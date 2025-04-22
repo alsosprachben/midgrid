@@ -14,8 +14,8 @@ with open(midgrid_in_path) as f:
     raw_lines = f.readlines()
 
 lines = []
-patches = {}  # voice_index -> patch number
-patch_directives = []  # (line_index, voice_index, patch_number)
+patches = {}
+patch_directives = []
 
 for line_index, line in enumerate(raw_lines):
     line_strip = line.strip()
@@ -25,7 +25,6 @@ for line_index, line in enumerate(raw_lines):
             v_label = match.group(1)
             s_label = match.group(2)
             patch = int(match.group(3))
-
             if v_label:
                 voice_idx = int(v_label[1:])
             elif s_label:
@@ -34,7 +33,6 @@ for line_index, line in enumerate(raw_lines):
                     raise ValueError(f"Unknown voice label '{s_label}' in Patch directive.")
             else:
                 raise ValueError("Malformed Patch directive.")
-
             if line_index == 0:
                 patches[voice_idx] = patch
             else:
@@ -42,13 +40,12 @@ for line_index, line in enumerate(raw_lines):
     elif line_strip and not line_strip.startswith("#"):
         lines.append(line)
 
-# Note converter
 note_map = {'C': 0, 'C#': 1, 'D': 2, 'D#': 3, 'E': 4, 'F': 5,
             'F#': 6, 'G': 7, 'G#': 8, 'A': 9, 'A#': 10, 'B': 11,
             'B-': 10, 'A-': 8, 'E-': 3}
 
 def note_to_midi(pitch):
-    if pitch == '-' or pitch == '_':
+    if pitch in ('-', '_'):
         return None
     name = pitch[:-1]
     octave = int(pitch[-1])
@@ -57,54 +54,62 @@ def note_to_midi(pitch):
 def parse_note_cell(cell):
     if '//' in cell:
         cell = cell.split('//')[0].strip()
-
     meta = {'velocity': 70, 'patch': None}
-
     if '~' in cell:
         cell, patch = cell.split('~')
         meta['patch'] = int(patch.strip())
-
     if '@' in cell:
         cell, vel = cell.split('@')
         meta['velocity'] = int(vel.strip())
-
     if ':' in cell:
         pitch, dur = cell.split(':')
         meta['pitch'] = pitch.strip()
         meta['duration'] = float(dur.strip())
     else:
         meta['pitch'] = cell.strip()
-        meta['duration'] = 1.0
-
+        meta['duration'] = None  # now explicitly unset
     meta['midi'] = note_to_midi(meta['pitch'])
     return meta
 
-# Determine voice count from first data line
 first_data = lines[0].split('|')
 voice_count = len(first_data) - 1
-
-# Fill patch list from default or fallbacks
 patch_list = [patches.get(i, 19) for i in range(voice_count)]
 
-# Parse grid data
 notes = [[] for _ in range(voice_count)]
 annotations = []
+beats = []
 
-for line in lines:
+for line_index, line in enumerate(lines):
     comment_split = line.split('//')
     core = comment_split[0].strip()
     annotation = comment_split[1].strip() if len(comment_split) > 1 else ""
     annotations.append(annotation)
-
     parts = core.split('|')
     parts = parts[:voice_count + 1]
     parts = [p.strip() for p in parts]
     while len(parts) < voice_count + 1:
         parts.append('')
-
+    try:
+        beat = float(parts[0])
+    except ValueError:
+        beat = float(line_index)
+    beats.append(beat)
     for i in range(voice_count):
         cell_meta = parse_note_cell(parts[i + 1])
         notes[i].append(cell_meta)
+
+# Validate durations and infer defaults
+for i in range(voice_count):
+    for row_idx in range(len(notes[i])):
+        meta = notes[i][row_idx]
+        is_last = row_idx + 1 == len(beats)
+        current_beat = beats[row_idx]
+        next_beat = beats[row_idx + 1] if not is_last else current_beat + (meta['duration'] if meta['duration'] else 1.0)
+        span = next_beat - current_beat
+        if meta['duration'] is None:
+            meta['duration'] = span
+        elif meta['duration'] > span + 0.01:
+            raise ValueError(f"Voice {i}, row {row_idx}: duration {meta['duration']} exceeds available span {span}")
 
 # Setup MIDI
 mid = MidiFile(ticks_per_beat=480)
@@ -113,45 +118,41 @@ meta.append(MetaMessage('set_tempo', tempo=int(60_000_000 / 96)))
 mid.tracks.append(meta)
 
 tracks = [MidiTrack() for _ in range(voice_count)]
-for track in tracks:
-    mid.tracks.append(track)
+for t in tracks:
+    mid.tracks.append(t)
 
-# Write MIDI
 current_patches = patch_list.copy()
+voice_times = [0.0] * voice_count
 
 for i in range(voice_count):
     track = tracks[i]
     track.append(Message('program_change', program=current_patches[i], channel=i))
     current_note = None
 
-    row_idx = 0
-    for meta in notes[i]:
-        for (directive_row, voice_idx, patch_num) in patch_directives:
-            if directive_row == row_idx and voice_idx == i:
+    for row_idx, meta in enumerate(notes[i]):
+        for (dir_row, voice_idx, patch_num) in patch_directives:
+            if dir_row == row_idx and voice_idx == i:
                 track.append(Message('program_change', program=patch_num, time=0, channel=i))
                 current_patches[i] = patch_num
-
         if meta['patch'] is not None and meta['patch'] != current_patches[i]:
             track.append(Message('program_change', program=meta['patch'], time=0, channel=i))
             current_patches[i] = meta['patch']
-
         note = meta['midi']
         dur = int(meta['duration'] * 480)
         vel = meta['velocity']
-
+        if abs(voice_times[i] - beats[row_idx]) > 0.1:
+            print(f"Warning: voice {i} row {row_idx} misaligned — expected beat {beats[row_idx]}, but track is at {voice_times[i]}")
         if note != current_note:
             if current_note is not None:
                 track.append(Message('note_off', note=current_note, velocity=70, time=0, channel=i))
             if note is not None:
                 track.append(Message('note_on', note=note, velocity=vel, time=0, channel=i))
             current_note = note
-
         track.append(Message('note_off', note=0, velocity=0, time=dur, channel=i))
-        row_idx += 1
+        voice_times[i] += meta['duration']
 
     if current_note is not None:
         track.append(Message('note_off', note=current_note, velocity=70, time=0, channel=i))
 
-# Save
 mid.save(midgrid_out_path)
 print(f"Saved {midgrid_out_path}")
