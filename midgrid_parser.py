@@ -6,7 +6,10 @@ args = dict(enumerate(argv))
 midgrid_in_path = args[1]
 midgrid_out_path = args[2]
 
-# Read file lines and parse global/mid-line patch configs
+# Voice aliases
+voice_alias = {'S': 0, 'A': 1, 'T': 2, 'B': 3}
+
+# Read file lines and parse patch configs
 with open(midgrid_in_path) as f:
     raw_lines = f.readlines()
 
@@ -17,10 +20,21 @@ patch_directives = []  # (line_index, voice_index, patch_number)
 for line_index, line in enumerate(raw_lines):
     line_strip = line.strip()
     if line_strip.startswith("// Patch"):
-        match = re.match(r'//\s*Patch\s+V?(\d+):\s*(\d+)', line_strip)
+        match = re.match(r'//\s*Patch\s+(?:(V\d+)|([A-Z])):\s*(\d+)', line_strip)
         if match:
-            voice_idx = int(match.group(1))
-            patch = int(match.group(2))
+            v_label = match.group(1)
+            s_label = match.group(2)
+            patch = int(match.group(3))
+
+            if v_label:
+                voice_idx = int(v_label[1:])
+            elif s_label:
+                voice_idx = voice_alias.get(s_label)
+                if voice_idx is None:
+                    raise ValueError(f"Unknown voice label '{s_label}' in Patch directive.")
+            else:
+                raise ValueError("Malformed Patch directive.")
+
             if line_index == 0:
                 patches[voice_idx] = patch
             else:
@@ -40,7 +54,6 @@ def note_to_midi(pitch):
     octave = int(pitch[-1])
     return 12 * (octave + 1) + note_map[name]
 
-# Extended note cell parser
 def parse_note_cell(cell):
     if '//' in cell:
         cell = cell.split('//')[0].strip()
@@ -66,11 +79,11 @@ def parse_note_cell(cell):
     meta['midi'] = note_to_midi(meta['pitch'])
     return meta
 
-# Determine voice count from first line
+# Determine voice count from first data line
 first_data = lines[0].split('|')
 voice_count = len(first_data) - 1
 
-# Fill default patch if missing
+# Fill patch list from default or fallbacks
 patch_list = [patches.get(i, 19) for i in range(voice_count)]
 
 # Parse grid data
@@ -111,19 +124,20 @@ for i in range(voice_count):
     track.append(Message('program_change', program=current_patches[i], channel=i))
     current_note = None
 
-    for step, meta in enumerate(notes[i]):
-        note = meta['midi']
-        dur = int(meta['duration'] * 480)
-        vel = meta['velocity']
-
-        for (step_idx, voice_idx, patch_num) in patch_directives:
-            if step_idx == step and voice_idx == i:
+    row_idx = 0
+    for meta in notes[i]:
+        for (directive_row, voice_idx, patch_num) in patch_directives:
+            if directive_row == row_idx and voice_idx == i:
                 track.append(Message('program_change', program=patch_num, time=0, channel=i))
                 current_patches[i] = patch_num
 
         if meta['patch'] is not None and meta['patch'] != current_patches[i]:
             track.append(Message('program_change', program=meta['patch'], time=0, channel=i))
             current_patches[i] = meta['patch']
+
+        note = meta['midi']
+        dur = int(meta['duration'] * 480)
+        vel = meta['velocity']
 
         if note != current_note:
             if current_note is not None:
@@ -133,9 +147,11 @@ for i in range(voice_count):
             current_note = note
 
         track.append(Message('note_off', note=0, velocity=0, time=dur, channel=i))
+        row_idx += 1
 
     if current_note is not None:
         track.append(Message('note_off', note=current_note, velocity=70, time=0, channel=i))
 
+# Save
 mid.save(midgrid_out_path)
 print(f"Saved {midgrid_out_path}")
