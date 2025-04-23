@@ -156,3 +156,99 @@ for i in range(voice_count):
 
 mid.save(midgrid_out_path)
 print(f"Saved {midgrid_out_path}")
+
+
+# === CONTRAPUNTAL REPORT USING HARMONIC COMPLEXITY ===
+def build_harmonic_complexity_table():
+    interval_definitions = {
+        0:  ("Unison",       (1, 1)),
+        1:  ("Minor 2nd",    (15, 16)),
+        2:  ("Major 2nd",    (8, 9)),
+        3:  ("Minor 3rd",    (5, 6)),
+        4:  ("Major 3rd",    (4, 5)),
+        5:  ("Perfect 4th",  (3, 4)),
+        6:  ("Tritone",      (32, 45)),
+        7:  ("Perfect 5th",  (2, 3)),
+        8:  ("Minor 6th",    (5, 8)),
+        9:  ("Major 6th",    (3, 5)),
+        10: ("Minor 7th",    (7, 9)),
+        11: ("Major 7th",    (8, 15)),
+        12: ("Octave",       (1, 2)),
+    }
+    table = {}
+    for semitone, (name, (h1, h2)) in interval_definitions.items():
+        table[semitone] = {
+            "name": name,
+            "harmonics": (h1, h2),
+            "complexity": h1 + h2
+        }
+    return table
+
+def build_extended_harmonic_complexity_table(max_semitones=127):
+    base_table = build_harmonic_complexity_table()
+    extended_table = {}
+    for semitone in range(max_semitones + 1):
+        iclass = semitone % 12
+        octaves = semitone // 12
+        if iclass in base_table:
+            h1, h2 = base_table[iclass]["harmonics"]
+            h1 *= 2 ** octaves
+            h2 *= 2 ** octaves
+            extended_table[semitone] = {
+                "name": f"{base_table[iclass]['name']} (+{octaves} oct)" if octaves else base_table[iclass]["name"],
+                "harmonics": (h1, h2),
+                "complexity": h1 + h2
+            }
+        else:
+            extended_table[semitone] = {
+                "name": "Undefined",
+                "harmonics": (1, 99),
+                "complexity": 100
+            }
+    return extended_table
+
+complexity_table = build_extended_harmonic_complexity_table()
+
+def contrapuntal_report(notes, beats):
+    lines = []
+    num_rows = len(notes[0])
+    num_voices = len(notes)
+    for row in range(num_rows):
+        lines.append(f"Beat {beats[row]:.2f}:")
+        midis = [notes[v][row]['midi'] for v in range(num_voices)]
+        for i in range(num_voices):
+            for j in range(i + 1, num_voices):
+                m1, m2 = midis[i], midis[j]
+                if m1 is None or m2 is None:
+                    interval = "rest"
+                    motion = "n/a"
+                    complexity = "n/a"
+                else:
+                    interval = abs(m2 - m1)
+                    motion = "unknown"
+                    if row > 0:
+                        p1 = notes[i][row - 1]['midi']
+                        p2 = notes[j][row - 1]['midi']
+                        if p1 is not None and p2 is not None:
+                            d1 = m1 - p1
+                            d2 = m2 - p2
+                            if d1 == 0 or d2 == 0:
+                                motion = "oblique"
+                            elif (d1 > 0 and d2 < 0) or (d1 < 0 and d2 > 0):
+                                motion = "contrary"
+                            elif d1 == d2:
+                                motion = "parallel"
+                            else:
+                                motion = "similar"
+                    cx = complexity_table.get(interval)
+                    complexity = cx["complexity"] if cx else "?"
+                    interval_name = cx["name"] if cx else f"{interval} semitones"
+                    lines.append(f"  V{i}–V{j}: interval={interval_name}, motion={motion}, complexity={complexity}")
+    return "\n".join(lines)
+
+# Write harmonic complexity report
+report_text = contrapuntal_report(notes, beats)
+report_path = midgrid_out_path.replace(".mid", ".report.txt")
+with open(report_path, "w") as rep:
+    rep.write(report_text)
+print(f"Contrapuntal analysis written to {report_path}")
