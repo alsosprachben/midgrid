@@ -32,7 +32,7 @@ brew install timidity sox
 
 ## Usage
 
-To convert and play a MidGrid file:
+To convert and play a MidGrid file using the shell script (Unix/macOS):
 
 ```bash
 ./midgrid_parser.sh filename
@@ -40,8 +40,15 @@ To convert and play a MidGrid file:
 
 This script:
 1. Converts `filename.midgrid` to `filename.mid`
-2. Plays `filename.mid` using `timidity`
-3. Optionally plays `filename.ogg` if present using `sox`
+2. Generates `filename.midgrid_report.txt` with harmonic analysis
+3. Plays `filename.mid` using `timidity`
+4. Optionally plays `filename.ogg` if present using `sox`
+
+If you're not using a Unix-style shell, you can invoke the parser directly via Python:
+
+```bash
+python midgrid_parser.py filename.midgrid
+```
 
 ## File Structure
 
