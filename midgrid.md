@@ -23,8 +23,16 @@ A MidGrid file represents musical notes and timing in a text grid where each col
   - Examples: `C4`, `D#3`, `G5`, `Bb`
 - A held note is represented by `-` (continuation of the previous pitch).
 - A rest or silence is represented by `.` or space.
-- Optional velocity can be encoded as a suffix: `C4:100`
-- Optional duration can be inferred by contiguous `-` following a pitch event.
+- Optional **velocity** (volume) is encoded with `@` suffix:
+  - Example: `C4@90`
+- Optional **duration** (in beats) is encoded with `:` suffix:
+  - Example: `E4:1.5` (plays for 1.5 beats)
+- Velocity and duration can be specified independently or together using either `@`, `:`, or both suffixes:
+  - Examples: `D#4@80:1.0`, `G3:0.5@100`
+- Optional **instrument patch** (MIDI program number) is encoded with `~` suffix:
+  - Example: `G3~41`
+- Multiple properties may be chained in any order:
+  - Examples: `C4@100:1.5~23`, `C4~23:1.5@100`
 
 ### Example
 
@@ -42,6 +50,7 @@ V2: .    .    C3   -    -    .    D3   -    -    .    E3   -
 - All voices must contain the same number of columns (use `.` or `-` to pad).
 - Columns may be subdivided by measure with visual guides (`|`) for readability.
 - Grid spacing may be adjusted for visual alignment but must maintain consistency within a line.
+- The parser accepts chained note modifiers in any order and parses them according to suffix symbols.
 
 ## Applications
 
@@ -55,6 +64,5 @@ The MidGrid format is designed for use in:
 
 - Channel/Instrument mapping per voice
 - Microtonal pitch notation
-- Explicit duration encoding
+- Multiple per-note properties: velocity, duration, patch
 - Tied notes and slurs
-
