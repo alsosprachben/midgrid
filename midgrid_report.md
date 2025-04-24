@@ -35,7 +35,7 @@ Each line describes the harmonic relationship between a pair of voices (e.g., V0
 
 ### Missing Beats
 
-If a beat is listed (e.g., `Beat 6.00:`) with no following lines, it indicates a silent frame or unprocessed analysis window.
+If a beat is listed (e.g., `Beat 6.00:`) with no following lines, it indicates a silent frame, a frame with only a single active note, or an unprocessed analysis window.
 
 ## Notes
 
