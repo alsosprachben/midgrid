@@ -48,9 +48,12 @@ This script:
 - `midgrid_parser.py`: Main parser converting `.midgrid` to `.mid`
 - `midgrid_parser.sh`: Shell wrapper for parsing and playback
 
-## Example
+## Specifications
 
-Sample `.midgrid` format usage and documentation are available in `midgrid.md`.
+The following documents describe the core formats used in this project:
+
+- [MidGrid Format Specification](midgrid.md): Defines the `.midgrid` textual format for representing MIDI sequences.
+- [Harmonic Analysis Report Format](midgrid_report.md): Describes the structure of analysis reports generated from `.midgrid` input.
 
 ## License
 
