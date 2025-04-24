@@ -142,8 +142,7 @@ for i in range(voice_count):
 
 mid.save(midgrid_out_path)
 print(f"Saved {midgrid_out_path}")
-
-# === CONTRAPUNTAL REPORT WITH SUSTAINED NOTES AND HARMONIC COMPLEXITY ===
+# === PERCEPTUAL CONTRAPUNTAL REPORT ===
 
 def build_harmonic_complexity_table():
     interval_definitions = {
@@ -166,7 +165,8 @@ def build_harmonic_complexity_table():
         table[semitone] = {
             "name": name,
             "harmonics": (h1, h2),
-            "complexity": h1 + h2
+            "complexity": h1 + h2,
+            "phase_aligned": (h2 & (h2 - 1)) == 0
         }
     return table
 
@@ -177,19 +177,24 @@ def build_extended_harmonic_complexity_table(max_semitones=127):
         iclass = semitone % 12
         octaves = semitone // 12
         if iclass in base_table:
-            h1, h2 = base_table[iclass]["harmonics"]
+            b = base_table[iclass]
+            h1, h2 = b["harmonics"]
             h1 *= 2 ** octaves
             h2 *= 2 ** octaves
+            total_complexity = h1 + h2
+            adjusted = total_complexity / (1 + octaves) ** 2
             extended_table[semitone] = {
-                "name": f"{base_table[iclass]['name']} (+{octaves} oct)" if octaves else base_table[iclass]["name"],
+                "name": f"{b['name']} (+{octaves} oct)" if octaves else b["name"],
                 "harmonics": (h1, h2),
-                "complexity": h1 + h2
+                "perceptual_complexity": round(adjusted, 3),
+                "phase_aligned": b["phase_aligned"]
             }
         else:
             extended_table[semitone] = {
                 "name": "Undefined",
                 "harmonics": (1, 99),
-                "complexity": 100
+                "perceptual_complexity": 100.0,
+                "phase_aligned": False
             }
     return extended_table
 
@@ -225,7 +230,7 @@ def contrapuntal_report(notes, beats):
                 if m1 is None or m2 is None:
                     interval = "rest"
                     motion = "n/a"
-                    complexity = "n/a"
+                    pscore = "n/a"
                 else:
                     interval = abs(m2 - m1)
                     motion = "unknown"
@@ -244,14 +249,15 @@ def contrapuntal_report(notes, beats):
                             else:
                                 motion = "similar"
                     cx = table.get(interval)
-                    complexity = cx["complexity"] if cx else "?"
+                    pscore = cx["perceptual_complexity"] if cx else "?"
                     interval_name = cx["name"] if cx else f"{interval} semitones"
-                    lines.append(f"  V{i}–V{j}: interval={interval_name}, motion={motion}, complexity={complexity}")
+                    if cx and cx["phase_aligned"]:
+                        interval_name += " [phase-aligned]"
+                    lines.append(f"  V{i}–V{j}: interval={interval_name}, motion={motion}, perceptual_complexity={pscore}")
     return "\n".join(lines)
 
-# Save contrapuntal report
 report_text = contrapuntal_report(notes, beats)
 report_path = midgrid_out_path.replace(".mid", ".report.txt")
 with open(report_path, "w") as rep:
     rep.write(report_text)
-print(f"Contrapuntal analysis written to {report_path}")
+print(f"Perceptual contrapuntal analysis written to {report_path}")
