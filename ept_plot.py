@@ -138,7 +138,7 @@ def plot_temperament_cartesian(tuning_defs, filename="cartesian_differences.png"
 
 
 # --- Interval deviation heatmap for EPT compared to pure ratios ---
-def plot_ept_interval_heatmap(filename="ept_interval_heatmap.png"):
+def plot_interval_heatmap(ratios, filename="interval_heatmap.png", stretch_octave=False, title="Interval Deviation from Pure Ratios"):
     # Base notes: C, C#, ..., B
     note_names_heatmap = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
@@ -158,19 +158,21 @@ def plot_ept_interval_heatmap(filename="ept_interval_heatmap.png"):
         ("8ve", 2/1)
     ]
 
-    stretch = (3**12 / 2**19)**(1.0 / 7)
-    ept_table_local = [(2 * stretch)**(n / 12) for n in range(12)]
+    if stretch_octave:
+        stretch = (3**12 / 2**19)**(1.0 / 7)
+    else:
+        stretch = 1
 
     heatmap = []
-    for i, base in enumerate(ept_table_local):
+    for i, base in enumerate(ratios):
         row = []
         for j, (_, interval_ratio) in enumerate(intervals):
             target_index = (i + j + 1) % 12  # +1 since m2 starts one semitone up
             if i + j + 1 >= 12:
-                expected = base * interval_ratio / (2 * stretch)  # adjust for stretched octave
+                expected = base * interval_ratio / (2 * stretch) if stretch_octave else base * interval_ratio / 2
             else:
                 expected = base * interval_ratio
-            actual = ept_table_local[target_index]
+            actual = ratios[target_index]
             deviation = np.log2(actual / expected)
             row.append(abs(deviation))
         heatmap.append(row)
@@ -185,7 +187,7 @@ def plot_ept_interval_heatmap(filename="ept_interval_heatmap.png"):
     plt.yticks(range(12), note_names_heatmap)
     plt.xlabel("Interval")
     plt.ylabel("Base Note")
-    plt.title("EPT Deviation from Pure Interval Ratios")
+    plt.title(title)
     plt.tight_layout()
     plt.savefig(filename)
     plt.show()
@@ -209,4 +211,44 @@ if __name__ == "__main__":
         ("Meantone Temperament", "magenta", "^", "--", meantone_notes),
     ])
 
-    plot_ept_interval_heatmap()
+    # ET
+    plot_interval_heatmap(
+        et_table,
+        filename="et_interval_heatmap.png",
+        stretch_octave=False,
+        title="ET Deviation from Pure Interval Ratios"
+    )
+
+    # EPT with stretch
+    stretch = (3**12 / 2**19)**(1.0 / 7)
+    ept_table_local = [(2 * stretch)**(n / 12) for n in range(12)]
+    plot_interval_heatmap(
+        ept_table_local,
+        filename="ept_interval_heatmap.png",
+        stretch_octave=True,
+        title="EPT Deviation from Pure Interval Ratios"
+    )
+
+    # Pythagorean
+    plot_interval_heatmap(
+        pyth_ratios,
+        filename="pyth_interval_heatmap.png",
+        stretch_octave=False,
+        title="Pythagorean Deviation from Pure Interval Ratios"
+    )
+
+    # Just Intonation
+    plot_interval_heatmap(
+        just_ratios,
+        filename="ji_interval_heatmap.png",
+        stretch_octave=False,
+        title="Just Intonation Deviation from Pure Interval Ratios"
+    )
+
+    # Meantone Temperament
+    plot_interval_heatmap(
+        meantone_notes,
+        filename="meantone_interval_heatmap.png",
+        stretch_octave=False,
+        title="Meantone Deviation from Pure Interval Ratios"
+    )
