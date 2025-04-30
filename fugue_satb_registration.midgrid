@@ -1,0 +1,44 @@
+// Patch S: 73    // Flute
+// Patch A: 71    // Clarinet
+// Patch T: 48    // String Ensemble
+// Patch B: 19    // Organ
+
+#beat | S             | A             | T             | B             // SATB chorale style
+0     | G4:2@85       | D4:2@65       | B3:2@55       | G2:2@50       // G major
+2     | A4:1@85       | E4:1@70       | C4:1@55       | A2:1@50       // A minor
+3     | B4:1@85       | F#4:1@70      | D4:1@55       | B2:1@50       // B minor
+4     | C5:2@90       | G4:2@75       | E4:2@60       | C3:2@55       // C major
+6     | .             | .             | .             | .             //
+// Patch S: 73
+// Patch A: 71
+// Patch T: 48
+// Patch B: 19
+
+#beat | S             | A             | T             | B             // Continuation
+8     | D5:1@90       | A4:1@70       | F#4:1@60      | D3:1@55       // D major chord
+9     | E5:1@90       | B4:1@70       | G4:1@60       | E3:1@55       // E minor
+10    | F#5:2@90      | D5:2@75       | A4:2@60       | B2:2@50       // Secondary dom
+12    | G5:2@95       | D5:2@75       | B4:2@65       | G2:2@55       // Full cadence
+#beat | S             | A             | T             | B             // Suspension entry
+14    | G5:2@90       | D5:2@75       | B4:2@60       | G2:2@50       // Prepare: G major
+16    | G5:2@90       | D5:2@75       | A4:2@60       | F#2:2@50      // Hold G (suspends against F#)
+18    | F#5:2@85      | D5:2@70       | A4:2@60       | F#2:2@50      // Resolve suspension
+20    | E5:2@85       | C5:2@70       | G4:2@60       | E2:2@50       // Close into E minor
+#beat | S             | A             | T             | B             // Chromatic borrowing
+22    | E5:2@85       | C5:2@70       | G4:2@60       | E2:2@50       // E minor
+24    | D#5:1@90      | B4:1@70       | F#4:1@60      | D#2:1@55      // borrowed leading tone
+25    | E5:1@90       | C5:1@70       | G4:1@60       | E2:1@55       // resolves into E
+26    | F#5:2@90      | D5:2@75       | A4:2@65       | B2:2@55       // secondary dom (B7)
+28    | G5:2@95       | D5:2@75       | B4:2@65       | G2:2@55       // return to G major
+#beat | S             | A             | T             | B             // Rising modal turn
+30    | A5:1.5@95     | F#5:1.5@75    | D5:1.5@65     | A2:1.5@55     // A major color
+31.5  | .             | .             | .             | .
+32    | B5:1.5@95     | G5:1.5@75     | E5:1.5@65     | B2:1.5@55     // build tension
+33.5  | .             | .             | .             | .
+34    | C6:2@100      | A5:2@80       | F#5:2@70      | C3:2@60       // Dorian shimmer
+36    | G5:2@95       | D5:2@75       | B4:2@65       | G2:2@55       // Final cadence
+#beat | S             | A             | T             | B             // Descending return
+38    | F#5:1@90      | D5:1@75       | A4:1@65       | D3:1@55       // D major
+39    | E5:1@85       | C#5:1@70      | G4:1@60       | C#3:1@50      // hint of A major
+40    | D5:2@80       | B4:2@65       | F#4:2@55      | B2:2@50       // B minor
+42    | G4:3@70       | D4:3@60       | B3:3@50       | G2:3@45       // Plagal closure

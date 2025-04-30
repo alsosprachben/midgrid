@@ -7,11 +7,39 @@ args = dict(enumerate(argv))
 midgrid_in_path = args[1]
 midgrid_out_path = args[2]
 
+# Collect other MIDI events (non-meta, non-voice tracks)
+other_midi_events = []
+
 # Voice aliases
 voice_alias = {'S': 0, 'A': 1, 'T': 2, 'B': 3}
 
 with open(midgrid_in_path) as f:
     raw_lines = f.readlines()
+
+# Parse tempo changes from raw_lines
+tempo_changes = []
+seen_tempos = set()
+for line in raw_lines:
+    line_strip = line.strip()
+    if line_strip.startswith("# tempo"):
+        parts = line_strip.split()
+        if len(parts) >= 3:
+            try:
+                bpm = float(parts[2])
+                if len(parts) >= 4:
+                    at_beat = float(parts[3])
+                else:
+                    at_beat = 0.0
+                key = (round(bpm, 6), round(at_beat, 6))
+                # Deduplicate tempo changes at same beat and bpm
+                if key not in seen_tempos:
+                    tempo_changes.append((at_beat, bpm))
+                    seen_tempos.add(key)
+            except ValueError:
+                pass
+
+# Sort tempo changes by beat
+tempo_changes.sort(key=lambda x: x[0])
 
 lines = []
 patches = {}
@@ -38,24 +66,35 @@ for line_index, line in enumerate(raw_lines):
             if line_index == 0:
                 patches[voice_idx] = patch
             else:
-                patch_directives.append((len(lines), voice_idx, patch))
+                # Deduplicate patch directives for same line and voice
+                if not any(pd[0] == len(lines) and pd[1] == voice_idx and pd[2] == patch for pd in patch_directives):
+                    patch_directives.append((len(lines), voice_idx, patch))
+    elif line_strip.startswith("# events"):
+        break  # stop collecting grid lines at event section
     elif line_strip and not line_strip.startswith("#"):
         lines.append(line)
+
+    # After collecting raw grid lines and patch directives, use raw_lines for grid parsing
+    lines = [l for l in raw_lines if l.strip() and not l.strip().startswith("#") and not l.strip().startswith("//")]
 
 note_map = {'C': 0, 'C#': 1, 'D': 2, 'D#': 3, 'E': 4, 'F': 5,
             'F#': 6, 'G': 7, 'G#': 8, 'A': 9, 'A#': 10, 'B': 11,
             'B-': 10, 'A-': 8, 'E-': 3}
 
 def note_to_midi(pitch):
-    if pitch == '-' or pitch == '_':
+    if pitch in ('-', '_', '.'):
         return None
     name = pitch[:-1]
     octave = int(pitch[-1])
     return 12 * (octave + 1) + note_map[name]
 
 def parse_note_cell(cell):
-    if '//' in cell:
-        cell = cell.split('//')[0].strip()
+    cell = cell.strip()
+    if not cell or cell in ('.', '-', '_'):
+        return {'velocity': 70, 'patch': None, 'pitch': '.', 'duration': None, 'midi': None}
+
+    # if '//' in cell:
+    #     cell = cell.split('//')[0].strip()
 
     meta = {'velocity': 70, 'patch': None}
 
@@ -93,48 +132,116 @@ for line in lines:
     parts = [p.strip() for p in parts]
     while len(parts) < voice_count + 1:
         parts.append('')
-    beats.append(float(parts[0]))
+    try:
+        beat_val = float(parts[0])
+        beats.append(beat_val)
+    except ValueError:
+        # For lines without a valid beat, still append None to keep line alignment
+        beats.append(None)
     for i in range(voice_count):
         notes[i].append(parse_note_cell(parts[i + 1]))
 
+# Fill in implicit durations by extending notes only until the next beat row
+for v in range(voice_count):
+    for i in range(len(notes[v])):
+        meta = notes[v][i]
+        if meta["duration"] is not None:
+            continue
+        start_beat = beats[i]
+        if start_beat is None:
+            meta["duration"] = 1.0
+            continue
+        # Find next valid beat row (not necessarily a note)
+        for j in range(i + 1, len(beats)):
+            if beats[j] is not None:
+                meta["duration"] = beats[j] - start_beat
+                break
+        else:
+            meta["duration"] = 1.0
+
 mid = MidiFile(ticks_per_beat=480)
 meta = MidiTrack()
-meta.append(MetaMessage('set_tempo', tempo=int(60_000_000 / 96)))
+
+# Insert tempo changes at correct tick positions
+last_tick = 0
+last_beat = 0.0
+last_tempo = None
+for beat, bpm in tempo_changes:
+    delta_beats = beat - last_beat
+    delta_ticks = int(delta_beats * mid.ticks_per_beat)
+    delta_time = max(0, delta_ticks - last_tick)
+    tempo = int(60_000_000 / bpm)
+    if last_tempo != tempo or abs(beat - last_beat) > 1e-9:
+        meta.append(MetaMessage('set_tempo', tempo=tempo, time=delta_time))
+        last_tick += delta_time
+        last_beat = beat
+        last_tempo = tempo
+
+if not tempo_changes:
+    meta.append(MetaMessage('set_tempo', tempo=int(60_000_000 / 96)))
+
 mid.tracks.append(meta)
 
 tracks = [MidiTrack() for _ in range(voice_count)]
 for track in tracks:
     mid.tracks.append(track)
 
+# Scan all tracks (except meta and voice tracks) for additional events
+for track in mid.tracks:
+    abs_time = 0
+    for msg in track:
+        abs_time += msg.time
+        if msg.type in ('control_change', 'pitchwheel', 'aftertouch', 'text', 'program_change'):
+            beat = abs_time / mid.ticks_per_beat
+            event_dict = msg.dict()
+            event_dict.pop('time')
+            other_midi_events.append((beat, msg.type, event_dict))
+
 current_patches = patch_list.copy()
 for i in range(voice_count):
     track = tracks[i]
-    track.append(Message('program_change', program=current_patches[i], channel=i))
+    if i not in current_patches or current_patches[i] != patch_list[i]:
+        track.append(Message('program_change', program=patch_list[i], channel=i))
+        current_patches[i] = patch_list[i]
     current_note = None
+    current_time = 0  # track elapsed ticks in this track
 
     row_idx = 0
     for meta in notes[i]:
         for (directive_row, voice_idx, patch_num) in patch_directives:
             if directive_row == row_idx and voice_idx == i:
-                track.append(Message('program_change', program=patch_num, time=0, channel=i))
-                current_patches[i] = patch_num
+                if current_patches[i] != patch_num:
+                    track.append(Message('program_change', program=patch_num, time=0, channel=i))
+                    current_patches[i] = patch_num
 
         if meta['patch'] is not None and meta['patch'] != current_patches[i]:
             track.append(Message('program_change', program=meta['patch'], time=0, channel=i))
             current_patches[i] = meta['patch']
 
         note = meta['midi']
-        dur = int(meta['duration'] * 480)
+        dur = int(meta['duration'] * 480) if meta['duration'] is not None else 480
         vel = meta['velocity']
 
-        if note != current_note:
-            if current_note is not None:
-                track.append(Message('note_off', note=current_note, velocity=70, time=0, channel=i))
-            if note is not None:
-                track.append(Message('note_on', note=note, velocity=vel, time=0, channel=i))
-            current_note = note
+        if meta['pitch'] == '.':
+            # Explicit rest
+            track.append(Message('note_off', note=0, velocity=0, time=dur, channel=i))
+            current_note = None
+        else:
+            if note != current_note:
+                if current_note is not None:
+                    # Turn off previous note
+                    track.append(Message('note_off', note=current_note, velocity=70, time=0, channel=i))
+                if note is not None:
+                    # Start new note
+                    track.append(Message('note_on', note=note, velocity=vel, time=0, channel=i))
+                current_note = note
 
-        track.append(Message('note_off', note=0, velocity=0, time=dur, channel=i))
+            # Hold note for duration
+            if note is not None:
+                track.append(Message('note_off', note=note, velocity=70, time=dur, channel=i))
+                current_note = None
+            else:
+                track.append(Message('note_off', note=0, velocity=0, time=dur, channel=i))
         row_idx += 1
 
     if current_note is not None:
@@ -203,15 +310,23 @@ def build_sounding_notes(notes, beats):
     row_count = len(beats)
     sounding_at_beat = []
     for row_idx, current_beat in enumerate(beats):
+        if current_beat is None:
+            sounding_at_beat.append([None] * voice_count)
+            continue
         current_state = []
         for v in range(voice_count):
             sounding_note = None
             for prev_row in range(row_idx, -1, -1):
-                note = notes[v][prev_row]
+                note_meta = notes[v][prev_row]
                 start_beat = beats[prev_row]
-                end_beat = start_beat + note["duration"]
+                if start_beat is None:
+                    continue
+                duration = note_meta.get("duration", 1.0)
+                if duration is None:
+                    continue
+                end_beat = start_beat + duration
                 if start_beat <= current_beat < end_beat:
-                    sounding_note = note["midi"]
+                    sounding_note = note_meta["midi"]
                     break
             current_state.append(sounding_note)
         sounding_at_beat.append(current_state)
@@ -223,6 +338,8 @@ def contrapuntal_report(notes, beats):
     sounding = build_sounding_notes(notes, beats)
     num_voices = len(notes)
     for row, midis in enumerate(sounding):
+        if beats[row] is None:
+            continue
         lines.append(f"Beat {beats[row]:.2f}:")
         for i in range(num_voices):
             for j in range(i + 1, num_voices):

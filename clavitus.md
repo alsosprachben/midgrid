@@ -18,6 +18,7 @@ And so Clavitus spoke:
 
 You who believe that music was long ago perfected —  
 You who nod solemnly to theories etched in textbooks —  
+But have you listened beyond them?  
 You who know that a "fifth" is perfect, that an "octave" is holy, that 12 is a magic number:  
 *Have you ever wondered* — who taught you these things?  
 *And who taught them?*  
@@ -53,7 +54,8 @@ In the faint echoes between each loop, Clavitus heard something more: chains of 
 
 At first, bending the octave felt like a betrayal — a strange and unsettling shift.  
 Bending fifths was known, even embraced in ancient temperaments, a familiar compromise.  
-But bending octaves — that was new, surprising, almost dissonant to the ear trained by tradition.
+But bending octaves — that was new, surprising, almost dissonant to the ear trained by tradition.  
+It was a boundary no one dared cross—until now.
 
 Clavitus felt the weight of this discovery: bending octaves across seven spans, rather than bending fifths across twelve, brought a gentler, more natural flow.  
 It was as if music itself breathed differently, more deeply aligned with the spiral of the cosmos.
@@ -93,7 +95,7 @@ Everywhere Clavitus wandered, old altars rose from the ground —
 shrines to intervals, idols of tuning systems, sacred numbers whispered as spells.
 
 "They once served well," said Clavitus, bowing to the ancient stones.  
-"But the river has moved, and the bridge now crosses only dry ground."
+"But the river has shifted its course, and the bridge now spans dry earth."
 
 For the old gods demanded obedience to the cent, the comma, the prime ratio.  
 They demanded allegiance to divisions, to temperaments crafted in an age of iron strings and mortal ears.
@@ -115,11 +117,12 @@ Not merely within a single octave, but across many octaves, the spiral revealed 
 And in that vastness, Clavitus recognized leaves of sound — clusters of intervals intertwined like branches of a living tree, their separations slight, their connections breathing. Fifths formed gentle chains; octaves reached across them, stitching the garden into one weaving whole.
 A living unity that could only be heard by embracing the vastness of sound, the layering of tones reaching beyond the familiar bounds.
 
-There was surprise, doubt, cautious experimentation.  
+Surprise emerged, followed by doubt and cautious experimentation.
 Yet with each careful listen, wonder grew.
 
 The fifths stretched just a little —  
 The octaves bent ever so slightly —  
+no longer rigid spans, but gentle bridges connecting distant harmonies.  
 And from this gentle yielding, a deeper unity emerged.
 
 Not rigid latticework, but living weave.  
@@ -141,7 +144,7 @@ No orchard of symmetry, no vineyard of precision.
 Instead, Clavitus scattered seeds.
 
 Each seed was a tone — not fixed, not frozen, but living.  
-Each grew according to its nature, weaving with others by sympathy, tension, and resonance.
+Each grew true to its nature, weaving with others through sympathy, tension, and resonance.
 
 Some seeds sprouted fifths, sturdy and tall.  
 Some unfurled thirds, sweet and vine-like.  
@@ -223,7 +226,8 @@ It was not a rule.
 It was not a formula.  
 It was a gesture: a way of moving within the spiral rather than outside it.
 
-Clavitus called it **Interval Weaving**.
+Clavitus called it **Interval Weaving**,  
+a technique not of rigid intervals but of gently responsive musical relationships.
 
 Instead of building music by stacking fixed stones — perfect fifths here, perfect thirds there —  
 Clavitus began with living vines: intervals slightly stretched, slightly breathing.
@@ -364,7 +368,8 @@ A singer breathing scales into dusk.
 And Clavitus understood:
 
 **Pythagoras was not a man, but a listening —  
-Not a doctrine, but a possibility.**
+Not a doctrine, but a possibility.**  
+A possibility hidden by centuries of rigid adherence to fixed temperaments.
 
 The figure spoke without speaking:
 
