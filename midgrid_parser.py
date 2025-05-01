@@ -74,8 +74,6 @@ for line_index, line in enumerate(raw_lines):
     elif line_strip and not line_strip.startswith("#"):
         lines.append(line)
 
-    # After collecting raw grid lines and patch directives, use raw_lines for grid parsing
-    lines = [l for l in raw_lines if l.strip() and not l.strip().startswith("#") and not l.strip().startswith("//")]
 
 note_map = {'C': 0, 'C#': 1, 'D': 2, 'D#': 3, 'E': 4, 'F': 5,
             'F#': 6, 'G': 7, 'G#': 8, 'A': 9, 'A#': 10, 'B': 11,
@@ -90,8 +88,10 @@ def note_to_midi(pitch):
 
 def parse_note_cell(cell):
     cell = cell.strip()
-    if not cell or cell in ('.', '-', '_'):
+    if not cell or cell == '.':
         return {'velocity': 70, 'patch': None, 'pitch': '.', 'duration': None, 'midi': None}
+    if cell in ('-', '_'):
+        return {'velocity': 0, 'patch': None, 'pitch': '-', 'duration': None, 'midi': None}
 
     # if '//' in cell:
     #     cell = cell.split('//')[0].strip()
@@ -197,6 +197,17 @@ for track in mid.tracks:
             event_dict.pop('time')
             other_midi_events.append((beat, msg.type, event_dict))
 
+# Compute per-row time deltas from beat positions
+row_deltas = []
+for idx, b in enumerate(beats):
+    if b is None:
+        row_deltas.append(0)
+    elif idx == 0:
+        row_deltas.append(int(b * mid.ticks_per_beat))
+    else:
+        prev = beats[idx-1] if beats[idx-1] is not None else 0.0
+        row_deltas.append(int((b - prev) * mid.ticks_per_beat))
+
 current_patches = patch_list.copy()
 for i in range(voice_count):
     track = tracks[i]
@@ -219,10 +230,14 @@ for i in range(voice_count):
             current_patches[i] = meta['patch']
 
         note = meta['midi']
-        dur = int(meta['duration'] * 480) if meta['duration'] is not None else 480
+        dur = row_deltas[row_idx]
         vel = meta['velocity']
 
-        if meta['pitch'] == '.':
+        if meta['pitch'] == '-':
+            # Hold: extend the previous note-off by this duration
+            if track and track[-1].type == 'note_off':
+                track[-1].time += dur
+        elif meta['pitch'] == '.':
             # Explicit rest
             track.append(Message('note_off', note=0, velocity=0, time=dur, channel=i))
             current_note = None
