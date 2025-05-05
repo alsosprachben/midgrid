@@ -4,18 +4,23 @@ The MidGrid format is a compact, human-readable grid-based notation for specifyi
 
 ## Overview
 
-A MidGrid file represents musical notes and timing in a text grid where each column represents a beat subdivision and each row represents a voice or instrument. Each voice line specifies events using shorthand symbols, and all voices are aligned horizontally by beat position.
-
-## Format
+A MidGrid file represents musical notes and timing in a text grid for input, where each row is a beat subdivision and each column a voice.  The reference emitter inverts this for output. Each voice column specifies events using shorthand symbols, and all voices are aligned horizontally by beat position.
 
 - The file is structured as:
   - An optional metadata block (comment lines starting with `#` or `;`)
-  - A sequence of time-aligned lines for each voice
-- Voice lines follow the format:
+  - **Input grid**: one row per beat time (with the first column as the beat label and each subsequent column a voice), e.g.:
+
+    ```
+    0.00  | C4  | G#3
+    0.25  | F4  | -
+    0.50  | E4  | B3
+    ```
+  - **Emitter table output**: a table where each row is a beat time and each column a voice, headed by `#beat | V0 | V1 | ...`
+- **Input rows** start with a beat label followed by one column per voice (separated by `|` or whitespace). For example:
   ```
-  V[n]: [note grid...]
+  0.00  | C4  | G#3
+  0.25  | F4  | -
   ```
-  where `V[n]` is the voice number, and the note grid consists of space- or tab-separated symbols denoting pitch events.
 - Voice aliases such as `S`, `A`, `T`, and `B` (for Soprano, Alto, Tenor, Bass) may be used in place of `V0`, `V1`, etc., in `// Patch` directives or voice assignments.
 - Tempo changes can be specified using `# tempo <BPM> [at_beat]`, where BPM is a number and `at_beat` is optional (defaults to 0.0). Example: `# tempo 72.0 8.0`
 
@@ -41,6 +46,21 @@ A MidGrid file represents musical notes and timing in a text grid where each col
   - Examples: `C4@100:1.5~23`, `C4~23:1.5@100`
 - You may use `//` within a note cell for inline comments; text after `//` in a cell is ignored after splitting.
 
+### Emitter Table Output
+
+The reference emitter produces a tabular text representation with:
+
+```
+#beat | V0  | V1  | ... | Vn
+0.00  | C4  | G3  | ... | . 
+0.25  | -   | -   | ... | A4
+```
+ 
+- **First column** (`#beat`) shows the beat time (fractional beats).
+- **Subsequent columns** correspond to each voice (`V0` through `Vn`).
+- **Rows** are only printed for time points where an event (note_on, note_off, tempo change) occurs.
+- **Cell contents** use the same pitch, hold (`-`), rest (`.`), and modifier syntax as the input grid.
+
 ### Example
 
 ```
@@ -48,9 +68,15 @@ A MidGrid file represents musical notes and timing in a text grid where each col
 # Tempo: 90
 # tempo 90.0
 
-V0: C4   -    -    D4   -    -    E4   -    -    F4   -    -    
-V1: G3   -    -    A3   -    -    B3   -    -    C4   -    -    
-V2: .    .    C3   -    -    .    D3   -    -    .    E3   -    
+0.00  | C4    | G3    | C3    
+0.25  | -     | -     | -     
+0.50  | -     | -     | D3    
+0.75  | D4    | A3    | -     
+1.00  | -     | -     | -     
+1.25  | -     | -     | E3    
+1.50  | E4    | B3    | -     
+1.75  | -     | -     | -     
+2.00  | F4    | C4    | -     
 ```
 
 ## Notes
