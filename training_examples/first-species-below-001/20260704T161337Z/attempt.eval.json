@@ -1,0 +1,140 @@
+{
+  "schema": "midgrid.eval.v1",
+  "input": "/tmp/first_species_below_attempt.midgrid",
+  "lint": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  },
+  "parser": {
+    "ok": true,
+    "returncode": 0,
+    "stdout": "Saved /tmp/first_species_below_attempt.mid\nPerceptual contrapuntal analysis written to /tmp/first_species_below_attempt.report.txt\nPerceptual contrapuntal analysis JSON written to /tmp/first_species_below_attempt.report.json\n",
+    "stderr": "",
+    "midi_out": "/tmp/first_species_below_attempt.mid",
+    "report_text": "/tmp/first_species_below_attempt.report.txt",
+    "report_json": "/tmp/first_species_below_attempt.report.json"
+  },
+  "report_summary": {
+    "beat_count": 8,
+    "active_pair_count": 2,
+    "rest_pair_count": 6,
+    "motion_counts": {
+      "unknown": 2,
+      "n/a": 6
+    },
+    "mean_perceptual_complexity": 0.945,
+    "max_perceptual_complexity": 1.0,
+    "max_perceptual_complexity_pair": {
+      "beat": 7.0,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 1.0,
+      "interval": "Unison (+1 oct)"
+    }
+  },
+  "issues": [
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V1 is not filled at beat 1.",
+      "beat": 1.0,
+      "voice": 1,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V1 is not filled at beat 2.",
+      "beat": 2.0,
+      "voice": 1,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V1 is not filled at beat 3.",
+      "beat": 3.0,
+      "voice": 1,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V1 is not filled at beat 4.",
+      "beat": 4.0,
+      "voice": 1,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V1 is not filled at beat 5.",
+      "beat": 5.0,
+      "voice": 1,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V1 is not filled at beat 6.",
+      "beat": 6.0,
+      "voice": 1,
+      "actual": "."
+    }
+  ],
+  "issue_counts": {
+    "error": 6,
+    "warning": 0,
+    "info": 0
+  },
+  "exercise_issues": [
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V1 is not filled at beat 1.",
+      "beat": 1.0,
+      "voice": 1,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V1 is not filled at beat 2.",
+      "beat": 2.0,
+      "voice": 1,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V1 is not filled at beat 3.",
+      "beat": 3.0,
+      "voice": 1,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V1 is not filled at beat 4.",
+      "beat": 4.0,
+      "voice": 1,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V1 is not filled at beat 5.",
+      "beat": 5.0,
+      "voice": 1,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V1 is not filled at beat 6.",
+      "beat": 6.0,
+      "voice": 1,
+      "actual": "."
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "schema": "midgrid.eval.v1",
+  "input": "/tmp/parallel_attempt.midgrid",
+  "lint": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  },
+  "parser": {
+    "ok": true,
+    "returncode": 0,
+    "stdout": "Saved /tmp/parallel_attempt.mid\nPerceptual contrapuntal analysis written to /tmp/parallel_attempt.report.txt\nPerceptual contrapuntal analysis JSON written to /tmp/parallel_attempt.report.json\n",
+    "stderr": "",
+    "midi_out": "/tmp/parallel_attempt.mid",
+    "report_text": "/tmp/parallel_attempt.report.txt",
+    "report_json": "/tmp/parallel_attempt.report.json"
+  },
+  "report_summary": {
+    "beat_count": 4,
+    "active_pair_count": 4,
+    "rest_pair_count": 0,
+    "motion_counts": {
+      "unknown": 1,
+      "parallel": 3
+    },
+    "mean_perceptual_complexity": 2.5,
+    "max_perceptual_complexity": 2.5,
+    "max_perceptual_complexity_pair": {
+      "beat": 0.0,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 2.5,
+      "interval": "Perfect 5th (+1 oct)"
+    }
+  },
+  "issues": [
+    {
+      "severity": "error",
+      "code": "parallel_perfect",
+      "message": "Parallel perfect interval in V0-V1 from beat 0 to 1.",
+      "beat": 1.0,
+      "previous_beat": 0.0,
+      "voice_pair": "V0-V1",
+      "previous_interval": "Perfect 5th (+1 oct)",
+      "interval": "Perfect 5th (+1 oct)"
+    },
+    {
+      "severity": "error",
+      "code": "parallel_perfect",
+      "message": "Parallel perfect interval in V0-V1 from beat 1 to 2.",
+      "beat": 2.0,
+      "previous_beat": 1.0,
+      "voice_pair": "V0-V1",
+      "previous_interval": "Perfect 5th (+1 oct)",
+      "interval": "Perfect 5th (+1 oct)"
+    },
+    {
+      "severity": "error",
+      "code": "parallel_perfect",
+      "message": "Parallel perfect interval in V0-V1 from beat 2 to 3.",
+      "beat": 3.0,
+      "previous_beat": 2.0,
+      "voice_pair": "V0-V1",
+      "previous_interval": "Perfect 5th (+1 oct)",
+      "interval": "Perfect 5th (+1 oct)"
+    }
+  ],
+  "issue_counts": {
+    "error": 3,
+    "warning": 0,
+    "info": 0
+  }
+}

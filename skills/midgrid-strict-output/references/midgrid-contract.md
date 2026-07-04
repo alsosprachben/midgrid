@@ -1,0 +1,90 @@
+# MidGrid Parser Contract
+
+Use this contract for the current reference parser in `midgrid_parser.py`.
+
+## Safe File Shape
+
+```text
+# Title: Example
+# tempo 80
+// Patch V0: 73
+// Patch V1: 71
+
+0.00 | C4:1@80 | E3:1@70
+1.00 | D4:1@80 | F3:1@70
+2.00 | E4:1@80 | G3:1@70
+```
+
+Rules:
+
+- Start grid rows with a numeric beat.
+- Separate columns with `|`.
+- Keep every row at the same voice count.
+- Use `#` for comments outside the grid.
+- Use `// Patch Vn: N` or `// Patch S: N`, `A`, `T`, `B`.
+- Avoid `;` comments in files meant for the current parser; they are not skipped by `midgrid_parser.py`.
+
+## Notes And Accidentals
+
+Safe notes:
+
+```text
+C4 C#4 D4 D#4 E4 F4 F#4 G4 G#4 A4 A#4 B4
+B-4 A-4 E-4
+```
+
+Prefer sharps. Avoid Unicode flats and `Bb`, `Eb`, `Ab`, etc. unless the parser has been extended.
+
+## Canonical Modifier Order
+
+The current parser is more restrictive than the format spec. Prefer:
+
+```text
+Pitch:duration@velocity~patch
+```
+
+Examples:
+
+```text
+C4
+C4:1
+C4@80
+C4:1@80
+C4:1@80~73
+```
+
+Avoid:
+
+```text
+C4@80:1
+C4~73:1
+C4:1~73@80
+```
+
+## Spatial Discipline
+
+Good:
+
+```text
+0 | E4:1@80 | C3:1@70
+1 | F4:1@80 | D3:1@70
+2 | G4:1@80 | E3:1@70
+```
+
+Bad:
+
+```text
+0 | (bright opening)E4@80 | C3@70
+1 | F4@80 suspension      | D3@70
+2 | G4@80                 | E3@70 // ok only if comment starts after all cells
+```
+
+## Validation
+
+For a file `draft.midgrid`, validate with:
+
+```bash
+python3 midgrid_parser.py draft.midgrid draft.mid
+```
+
+For syntax-only checks without MIDI dependencies, run `python3 midgrid_lint.py draft.midgrid`. The full parser should produce `draft.mid`, `draft.report.txt`, and `draft.report.json` when `mido` is installed.

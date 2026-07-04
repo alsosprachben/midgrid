@@ -1,0 +1,16 @@
+Beat 0.00:
+  V0-V1: interval=Unison (+2 oct) [phase-aligned], motion=unknown, perceptual_complexity=0.889
+Beat 1.00:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 2.00:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 3.00:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 4.00:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 5.00:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 6.00:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 7.00:
+  V0-V1: interval=Unison (+1 oct) [phase-aligned], motion=unknown, perceptual_complexity=1.0

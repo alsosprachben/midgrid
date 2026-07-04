@@ -1,0 +1,31 @@
+{
+  "id": "parallel-perfect-repair-001",
+  "title": "Repair Parallel Perfect Motion",
+  "skill": "midgrid-repair-loop",
+  "species": "first",
+  "objective": "Repair a two-voice passage that contains parallel perfect fifths.",
+  "prompt": "Change the fewest notes needed to remove evaluator errors while preserving strict MidGrid syntax and the lower voice contour.",
+  "seed_midgrid": "# Title: Parallel Perfect Repair 001\n# tempo 80\n\n0 | G4:1@80 | C3:1@70\n1 | A4:1@80 | D3:1@70\n2 | B4:1@80 | E3:1@70\n3 | C5:1@80 | F3:1@70\n",
+  "success_criteria": [
+    "Evaluator initially reports parallel_perfect for the seed or attempt.",
+    "Corrected version keeps V1 unchanged unless a smaller repair is impossible.",
+    "Corrected version has no evaluator error issues."
+  ],
+  "evaluation_defaults": {
+    "fail_on": "none",
+    "high_complexity_threshold": 30.0,
+    "wide_spacing_threshold": 19
+  },
+  "recording": {
+    "corrected_fail_on": "error"
+  },
+  "exercise_checks": {
+    "locked_voices": [
+      1
+    ],
+    "filled_voices": [
+      0,
+      1
+    ]
+  }
+}

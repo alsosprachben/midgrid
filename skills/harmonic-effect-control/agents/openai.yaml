@@ -1,0 +1,4 @@
+interface:
+  display_name: "Harmonic Effect Control"
+  short_description: "Shape effects from report metrics"
+  default_prompt: "Use $harmonic-effect-control to target tension, release, clarity, or density from MidGrid harmonic reports."

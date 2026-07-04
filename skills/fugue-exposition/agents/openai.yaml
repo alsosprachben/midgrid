@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fugue Exposition"
+  short_description: "Build strict fugal expositions"
+  default_prompt: "Use $fugue-exposition to compose or diagnose a strict MidGrid fugue exposition."

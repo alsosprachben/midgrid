@@ -1,0 +1,4 @@
+interface:
+  display_name: "MidGrid Strict Output"
+  short_description: "Emit parser-valid MidGrid notation"
+  default_prompt: "Use $midgrid-strict-output to produce strict parser-valid MidGrid without prose inside cells."

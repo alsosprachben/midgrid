@@ -1,0 +1,30 @@
+Beat 0.00:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 0.50:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 1.00:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 1.50:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 2.00:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 2.50:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 3.00:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 3.50:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 4.00:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 4.50:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 5.00:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 5.50:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 6.00:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 6.50:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a
+Beat 7.00:
+  V0-V1: interval=rest, motion=n/a, perceptual_complexity=n/a

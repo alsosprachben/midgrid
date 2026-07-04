@@ -1,0 +1,4 @@
+interface:
+  display_name: "Species Counterpoint"
+  short_description: "Learn Fux species through MidGrid"
+  default_prompt: "Use $species-counterpoint to draft or repair a Fux-style species counterpoint exercise in MidGrid."

@@ -1,0 +1,44 @@
+{
+  "schema": "midgrid.eval.v1",
+  "input": "/tmp/second_species_solution.midgrid",
+  "lint": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  },
+  "parser": {
+    "ok": true,
+    "returncode": 0,
+    "stdout": "Saved /tmp/second_species_solution.mid\nPerceptual contrapuntal analysis written to /tmp/second_species_solution.report.txt\nPerceptual contrapuntal analysis JSON written to /tmp/second_species_solution.report.json\n",
+    "stderr": "",
+    "midi_out": "/tmp/second_species_solution.mid",
+    "report_text": "/tmp/second_species_solution.report.txt",
+    "report_json": "/tmp/second_species_solution.report.json"
+  },
+  "report_summary": {
+    "beat_count": 15,
+    "active_pair_count": 15,
+    "rest_pair_count": 0,
+    "motion_counts": {
+      "unknown": 1,
+      "oblique": 11,
+      "similar": 2,
+      "contrary": 1
+    },
+    "mean_perceptual_complexity": 4.559,
+    "max_perceptual_complexity": 8.5,
+    "max_perceptual_complexity_pair": {
+      "beat": 3.5,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 8.5,
+      "interval": "Major 2nd (+1 oct)"
+    }
+  },
+  "issues": [],
+  "issue_counts": {
+    "error": 0,
+    "warning": 0,
+    "info": 0
+  },
+  "exercise_issues": []
+}

@@ -1,0 +1,225 @@
+{
+  "schema": "midgrid.report.v1",
+  "voice_count": 2,
+  "beats": [
+    {
+      "beat": 0.0,
+      "sounding_midis": [
+        72,
+        48
+      ],
+      "pairs": [
+        {
+          "voices": [
+            0,
+            1
+          ],
+          "voice_pair": "V0-V1",
+          "midis": [
+            72,
+            48
+          ],
+          "interval": "Unison (+2 oct)",
+          "interval_semitones": 24,
+          "phase_aligned": true,
+          "motion": "unknown",
+          "perceptual_complexity": 0.889
+        }
+      ]
+    },
+    {
+      "beat": 1.0,
+      "sounding_midis": [
+        71,
+        50
+      ],
+      "pairs": [
+        {
+          "voices": [
+            0,
+            1
+          ],
+          "voice_pair": "V0-V1",
+          "midis": [
+            71,
+            50
+          ],
+          "interval": "Major 6th (+1 oct)",
+          "interval_semitones": 21,
+          "phase_aligned": false,
+          "motion": "contrary",
+          "perceptual_complexity": 4.0
+        }
+      ]
+    },
+    {
+      "beat": 2.0,
+      "sounding_midis": [
+        69,
+        53
+      ],
+      "pairs": [
+        {
+          "voices": [
+            0,
+            1
+          ],
+          "voice_pair": "V0-V1",
+          "midis": [
+            69,
+            53
+          ],
+          "interval": "Major 3rd (+1 oct)",
+          "interval_semitones": 16,
+          "phase_aligned": false,
+          "motion": "contrary",
+          "perceptual_complexity": 4.5
+        }
+      ]
+    },
+    {
+      "beat": 3.0,
+      "sounding_midis": [
+        67,
+        52
+      ],
+      "pairs": [
+        {
+          "voices": [
+            0,
+            1
+          ],
+          "voice_pair": "V0-V1",
+          "midis": [
+            67,
+            52
+          ],
+          "interval": "Minor 3rd (+1 oct)",
+          "interval_semitones": 15,
+          "phase_aligned": false,
+          "motion": "similar",
+          "perceptual_complexity": 5.5
+        }
+      ]
+    },
+    {
+      "beat": 4.0,
+      "sounding_midis": [
+        65,
+        50
+      ],
+      "pairs": [
+        {
+          "voices": [
+            0,
+            1
+          ],
+          "voice_pair": "V0-V1",
+          "midis": [
+            65,
+            50
+          ],
+          "interval": "Minor 3rd (+1 oct)",
+          "interval_semitones": 15,
+          "phase_aligned": false,
+          "motion": "parallel",
+          "perceptual_complexity": 5.5
+        }
+      ]
+    },
+    {
+      "beat": 5.0,
+      "sounding_midis": [
+        64,
+        48
+      ],
+      "pairs": [
+        {
+          "voices": [
+            0,
+            1
+          ],
+          "voice_pair": "V0-V1",
+          "midis": [
+            64,
+            48
+          ],
+          "interval": "Major 3rd (+1 oct)",
+          "interval_semitones": 16,
+          "phase_aligned": false,
+          "motion": "similar",
+          "perceptual_complexity": 4.5
+        }
+      ]
+    },
+    {
+      "beat": 6.0,
+      "sounding_midis": [
+        62,
+        47
+      ],
+      "pairs": [
+        {
+          "voices": [
+            0,
+            1
+          ],
+          "voice_pair": "V0-V1",
+          "midis": [
+            62,
+            47
+          ],
+          "interval": "Minor 3rd (+1 oct)",
+          "interval_semitones": 15,
+          "phase_aligned": false,
+          "motion": "similar",
+          "perceptual_complexity": 5.5
+        }
+      ]
+    },
+    {
+      "beat": 7.0,
+      "sounding_midis": [
+        60,
+        48
+      ],
+      "pairs": [
+        {
+          "voices": [
+            0,
+            1
+          ],
+          "voice_pair": "V0-V1",
+          "midis": [
+            60,
+            48
+          ],
+          "interval": "Unison (+1 oct)",
+          "interval_semitones": 12,
+          "phase_aligned": true,
+          "motion": "contrary",
+          "perceptual_complexity": 1.0
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "beat_count": 8,
+    "active_pair_count": 8,
+    "rest_pair_count": 0,
+    "motion_counts": {
+      "unknown": 1,
+      "contrary": 3,
+      "similar": 3,
+      "parallel": 1
+    },
+    "mean_perceptual_complexity": 3.924,
+    "max_perceptual_complexity": 5.5,
+    "max_perceptual_complexity_pair": {
+      "beat": 3.0,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 5.5,
+      "interval": "Minor 3rd (+1 oct)"
+    }
+  }
+}

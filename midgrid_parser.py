@@ -2,6 +2,7 @@ from mido import Message, MidiFile, MidiTrack, MetaMessage
 from sys import argv
 import re
 import math
+import json
 
 args = dict(enumerate(argv))
 midgrid_in_path = args[1]
@@ -322,74 +323,189 @@ def build_extended_harmonic_complexity_table(max_semitones=127):
 
 def build_sounding_notes(notes, beats):
     voice_count = len(notes)
-    row_count = len(beats)
+    active_notes = [None] * voice_count
+    active_until = [None] * voice_count
     sounding_at_beat = []
+    epsilon = 1e-9
+
     for row_idx, current_beat in enumerate(beats):
         if current_beat is None:
             sounding_at_beat.append([None] * voice_count)
             continue
+
         current_state = []
         for v in range(voice_count):
-            sounding_note = None
-            for prev_row in range(row_idx, -1, -1):
-                note_meta = notes[v][prev_row]
-                start_beat = beats[prev_row]
-                if start_beat is None:
-                    continue
-                duration = note_meta.get("duration", 1.0)
-                if duration is None:
-                    continue
-                end_beat = start_beat + duration
-                if start_beat <= current_beat < end_beat:
-                    sounding_note = note_meta["midi"]
-                    break
-            current_state.append(sounding_note)
+            note_meta = notes[v][row_idx]
+            duration = note_meta.get("duration", 1.0)
+            if duration is None:
+                duration = 1.0
+
+            if active_until[v] is not None and current_beat > active_until[v] + epsilon:
+                active_notes[v] = None
+                active_until[v] = None
+
+            if note_meta["pitch"] == "-":
+                if active_notes[v] is not None:
+                    start = active_until[v] if active_until[v] is not None else current_beat
+                    active_until[v] = max(start, current_beat) + duration
+            elif note_meta["pitch"] == ".":
+                active_notes[v] = None
+                active_until[v] = current_beat + duration
+            else:
+                active_notes[v] = note_meta["midi"]
+                active_until[v] = current_beat + duration
+
+            if active_notes[v] is not None and active_until[v] is not None and current_beat <= active_until[v] + epsilon:
+                current_state.append(active_notes[v])
+            else:
+                current_state.append(None)
         sounding_at_beat.append(current_state)
     return sounding_at_beat
 
-def contrapuntal_report(notes, beats):
+def motion_between_rows(current, previous, i, j):
+    m1, m2 = current[i], current[j]
+    prev1, prev2 = previous[i], previous[j]
+    if m1 is None or m2 is None or prev1 is None or prev2 is None:
+        return "unknown"
+    d1 = m1 - prev1
+    d2 = m2 - prev2
+    if d1 == 0 or d2 == 0:
+        return "oblique"
+    if (d1 > 0 and d2 < 0) or (d1 < 0 and d2 > 0):
+        return "contrary"
+    if d1 == d2:
+        return "parallel"
+    return "similar"
+
+
+def summarize_report(report):
+    motion_counts = {}
+    complexities = []
+    active_pair_count = 0
+    rest_pair_count = 0
+    max_complexity = None
+    max_complexity_pair = None
+
+    for beat in report["beats"]:
+        for pair in beat["pairs"]:
+            motion = pair["motion"]
+            motion_counts[motion] = motion_counts.get(motion, 0) + 1
+            pscore = pair["perceptual_complexity"]
+            if pscore is None:
+                rest_pair_count += 1
+                continue
+            active_pair_count += 1
+            complexities.append(pscore)
+            if max_complexity is None or pscore > max_complexity:
+                max_complexity = pscore
+                max_complexity_pair = {
+                    "beat": beat["beat"],
+                    "voice_pair": pair["voice_pair"],
+                    "perceptual_complexity": pscore,
+                    "interval": pair["interval"],
+                }
+
+    mean_complexity = round(sum(complexities) / len(complexities), 3) if complexities else None
+    return {
+        "beat_count": len(report["beats"]),
+        "active_pair_count": active_pair_count,
+        "rest_pair_count": rest_pair_count,
+        "motion_counts": motion_counts,
+        "mean_perceptual_complexity": mean_complexity,
+        "max_perceptual_complexity": max_complexity,
+        "max_perceptual_complexity_pair": max_complexity_pair,
+    }
+
+
+def contrapuntal_report_data(notes, beats):
     table = build_extended_harmonic_complexity_table()
-    lines = []
     sounding = build_sounding_notes(notes, beats)
     num_voices = len(notes)
+    beat_reports = []
+
     for row, midis in enumerate(sounding):
-        if beats[row] is None:
+        beat = beats[row]
+        if beat is None:
             continue
-        lines.append(f"Beat {beats[row]:.2f}:")
+        beat_report = {
+            "beat": beat,
+            "sounding_midis": midis,
+            "pairs": [],
+        }
+        previous = sounding[row - 1] if row > 0 else None
         for i in range(num_voices):
             for j in range(i + 1, num_voices):
                 m1, m2 = midis[i], midis[j]
+                voice_pair = f"V{i}-V{j}"
                 if m1 is None or m2 is None:
-                    interval = "rest"
-                    motion = "n/a"
-                    pscore = "n/a"
+                    pair = {
+                        "voices": [i, j],
+                        "voice_pair": voice_pair,
+                        "midis": [m1, m2],
+                        "interval": "rest",
+                        "interval_semitones": None,
+                        "phase_aligned": None,
+                        "motion": "n/a",
+                        "perceptual_complexity": None,
+                    }
                 else:
                     interval = abs(m2 - m1)
-                    motion = "unknown"
-                    if row > 0:
-                        prev1 = sounding[row - 1][i]
-                        prev2 = sounding[row - 1][j]
-                        if prev1 is not None and prev2 is not None:
-                            d1 = m1 - prev1
-                            d2 = m2 - prev2
-                            if d1 == 0 or d2 == 0:
-                                motion = "oblique"
-                            elif (d1 > 0 and d2 < 0) or (d1 < 0 and d2 > 0):
-                                motion = "contrary"
-                            elif d1 == d2:
-                                motion = "parallel"
-                            else:
-                                motion = "similar"
+                    motion = motion_between_rows(midis, previous, i, j) if previous is not None else "unknown"
                     cx = table.get(interval)
-                    pscore = cx["perceptual_complexity"] if cx else "?"
-                    interval_name = cx["name"] if cx else f"{interval} semitones"
-                    if cx and cx["phase_aligned"]:
-                        interval_name += " [phase-aligned]"
-                    lines.append(f"  V{i}–V{j}: interval={interval_name}, motion={motion}, perceptual_complexity={pscore}")
+                    pair = {
+                        "voices": [i, j],
+                        "voice_pair": voice_pair,
+                        "midis": [m1, m2],
+                        "interval": cx["name"] if cx else f"{interval} semitones",
+                        "interval_semitones": interval,
+                        "phase_aligned": cx["phase_aligned"] if cx else False,
+                        "motion": motion,
+                        "perceptual_complexity": cx["perceptual_complexity"] if cx else None,
+                    }
+                beat_report["pairs"].append(pair)
+        beat_reports.append(beat_report)
+
+    report = {
+        "schema": "midgrid.report.v1",
+        "voice_count": num_voices,
+        "beats": beat_reports,
+    }
+    report["summary"] = summarize_report(report)
+    return report
+
+
+def format_contrapuntal_report(report):
+    lines = []
+    for beat in report["beats"]:
+        lines.append(f"Beat {beat['beat']:.2f}:")
+        for pair in beat["pairs"]:
+            interval_name = pair["interval"]
+            if pair["phase_aligned"]:
+                interval_name += " [phase-aligned]"
+            pscore = pair["perceptual_complexity"]
+            pscore_text = "n/a" if pscore is None else pscore
+            lines.append(
+                f"  {pair['voice_pair']}: interval={interval_name}, "
+                f"motion={pair['motion']}, perceptual_complexity={pscore_text}"
+            )
     return "\n".join(lines)
 
-report_text = contrapuntal_report(notes, beats)
-report_path = midgrid_out_path.replace(".mid", ".report.txt")
+
+def report_path_with_suffix(mid_path, suffix):
+    if mid_path.endswith(".mid"):
+        return mid_path[:-4] + suffix
+    return mid_path + suffix
+
+
+report_data = contrapuntal_report_data(notes, beats)
+report_text = format_contrapuntal_report(report_data)
+report_path = report_path_with_suffix(midgrid_out_path, ".report.txt")
 with open(report_path, "w") as rep:
     rep.write(report_text)
 print(f"Perceptual contrapuntal analysis written to {report_path}")
+
+report_json_path = report_path_with_suffix(midgrid_out_path, ".report.json")
+with open(report_json_path, "w") as rep:
+    json.dump(report_data, rep, indent=2)
+    rep.write("\n")
+print(f"Perceptual contrapuntal analysis JSON written to {report_json_path}")

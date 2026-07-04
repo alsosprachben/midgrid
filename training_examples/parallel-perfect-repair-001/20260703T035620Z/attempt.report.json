@@ -1,0 +1,123 @@
+{
+  "schema": "midgrid.report.v1",
+  "voice_count": 2,
+  "beats": [
+    {
+      "beat": 0.0,
+      "sounding_midis": [
+        67,
+        48
+      ],
+      "pairs": [
+        {
+          "voices": [
+            0,
+            1
+          ],
+          "voice_pair": "V0-V1",
+          "midis": [
+            67,
+            48
+          ],
+          "interval": "Perfect 5th (+1 oct)",
+          "interval_semitones": 19,
+          "phase_aligned": false,
+          "motion": "unknown",
+          "perceptual_complexity": 2.5
+        }
+      ]
+    },
+    {
+      "beat": 1.0,
+      "sounding_midis": [
+        69,
+        50
+      ],
+      "pairs": [
+        {
+          "voices": [
+            0,
+            1
+          ],
+          "voice_pair": "V0-V1",
+          "midis": [
+            69,
+            50
+          ],
+          "interval": "Perfect 5th (+1 oct)",
+          "interval_semitones": 19,
+          "phase_aligned": false,
+          "motion": "parallel",
+          "perceptual_complexity": 2.5
+        }
+      ]
+    },
+    {
+      "beat": 2.0,
+      "sounding_midis": [
+        71,
+        52
+      ],
+      "pairs": [
+        {
+          "voices": [
+            0,
+            1
+          ],
+          "voice_pair": "V0-V1",
+          "midis": [
+            71,
+            52
+          ],
+          "interval": "Perfect 5th (+1 oct)",
+          "interval_semitones": 19,
+          "phase_aligned": false,
+          "motion": "parallel",
+          "perceptual_complexity": 2.5
+        }
+      ]
+    },
+    {
+      "beat": 3.0,
+      "sounding_midis": [
+        72,
+        53
+      ],
+      "pairs": [
+        {
+          "voices": [
+            0,
+            1
+          ],
+          "voice_pair": "V0-V1",
+          "midis": [
+            72,
+            53
+          ],
+          "interval": "Perfect 5th (+1 oct)",
+          "interval_semitones": 19,
+          "phase_aligned": false,
+          "motion": "parallel",
+          "perceptual_complexity": 2.5
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "beat_count": 4,
+    "active_pair_count": 4,
+    "rest_pair_count": 0,
+    "motion_counts": {
+      "unknown": 1,
+      "parallel": 3
+    },
+    "mean_perceptual_complexity": 2.5,
+    "max_perceptual_complexity": 2.5,
+    "max_perceptual_complexity_pair": {
+      "beat": 0.0,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 2.5,
+      "interval": "Perfect 5th (+1 oct)"
+    }
+  }
+}

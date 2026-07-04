@@ -1,0 +1,4 @@
+interface:
+  display_name: "MidGrid Repair Loop"
+  short_description: "Revise using lint and report feedback"
+  default_prompt: "Use $midgrid-repair-loop to revise MidGrid from parser, lint, and harmonic report feedback."

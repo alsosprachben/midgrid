@@ -1,0 +1,43 @@
+{
+  "schema": "midgrid.eval.v1",
+  "input": "/tmp/parallel_corrected.midgrid",
+  "lint": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  },
+  "parser": {
+    "ok": true,
+    "returncode": 0,
+    "stdout": "Saved /tmp/parallel_corrected.mid\nPerceptual contrapuntal analysis written to /tmp/parallel_corrected.report.txt\nPerceptual contrapuntal analysis JSON written to /tmp/parallel_corrected.report.json\n",
+    "stderr": "",
+    "midi_out": "/tmp/parallel_corrected.mid",
+    "report_text": "/tmp/parallel_corrected.report.txt",
+    "report_json": "/tmp/parallel_corrected.report.json"
+  },
+  "report_summary": {
+    "beat_count": 4,
+    "active_pair_count": 4,
+    "rest_pair_count": 0,
+    "motion_counts": {
+      "unknown": 1,
+      "contrary": 1,
+      "parallel": 1,
+      "similar": 1
+    },
+    "mean_perceptual_complexity": 4.5,
+    "max_perceptual_complexity": 5.5,
+    "max_perceptual_complexity_pair": {
+      "beat": 1.0,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 5.5,
+      "interval": "Minor 3rd (+1 oct)"
+    }
+  },
+  "issues": [],
+  "issue_counts": {
+    "error": 0,
+    "warning": 0,
+    "info": 0
+  }
+}

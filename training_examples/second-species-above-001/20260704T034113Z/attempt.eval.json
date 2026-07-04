@@ -1,0 +1,390 @@
+{
+  "schema": "midgrid.eval.v1",
+  "input": "/tmp/second_species_attempt.midgrid",
+  "lint": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  },
+  "parser": {
+    "ok": true,
+    "returncode": 0,
+    "stdout": "Saved /tmp/second_species_attempt.mid\nPerceptual contrapuntal analysis written to /tmp/second_species_attempt.report.txt\nPerceptual contrapuntal analysis JSON written to /tmp/second_species_attempt.report.json\n",
+    "stderr": "",
+    "midi_out": "/tmp/second_species_attempt.mid",
+    "report_text": "/tmp/second_species_attempt.report.txt",
+    "report_json": "/tmp/second_species_attempt.report.json"
+  },
+  "report_summary": {
+    "beat_count": 15,
+    "active_pair_count": 0,
+    "rest_pair_count": 15,
+    "motion_counts": {
+      "n/a": 15
+    },
+    "mean_perceptual_complexity": null,
+    "max_perceptual_complexity": null,
+    "max_perceptual_complexity_pair": null
+  },
+  "issues": [
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 0.",
+      "beat": 0.0,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 0.5.",
+      "beat": 0.5,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 1.",
+      "beat": 1.0,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 1.5.",
+      "beat": 1.5,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 2.",
+      "beat": 2.0,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 2.5.",
+      "beat": 2.5,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 3.",
+      "beat": 3.0,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 3.5.",
+      "beat": 3.5,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 4.",
+      "beat": 4.0,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 4.5.",
+      "beat": 4.5,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 5.",
+      "beat": 5.0,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 5.5.",
+      "beat": 5.5,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 6.",
+      "beat": 6.0,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 6.5.",
+      "beat": 6.5,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 7.",
+      "beat": 7.0,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_interval_rest",
+      "message": "Second-species downbeats must be consonant: V0-V1 has no sounding interval at beat 0.",
+      "beat": 0.0,
+      "voice_pair": "V0-V1"
+    },
+    {
+      "severity": "error",
+      "code": "exercise_interval_rest",
+      "message": "Second-species downbeats must be consonant: V0-V1 has no sounding interval at beat 1.",
+      "beat": 1.0,
+      "voice_pair": "V0-V1"
+    },
+    {
+      "severity": "error",
+      "code": "exercise_interval_rest",
+      "message": "Second-species downbeats must be consonant: V0-V1 has no sounding interval at beat 2.",
+      "beat": 2.0,
+      "voice_pair": "V0-V1"
+    },
+    {
+      "severity": "error",
+      "code": "exercise_interval_rest",
+      "message": "Second-species downbeats must be consonant: V0-V1 has no sounding interval at beat 3.",
+      "beat": 3.0,
+      "voice_pair": "V0-V1"
+    },
+    {
+      "severity": "error",
+      "code": "exercise_interval_rest",
+      "message": "Second-species downbeats must be consonant: V0-V1 has no sounding interval at beat 4.",
+      "beat": 4.0,
+      "voice_pair": "V0-V1"
+    },
+    {
+      "severity": "error",
+      "code": "exercise_interval_rest",
+      "message": "Second-species downbeats must be consonant: V0-V1 has no sounding interval at beat 5.",
+      "beat": 5.0,
+      "voice_pair": "V0-V1"
+    },
+    {
+      "severity": "error",
+      "code": "exercise_interval_rest",
+      "message": "Second-species downbeats must be consonant: V0-V1 has no sounding interval at beat 6.",
+      "beat": 6.0,
+      "voice_pair": "V0-V1"
+    },
+    {
+      "severity": "error",
+      "code": "exercise_interval_rest",
+      "message": "Second-species downbeats must be consonant: V0-V1 has no sounding interval at beat 7.",
+      "beat": 7.0,
+      "voice_pair": "V0-V1"
+    }
+  ],
+  "issue_counts": {
+    "error": 23,
+    "warning": 0,
+    "info": 0
+  },
+  "exercise_issues": [
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 0.",
+      "beat": 0.0,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 0.5.",
+      "beat": 0.5,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 1.",
+      "beat": 1.0,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 1.5.",
+      "beat": 1.5,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 2.",
+      "beat": 2.0,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 2.5.",
+      "beat": 2.5,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 3.",
+      "beat": 3.0,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 3.5.",
+      "beat": 3.5,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 4.",
+      "beat": 4.0,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 4.5.",
+      "beat": 4.5,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 5.",
+      "beat": 5.0,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 5.5.",
+      "beat": 5.5,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 6.",
+      "beat": 6.0,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 6.5.",
+      "beat": 6.5,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_unfilled_voice",
+      "message": "Required V0 is not filled at beat 7.",
+      "beat": 7.0,
+      "voice": 0,
+      "actual": "."
+    },
+    {
+      "severity": "error",
+      "code": "exercise_interval_rest",
+      "message": "Second-species downbeats must be consonant: V0-V1 has no sounding interval at beat 0.",
+      "beat": 0.0,
+      "voice_pair": "V0-V1"
+    },
+    {
+      "severity": "error",
+      "code": "exercise_interval_rest",
+      "message": "Second-species downbeats must be consonant: V0-V1 has no sounding interval at beat 1.",
+      "beat": 1.0,
+      "voice_pair": "V0-V1"
+    },
+    {
+      "severity": "error",
+      "code": "exercise_interval_rest",
+      "message": "Second-species downbeats must be consonant: V0-V1 has no sounding interval at beat 2.",
+      "beat": 2.0,
+      "voice_pair": "V0-V1"
+    },
+    {
+      "severity": "error",
+      "code": "exercise_interval_rest",
+      "message": "Second-species downbeats must be consonant: V0-V1 has no sounding interval at beat 3.",
+      "beat": 3.0,
+      "voice_pair": "V0-V1"
+    },
+    {
+      "severity": "error",
+      "code": "exercise_interval_rest",
+      "message": "Second-species downbeats must be consonant: V0-V1 has no sounding interval at beat 4.",
+      "beat": 4.0,
+      "voice_pair": "V0-V1"
+    },
+    {
+      "severity": "error",
+      "code": "exercise_interval_rest",
+      "message": "Second-species downbeats must be consonant: V0-V1 has no sounding interval at beat 5.",
+      "beat": 5.0,
+      "voice_pair": "V0-V1"
+    },
+    {
+      "severity": "error",
+      "code": "exercise_interval_rest",
+      "message": "Second-species downbeats must be consonant: V0-V1 has no sounding interval at beat 6.",
+      "beat": 6.0,
+      "voice_pair": "V0-V1"
+    },
+    {
+      "severity": "error",
+      "code": "exercise_interval_rest",
+      "message": "Second-species downbeats must be consonant: V0-V1 has no sounding interval at beat 7.",
+      "beat": 7.0,
+      "voice_pair": "V0-V1"
+    }
+  ]
+}

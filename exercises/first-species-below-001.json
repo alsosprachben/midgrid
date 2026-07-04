@@ -1,0 +1,31 @@
+{
+  "id": "first-species-below-001",
+  "title": "First Species Below a Cantus",
+  "skill": "species-counterpoint",
+  "species": "first",
+  "objective": "Complete a strict first-species lower counterpoint under the given upper cantus.",
+  "prompt": "Replace rests in V1 with one note per beat. Keep V0 unchanged. Stay below the cantus, avoid voice crossing, and create consonant vertical sonorities with no evaluator errors.",
+  "seed_midgrid": "# Title: First Species Below Exercise 001\n# tempo 80\n\n0 | C5:1@80 | C3:1@70\n1 | B4:1@80 | .\n2 | A4:1@80 | .\n3 | G4:1@80 | .\n4 | F4:1@80 | .\n5 | E4:1@80 | .\n6 | D4:1@80 | .\n7 | C4:1@80 | C3:1@70\n",
+  "success_criteria": [
+    "Every row remains strict parser-valid MidGrid.",
+    "V0 cantus remains unchanged.",
+    "V1 stays below V0 without voice crossing.",
+    "No evaluator error issues remain in the corrected solution."
+  ],
+  "evaluation_defaults": {
+    "fail_on": "error",
+    "high_complexity_threshold": 30.0,
+    "wide_spacing_threshold": 24
+  },
+  "recording": {
+    "corrected_fail_on": "error"
+  },
+  "exercise_checks": {
+    "locked_voices": [
+      0
+    ],
+    "filled_voices": [
+      1
+    ]
+  }
+}

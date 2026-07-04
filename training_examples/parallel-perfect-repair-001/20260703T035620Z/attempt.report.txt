@@ -1,0 +1,8 @@
+Beat 0.00:
+  V0-V1: interval=Perfect 5th (+1 oct), motion=unknown, perceptual_complexity=2.5
+Beat 1.00:
+  V0-V1: interval=Perfect 5th (+1 oct), motion=parallel, perceptual_complexity=2.5
+Beat 2.00:
+  V0-V1: interval=Perfect 5th (+1 oct), motion=parallel, perceptual_complexity=2.5
+Beat 3.00:
+  V0-V1: interval=Perfect 5th (+1 oct), motion=parallel, perceptual_complexity=2.5

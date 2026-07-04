@@ -1,0 +1,28 @@
+{
+  "id": "complexity-release-repair-001",
+  "title": "Shape Pressure Into Release",
+  "skill": "harmonic-effect-control",
+  "species": "effect-repair",
+  "objective": "Reduce an exposed high-complexity sonority and preserve a clear release gesture.",
+  "prompt": "Repair the opening beat so the passage moves from moderate pressure into clearer release. Keep the second beat unless necessary. Prefer the smallest edit that lowers high-complexity warnings.",
+  "seed_midgrid": "# Title: Complexity Release Repair 001\n# tempo 80\n\n0 | F4:1@80 | B3:1@70\n1 | G4:1@80 | C4:1@70\n2 | E4:1@80 | C4:1@70\n",
+  "success_criteria": [
+    "Corrected version remains strict parser-valid MidGrid.",
+    "Opening sonority avoids high_complexity warnings at the default threshold.",
+    "The phrase still contains a perceptible release by beat 1 or 2."
+  ],
+  "evaluation_defaults": {
+    "fail_on": "warning",
+    "high_complexity_threshold": 30.0,
+    "wide_spacing_threshold": 19
+  },
+  "recording": {
+    "corrected_fail_on": "warning"
+  },
+  "exercise_checks": {
+    "filled_voices": [
+      0,
+      1
+    ]
+  }
+}
