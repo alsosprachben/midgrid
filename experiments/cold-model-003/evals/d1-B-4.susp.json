@@ -1,0 +1,15 @@
+{
+ "syncope_compliant": true,
+ "onbeat_attacks_in_cs": [],
+ "offbeat_attacks": 7,
+ "valid_suspensions": 5,
+ "at": [
+  9.0,
+  10.0,
+  11.0,
+  12.0,
+  14.0
+ ],
+ "grammar_violations": [],
+ "meets_budget": true
+}

@@ -1,0 +1,75 @@
+{
+  "schema": "midgrid.eval.v1",
+  "input": "experiments/cold-model-003/submissions/d1-B-2.midgrid",
+  "lint": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  },
+  "parser": {
+    "ok": true,
+    "returncode": 0,
+    "stdout": "Saved /tmp/d1-B-2.mid\nPerceptual contrapuntal analysis written to /tmp/d1-B-2.report.txt\nPerceptual contrapuntal analysis JSON written to /tmp/d1-B-2.report.json\n",
+    "stderr": "",
+    "midi_out": "/tmp/d1-B-2.mid",
+    "report_text": "/tmp/d1-B-2.report.txt",
+    "report_json": "/tmp/d1-B-2.report.json"
+  },
+  "report_summary": {
+    "beat_count": 33,
+    "active_pair_count": 44,
+    "rest_pair_count": 55,
+    "motion_counts": {
+      "n/a": 55,
+      "unknown": 3,
+      "oblique": 22,
+      "contrary": 12,
+      "similar": 3,
+      "parallel": 4
+    },
+    "mean_perceptual_complexity": 8.544,
+    "max_perceptual_complexity": 38.5,
+    "max_perceptual_complexity_pair": {
+      "beat": 22.5,
+      "voice_pair": "V1-V2",
+      "perceptual_complexity": 38.5,
+      "interval": "Tritone (+1 oct)"
+    }
+  },
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "high_complexity",
+      "message": "V0-V1 reaches perceptual complexity 31 at beat 11.",
+      "beat": 11.0,
+      "voice_pair": "V0-V1",
+      "interval": "Minor 2nd",
+      "perceptual_complexity": 31.0,
+      "threshold": 30.0
+    },
+    {
+      "severity": "warning",
+      "code": "high_complexity",
+      "message": "V1-V2 reaches perceptual complexity 38.5 at beat 22.5.",
+      "beat": 22.5,
+      "voice_pair": "V1-V2",
+      "interval": "Tritone (+1 oct)",
+      "perceptual_complexity": 38.5,
+      "threshold": 30.0
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 20 semitones apart at beat 22.",
+      "beat": 22.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 20,
+      "threshold": 19
+    }
+  ],
+  "issue_counts": {
+    "error": 0,
+    "warning": 3,
+    "info": 0
+  }
+}
