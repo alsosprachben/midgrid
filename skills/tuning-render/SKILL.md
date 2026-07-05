@@ -46,9 +46,11 @@ an equal grid on C=256, so held notes glide by at most a few cents per
 event instead of the pitch level pumping away (a raw I-vi-ii-V comma pump
 drifts about a comma per cycle ungoverned; governed it stays within a few
 cents). Knobs: `TUNING_FOLLOW_CENTS` (default 3.0) and
-`TUNING_RECENTER_CENTS` (default 1.0) per tuning event. Note the solver
-purifies sonorities toward consonance, which flattens notated dissonance;
-renders are noticeably slower since each new chord runs a ratio search.
+`TUNING_RECENTER_CENTS` (default 1.0) per tuning event. The solver purifies
+sonorities toward consonance, which flattens notated dissonance. This is
+deliberately left unclamped as a demonstration: counterpoint, viewed as
+noise shaping, is a theory of dissonance, and solving the dissonance away
+removes the music's content. Renders run a ratio search per new chord.
 
 ## What the Renderer Honors
 
