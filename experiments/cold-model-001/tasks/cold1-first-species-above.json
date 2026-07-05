@@ -1,0 +1,49 @@
+{
+  "evaluation_defaults": {
+    "fail_on": "error",
+    "high_complexity_threshold": 30.0,
+    "wide_spacing_threshold": 24,
+    "strict_parallels": true
+  },
+  "recording": {
+    "corrected_fail_on": "error"
+  },
+  "id": "cold1-first-species-above",
+  "title": "First Species Above an A-minor Cantus (cold-model task)",
+  "skill": "species-counterpoint",
+  "species": "first",
+  "objective": "Complete a first-species counterpoint above the given A-minor cantus, one note against one.",
+  "prompt": "Replace rests in V0 with one whole-beat note per row. Keep V1 unchanged. Every interval must be consonant; no parallel perfect intervals. Minor mode: raise the leading tone (G#) only at the penultimate beat; avoid outlining an augmented second (F to G#).",
+  "seed_midgrid": "# Title: Cold Model Task 1\n# tempo 80\n\n0 | . | A3:1@70\n1 | . | C4:1@70\n2 | . | B3:1@70\n3 | . | D4:1@70\n4 | . | C4:1@70\n5 | . | E4:1@70\n6 | . | D4:1@70\n7 | . | B3:1@70\n8 | . | C4:1@70\n9 | . | B3:1@70\n10 | . | A3:1@70\n",
+  "success_criteria": [
+    "Parser-valid MidGrid.",
+    "V1 unchanged.",
+    "All intervals consonant, no parallel perfects.",
+    "G# only at the penultimate beat."
+  ],
+  "exercise_checks": {
+    "locked_voices": [
+      1
+    ],
+    "filled_voices": [
+      0
+    ],
+    "interval_rules": [
+      {
+        "label": "First-species intervals must be consonant",
+        "voice_pair": "V0-V1",
+        "beat_filter": "integer",
+        "allowed_interval_classes": [
+          0,
+          3,
+          4,
+          7,
+          8,
+          9
+        ],
+        "code": "exercise_downbeat_dissonance",
+        "severity": "error"
+      }
+    ]
+  }
+}

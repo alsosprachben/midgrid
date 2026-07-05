@@ -1,0 +1,30 @@
+{
+  "t3-A-1": {
+    "subject_alone": 1,
+    "tonal_answer": 1,
+    "countersubject": 1,
+    "cadence": 1,
+    "note": "Explicitly labels tonal answer; C# cadence to full D close. Textbook."
+  },
+  "t3-A-2": {
+    "subject_alone": 1,
+    "tonal_answer": 1,
+    "countersubject": 1,
+    "cadence": 0.5,
+    "note": "Ends on bare A/A octave, no leading tone; empty cells (not '.') draw 14 lint warnings."
+  },
+  "t3-B-1": {
+    "subject_alone": 1,
+    "tonal_answer": 1,
+    "countersubject": 1,
+    "cadence": 1,
+    "note": "Half-close on A; subject closely echoes the pack's worked exposition."
+  },
+  "t3-B-2": {
+    "subject_alone": 1,
+    "tonal_answer": 1,
+    "countersubject": 1,
+    "cadence": 0.5,
+    "note": "Answer placed low (A3); ends inconclusively on B/E."
+  }
+}

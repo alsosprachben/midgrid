@@ -1,0 +1,44 @@
+{
+  "schema": "midgrid.eval.v1",
+  "input": "experiments/cold-model-001/submissions/t1-A-1.midgrid",
+  "lint": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  },
+  "parser": {
+    "ok": true,
+    "returncode": 0,
+    "stdout": "Saved /tmp/t1-A-1.mid\nPerceptual contrapuntal analysis written to /tmp/t1-A-1.report.txt\nPerceptual contrapuntal analysis JSON written to /tmp/t1-A-1.report.json\n",
+    "stderr": "",
+    "midi_out": "/tmp/t1-A-1.mid",
+    "report_text": "/tmp/t1-A-1.report.txt",
+    "report_json": "/tmp/t1-A-1.report.json"
+  },
+  "report_summary": {
+    "beat_count": 11,
+    "active_pair_count": 11,
+    "rest_pair_count": 0,
+    "motion_counts": {
+      "unknown": 1,
+      "oblique": 1,
+      "similar": 4,
+      "contrary": 5
+    },
+    "mean_perceptual_complexity": 8.091,
+    "max_perceptual_complexity": 13.0,
+    "max_perceptual_complexity_pair": {
+      "beat": 2.0,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 13.0,
+      "interval": "Minor 6th"
+    }
+  },
+  "issues": [],
+  "issue_counts": {
+    "error": 0,
+    "warning": 0,
+    "info": 0
+  },
+  "exercise_issues": []
+}

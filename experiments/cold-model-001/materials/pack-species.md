@@ -1,0 +1,751 @@
+# MidGrid Example Pack
+
+Use these as few-shot learning material: imitate the attempt, diagnosis, correction, and lesson pattern. Rules are included only as diagnostic labels and validation checks.
+
+## Example 1: Fifth Species Above a Cantus
+
+Exercise: `fifth-species-above-001`
+Skill: `species-counterpoint`
+Species: `fifth`
+Record: `training_examples/fifth-species-above-001/20260705T023951Z/record.json`
+
+Objective:
+Complete a florid (fifth-species) counterpoint above the given C-major cantus, combining sustained suspensions, half-beat motion, and quarter-beat runs.
+
+Prompt:
+Replace V0 rests with a florid line on the fixed quarter-beat lattice: do not add or remove rows. Attack notes with durations 0.25, 0.5, or 1 and write '-' on rows where a note sustains, '.' only for the opening rest. Begin with a half-beat rest, use at least one suspension prepared on a half-beat, sustained across a downbeat, and resolved down by step, and at least one quarter-beat run. Integer-beat downbeats must be consonant unless suspended; all dissonances are passing, neighbor, or suspension figures. Cadence with a suspension into the final octave.
+
+Attempt issue codes:
+parallel_perfect=2
+
+Diagnosis excerpt:
+- error parallel_perfect (beat 3, V0-V1): Parallel perfect interval in V0-V1 from beat 2.75 to 3.
+- error parallel_perfect (beat 4, V0-V1): Parallel perfect interval in V0-V1 from beat 3.75 to 4.
+
+Attempt:
+```text
+# Title: Fifth Species Above Exercise 001 Attempt
+# tempo 80
+
+0 | . | C3:0.25@70
+0.25 | . | -
+0.5 | C5:1@80 | -
+0.75 | - | -
+1 | - | D3:0.25@70
+1.25 | - | -
+1.5 | B4:0.5@80 | -
+1.75 | - | -
+2 | G4:0.5@80 | E3:0.25@70
+2.25 | - | -
+2.5 | A4:0.25@80 | -
+2.75 | B4:0.25@80 | -
+3 | C5:1@80 | F3:0.25@70
+3.25 | - | -
+3.5 | - | -
+3.75 | - | -
+4 | D5:0.5@82 | G3:0.25@70
+4.25 | - | -
+4.5 | E5:1@82 | -
+4.75 | - | -
+5 | - | A3:0.25@70
+5.25 | - | -
+5.5 | C5:1@80 | -
+5.75 | - | -
+6 | - | G3:0.25@70
+6.25 | - | -
+6.5 | B4:0.5@80 | -
+6.75 | - | -
+7 | C5:1@82 | C3:1@70
+```
+
+Correction:
+```text
+# Title: Fifth Species Above Exercise 001 Solution
+# tempo 80
+
+0 | . | C3:0.25@70
+0.25 | . | -
+0.5 | C5:1@80 | -
+0.75 | - | -
+1 | - | D3:0.25@70
+1.25 | - | -
+1.5 | B4:0.5@80 | -
+1.75 | - | -
+2 | G4:0.5@80 | E3:0.25@70
+2.25 | - | -
+2.5 | A4:0.25@80 | -
+2.75 | B4:0.25@80 | -
+3 | A4:1@80 | F3:0.25@70
+3.25 | - | -
+3.5 | - | -
+3.75 | - | -
+4 | D5:0.5@82 | G3:0.25@70
+4.25 | - | -
+4.5 | E5:1@82 | -
+4.75 | - | -
+5 | - | A3:0.25@70
+5.25 | - | -
+5.5 | C5:1@80 | -
+5.75 | - | -
+6 | - | G3:0.25@70
+6.25 | - | -
+6.5 | B4:0.5@80 | -
+6.75 | - | -
+7 | C5:1@82 | C3:1@70
+```
+
+Result:
+errors=0, warnings=0, beats=29, mean_complexity=3.951
+
+Lesson:
+In florid writing, parallels hide where an ornamental run lands together with a cantus attack; reshaping the run into a turn figure that lands on an imperfect consonance removes both fifths.
+
+## Example 2: First Species Above a Cantus
+
+Exercise: `first-species-above-001`
+Skill: `species-counterpoint`
+Species: `first`
+Record: `training_examples/first-species-above-001/20260703T223203Z/record.json`
+
+Objective:
+Complete a strict first-species counterpoint above the given C-major cantus.
+
+Prompt:
+Replace rests in V0 with one note per beat. Keep V1 unchanged. Use only parser-valid MidGrid cells. Prefer consonant vertical intervals, mostly contrary/oblique motion, and a stable final octave or unison compound.
+
+Attempt issue codes:
+exercise_unfilled_voice=4
+
+Diagnosis excerpt:
+- error exercise_unfilled_voice (beat 4, V0): Required V0 is not filled at beat 4.
+- error exercise_unfilled_voice (beat 5, V0): Required V0 is not filled at beat 5.
+- error exercise_unfilled_voice (beat 6, V0): Required V0 is not filled at beat 6.
+- error exercise_unfilled_voice (beat 7, V0): Required V0 is not filled at beat 7.
+
+Attempt:
+```text
+# Title: First Species Above Exercise 001 Attempt
+# tempo 80
+
+0 | E4:1@80 | C3:1@70
+1 | F4:1@80 | D3:1@70
+2 | G4:1@80 | E3:1@70
+3 | A4:1@80 | F3:1@70
+4 | .       | G3:1@70
+5 | .       | A3:1@70
+6 | .       | G3:1@70
+7 | .       | C3:1@70
+```
+
+Correction:
+```text
+# Title: First Species Above Exercise 001 Solution
+# tempo 80
+
+0 | E4:1@80 | C3:1@70
+1 | F4:1@80 | D3:1@70
+2 | G4:1@80 | E3:1@70
+3 | A4:1@80 | F3:1@70
+4 | G4:1@80 | G3:1@70
+5 | F4:1@80 | A3:1@70
+6 | E4:1@80 | G3:1@70
+7 | C4:1@80 | C3:1@70
+```
+
+Result:
+errors=0, warnings=0, beats=8, mean_complexity=5.375
+
+Lesson:
+Complete the target voice while preserving the locked cantus; a stepwise descent into C4 over C3 removes the unfilled-voice errors and avoids spacing or direct-perfect warnings.
+
+## Example 3: First Species Above the Fux Dorian Cantus
+
+Exercise: `first-species-above-002`
+Skill: `species-counterpoint`
+Species: `first`
+Record: `training_examples/first-species-above-002/20260705T035954Z/record.json`
+
+Objective:
+Complete a first-species counterpoint above the authentic Fux Dorian cantus firmus, one note against one.
+
+Prompt:
+Replace rests in V0 with one whole-beat note per row. Keep V1 unchanged. Every interval must be consonant. Minor-mode discipline: prefer B natural (Dorian) where the line rises, avoid outlining an augmented second, and raise the leading tone (C#) only at the cadence. Close scale-degree 7-8 over 2-1.
+
+Attempt issue codes:
+exercise_downbeat_dissonance=1, parallel_perfect=2
+
+Diagnosis excerpt:
+- error parallel_perfect (beat 4, V0-V1): Parallel perfect interval in V0-V1 from beat 3 to 4.
+- error parallel_perfect (beat 5, V0-V1): Parallel perfect interval in V0-V1 from beat 4 to 5.
+- error exercise_downbeat_dissonance (beat 8, V0-V1): First-species intervals must be consonant: V0-V1 interval class 11 is not allowed at beat 8.
+
+Attempt:
+```text
+# Title: First Species Above Exercise 002
+# tempo 80
+
+0 | A3:1@80 | D3:1@70
+1 | A3:1@80 | F3:1@70
+2 | G3:1@80 | E3:1@70
+3 | A3:1@80 | D3:1@70
+4 | D4:1@80 | G3:1@70
+5 | C4:1@80 | F3:1@70
+6 | C4:1@80 | A3:1@70
+7 | B3:1@80 | G3:1@70
+8 | E4:1@80 | F3:1@70
+9 | C#4:1@80 | E3:1@70
+10 | D4:1@80 | D3:1@70
+```
+
+Correction:
+```text
+# Title: First Species Above Exercise 002
+# tempo 80
+
+0 | A3:1@80 | D3:1@70
+1 | A3:1@80 | F3:1@70
+2 | G3:1@80 | E3:1@70
+3 | A3:1@80 | D3:1@70
+4 | B3:1@80 | G3:1@70
+5 | C4:1@80 | F3:1@70
+6 | C4:1@80 | A3:1@70
+7 | B3:1@80 | G3:1@70
+8 | D4:1@80 | F3:1@70
+9 | C#4:1@80 | E3:1@70
+10 | D4:1@80 | D3:1@70
+```
+
+Result:
+errors=0, warnings=0, beats=11, mean_complexity=7.364
+
+Lesson:
+In minor, approach perfect intervals by contrary motion and keep C# for the cadence only; Fux's own solution moves stepwise into every fifth and reaches the leading tone by step from D.
+
+## Example 4: First Species Below a Cantus
+
+Exercise: `first-species-below-001`
+Skill: `species-counterpoint`
+Species: `first`
+Record: `training_examples/first-species-below-001/20260704T161337Z/record.json`
+
+Objective:
+Complete a strict first-species lower counterpoint under the given upper cantus.
+
+Prompt:
+Replace rests in V1 with one note per beat. Keep V0 unchanged. Stay below the cantus, avoid voice crossing, and create consonant vertical sonorities with no evaluator errors.
+
+Attempt issue codes:
+exercise_unfilled_voice=6
+
+Diagnosis excerpt:
+- error exercise_unfilled_voice (beat 1, V1): Required V1 is not filled at beat 1.
+- error exercise_unfilled_voice (beat 2, V1): Required V1 is not filled at beat 2.
+- error exercise_unfilled_voice (beat 3, V1): Required V1 is not filled at beat 3.
+- error exercise_unfilled_voice (beat 4, V1): Required V1 is not filled at beat 4.
+- error exercise_unfilled_voice (beat 5, V1): Required V1 is not filled at beat 5.
+- error exercise_unfilled_voice (beat 6, V1): Required V1 is not filled at beat 6.
+
+Attempt:
+```text
+# Title: First Species Below Exercise 001 Attempt
+# tempo 80
+
+0 | C5:1@80 | C3:1@70
+1 | B4:1@80 | .
+2 | A4:1@80 | .
+3 | G4:1@80 | .
+4 | F4:1@80 | .
+5 | E4:1@80 | .
+6 | D4:1@80 | .
+7 | C4:1@80 | C3:1@70
+```
+
+Correction:
+```text
+# Title: First Species Below Exercise 001 Solution
+# tempo 80
+
+0 | C5:1@80 | C3:1@70
+1 | B4:1@80 | D3:1@70
+2 | A4:1@80 | F3:1@70
+3 | G4:1@80 | E3:1@70
+4 | F4:1@80 | D3:1@70
+5 | E4:1@80 | C3:1@70
+6 | D4:1@80 | B2:1@70
+7 | C4:1@80 | C3:1@70
+```
+
+Result:
+errors=0, warnings=0, beats=8, mean_complexity=3.924
+
+Lesson:
+Fill the lower voice while preserving the upper cantus; contrary and mixed motion keep the lower line independent, consonant, and below the cantus with no spacing or direct-perfect warnings.
+
+## Example 5: Fourth Species Above a Cantus
+
+Exercise: `fourth-species-above-001`
+Skill: `species-counterpoint`
+Species: `fourth`
+Record: `training_examples/fourth-species-above-001/20260705T023951Z/record.json`
+
+Objective:
+Complete a fourth-species (syncopated) counterpoint above the given C-major cantus: whole-beat notes attacked on half-beats, sustained across each downbeat as suspensions.
+
+Prompt:
+V0 rests on beat 0, then attacks a note of duration 1 on every half-beat (0.5, 1.5, 2.5, ...), each sustaining across the following downbeat; write '-' in V0 on integer rows while a note is sustaining. Half-beat attacks (preparations and resolutions) must be consonant. A downbeat interval may be dissonant only as a suspension, and must resolve down by step at the next half-beat. Close with a 4-3 suspension into the final octave at beat 7.
+
+Attempt issue codes:
+exercise_offbeat_dissonance=1
+
+Diagnosis excerpt:
+- error exercise_offbeat_dissonance (beat 5.5, V0-V1): Fourth-species preparations and resolutions on half-beats must be consonant: V0-V1 interval class 5 is not allowed at beat 5.5.
+
+Attempt:
+```text
+# Title: Fourth Species Above Exercise 001 Attempt
+# tempo 80
+
+0 | . | C3:0.5@70
+0.5 | C5:1@80 | -
+1 | - | D3:0.5@70
+1.5 | B4:1@80 | -
+2 | - | E3:0.5@70
+2.5 | C5:1@80 | -
+3 | - | F3:0.5@70
+3.5 | D5:1@80 | -
+4 | - | G3:0.5@70
+4.5 | E5:1@80 | -
+5 | - | A3:0.5@70
+5.5 | D5:1@80 | -
+6 | - | G3:0.5@70
+6.5 | B4:0.5@80 | -
+7 | C5:1@82 | C3:1@70
+```
+
+Correction:
+```text
+# Title: Fourth Species Above Exercise 001 Solution
+# tempo 80
+
+0 | . | C3:0.5@70
+0.5 | C5:1@80 | -
+1 | - | D3:0.5@70
+1.5 | B4:1@80 | -
+2 | - | E3:0.5@70
+2.5 | C5:1@80 | -
+3 | - | F3:0.5@70
+3.5 | D5:1@80 | -
+4 | - | G3:0.5@70
+4.5 | E5:1@80 | -
+5 | - | A3:0.5@70
+5.5 | C5:1@80 | -
+6 | - | G3:0.5@70
+6.5 | B4:0.5@80 | -
+7 | C5:1@82 | C3:1@70
+```
+
+Result:
+errors=0, warnings=0, beats=15, mean_complexity=3.698
+
+Lesson:
+Preparations must be consonant on the half-beat before they suspend; replacing the fourth with a third above the cantus keeps the chain intact and sets up the cadential 4-3.
+
+## Example 6: Fourth Species Above the Fux Dorian Cantus
+
+Exercise: `fourth-species-above-002`
+Skill: `species-counterpoint`
+Species: `fourth`
+Record: `training_examples/fourth-species-above-002/20260705T035955Z/record.json`
+
+Objective:
+Syncopated counterpoint above the Fux Dorian cantus, exploiting its descending segments for true descending 7-6 suspension chains.
+
+Prompt:
+V1 is the cantus. V0 rests on beat 0, then attacks a duration-1 note on every half-beat, sustaining across downbeats with '-' cells. Half-beat attacks must be consonant. Where the cantus descends (beats 6 through 10), chain 7-6 suspensions: each sixth, held while the cantus steps down, becomes a seventh that resolves down by step to the next sixth. Cadence with the 7-6 into C# and close on the final octave.
+
+Attempt issue codes:
+exercise_offbeat_dissonance=2
+
+Diagnosis excerpt:
+- error exercise_offbeat_dissonance (beat 5.5, V0-V1): Fourth-species preparations and resolutions must be consonant: V0-V1 interval class 11 is not allowed at beat 5.5.
+- error exercise_offbeat_dissonance (beat 6.5, V0-V1): Fourth-species preparations and resolutions must be consonant: V0-V1 interval class 10 is not allowed at beat 6.5.
+
+Attempt:
+```text
+# Title: Fourth Species Above Exercise 002
+# tempo 80
+
+0 | . | D3:0.5@70
+0.5 | D4:1@80 | -
+1 | - | F3:0.5@70
+1.5 | D4:1@80 | -
+2 | - | E3:0.5@70
+2.5 | C4:1@80 | -
+3 | - | D3:0.5@70
+3.5 | B3:1@80 | -
+4 | - | G3:0.5@70
+4.5 | D4:1@80 | -
+5 | - | F3:0.5@70
+5.5 | E4:1@80 | -
+6 | - | A3:0.5@70
+6.5 | G4:1@80 | -
+7 | - | G3:0.5@70
+7.5 | E4:1@80 | -
+8 | - | F3:0.5@70
+8.5 | D4:1@80 | -
+9 | - | E3:0.5@70
+9.5 | C#4:0.5@80 | -
+10 | D4:1@82 | D3:1@70
+```
+
+Correction:
+```text
+# Title: Fourth Species Above Exercise 002
+# tempo 80
+
+0 | . | D3:0.5@70
+0.5 | D4:1@80 | -
+1 | - | F3:0.5@70
+1.5 | D4:1@80 | -
+2 | - | E3:0.5@70
+2.5 | C4:1@80 | -
+3 | - | D3:0.5@70
+3.5 | B3:1@80 | -
+4 | - | G3:0.5@70
+4.5 | D4:1@80 | -
+5 | - | F3:0.5@70
+5.5 | F4:1@80 | -
+6 | - | A3:0.5@70
+6.5 | F4:1@80 | -
+7 | - | G3:0.5@70
+7.5 | E4:1@80 | -
+8 | - | F3:0.5@70
+8.5 | D4:1@80 | -
+9 | - | E3:0.5@70
+9.5 | C#4:0.5@80 | -
+10 | D4:1@82 | D3:1@70
+```
+
+Result:
+errors=0, warnings=0, beats=21, mean_complexity=9.95
+
+Lesson:
+A descending cantus is what makes the true 7-6 chain possible: prepare a sixth, let the cantus step down beneath it to a seventh, resolve down by step to the next sixth; preparations struck as sevenths break the chain at its root.
+
+## Example 7: Second Species Above a Cantus
+
+Exercise: `second-species-above-001`
+Skill: `species-counterpoint`
+Species: `second`
+Record: `training_examples/second-species-above-001/20260704T034113Z/record.json`
+
+Objective:
+Complete a second-species counterpoint above the given C-major cantus, using two upper notes against each cantus note and a single final cadence note.
+
+Prompt:
+Replace rests in V0 with parser-valid half-beat notes. Keep V1 unchanged, including hold cells. Integer-beat downbeats must be consonant; weak half-beats may use passing dissonance when the line remains stepwise and controlled.
+
+Attempt issue codes:
+exercise_interval_rest=8, exercise_unfilled_voice=15
+
+Diagnosis excerpt:
+- error exercise_unfilled_voice (beat 0, V0): Required V0 is not filled at beat 0.
+- error exercise_unfilled_voice (beat 0.5, V0): Required V0 is not filled at beat 0.5.
+- error exercise_unfilled_voice (beat 1, V0): Required V0 is not filled at beat 1.
+- error exercise_unfilled_voice (beat 1.5, V0): Required V0 is not filled at beat 1.5.
+- error exercise_unfilled_voice (beat 2, V0): Required V0 is not filled at beat 2.
+- error exercise_unfilled_voice (beat 2.5, V0): Required V0 is not filled at beat 2.5.
+- error exercise_unfilled_voice (beat 3, V0): Required V0 is not filled at beat 3.
+- error exercise_unfilled_voice (beat 3.5, V0): Required V0 is not filled at beat 3.5.
+
+Attempt:
+```text
+# Title: Second Species Above Exercise 001
+# tempo 80
+
+0 | . | C3:0.5@70
+0.5 | . | -
+1 | . | D3:0.5@70
+1.5 | . | -
+2 | . | E3:0.5@70
+2.5 | . | -
+3 | . | F3:0.5@70
+3.5 | . | -
+4 | . | G3:0.5@70
+4.5 | . | -
+5 | . | A3:0.5@70
+5.5 | . | -
+6 | . | G3:0.5@70
+6.5 | . | -
+7 | . | C3:1@70
+```
+
+Correction:
+```text
+# Title: Second Species Above 001 Solution
+# tempo 80
+
+0 | E4:0.5@80 | C3:0.5@70
+0.5 | F4:0.5@80 | -
+1 | F4:0.5@80 | D3:0.5@70
+1.5 | G4:0.5@80 | -
+2 | G4:0.5@80 | E3:0.5@70
+2.5 | A4:0.5@80 | -
+3 | A4:0.5@80 | F3:0.5@70
+3.5 | G4:0.5@80 | -
+4 | B4:0.5@80 | G3:0.5@70
+4.5 | C5:0.5@80 | -
+5 | C5:0.5@80 | A3:0.5@70
+5.5 | B4:0.5@80 | -
+6 | D5:0.5@80 | G3:0.5@70
+6.5 | E5:0.5@80 | -
+7 | C5:1@80 | C3:1@70
+```
+
+Result:
+errors=0, warnings=0, beats=15, mean_complexity=4.559
+
+Lesson:
+Fill each half-beat in the counterpoint while preserving the held cantus; keep integer-beat downbeats consonant, and use weak-beat passing dissonance only as part of a controlled stepwise line.
+
+## Example 8: Second Species Below the Fux Dorian Cantus
+
+Exercise: `second-species-below-001`
+Skill: `species-counterpoint`
+Species: `second`
+Record: `training_examples/second-species-below-001/20260705T035954Z/record.json`
+
+Objective:
+Complete a second-species counterpoint BELOW the Fux Dorian cantus: two half-beat notes in V1 against each cantus note above.
+
+Prompt:
+Replace rests in V1 with half-beat notes (an opening half rest is allowed), closing with a single note at beat 10. Keep V0 unchanged. Below the cantus the interval vocabulary inverts: thirds above become sixths below; avoid fourths against the upper voice, since below-the-cantus fourths are dissonant. Integer beats must be consonant; weak halves may pass by step. Cadence with the leading tone C# below the cantus's E, resolving to the final octave.
+
+Attempt issue codes:
+parallel_perfect=1
+
+Diagnosis excerpt:
+- error parallel_perfect (beat 4, V0-V1): Parallel perfect interval in V0-V1 from beat 3.5 to 4.
+
+Attempt:
+```text
+# Title: Second Species Below Exercise 001
+# tempo 80
+
+0 | D4:0.5@70 | .
+0.5 | - | D3:0.5@80
+1 | F4:0.5@70 | A3:0.5@80
+1.5 | - | G3:0.5@80
+2 | E4:0.5@70 | C3:0.5@80
+2.5 | - | G3:0.5@80
+3 | D4:0.5@70 | F3:0.5@80
+3.5 | - | D3:0.5@80
+4 | G4:0.5@70 | G3:0.5@80
+4.5 | - | D3:0.5@80
+5 | F4:0.5@70 | A3:0.5@80
+5.5 | - | F3:0.5@80
+6 | A4:0.5@70 | D3:0.5@80
+6.5 | - | A3:0.5@80
+7 | G4:0.5@70 | B3:0.5@80
+7.5 | - | G3:0.5@80
+8 | F4:0.5@70 | A3:0.5@80
+8.5 | - | D3:0.5@80
+9 | E4:0.5@70 | E3:0.5@80
+9.5 | - | C#3:0.5@80
+10 | D4:1@70 | D3:1@80
+```
+
+Correction:
+```text
+# Title: Second Species Below Exercise 001
+# tempo 80
+
+0 | D4:0.5@70 | .
+0.5 | - | D3:0.5@80
+1 | F4:0.5@70 | A3:0.5@80
+1.5 | - | F3:0.5@80
+2 | E4:0.5@70 | A3:0.5@80
+2.5 | - | G3:0.5@80
+3 | D4:0.5@70 | F3:0.5@80
+3.5 | - | D3:0.5@80
+4 | G4:0.5@70 | B2:0.5@80
+4.5 | - | D3:0.5@80
+5 | F4:0.5@70 | A3:0.5@80
+5.5 | - | F3:0.5@80
+6 | A4:0.5@70 | D3:0.5@80
+6.5 | - | A3:0.5@80
+7 | G4:0.5@70 | B3:0.5@80
+7.5 | - | G3:0.5@80
+8 | F4:0.5@70 | A3:0.5@80
+8.5 | - | D3:0.5@80
+9 | E4:0.5@70 | E3:0.5@80
+9.5 | - | C#3:0.5@80
+10 | D4:1@70 | D3:1@80
+```
+
+Result:
+errors=0, warnings=0, beats=21, mean_complexity=5.225
+
+Lesson:
+Below the cantus the vocabulary inverts: thirds become sixths and fourths become dissonant; watch weak-to-strong octave arrivals, which is where below-voice parallels hide.
+
+## Example 9: Third Species Above a Cantus
+
+Exercise: `third-species-above-001`
+Skill: `species-counterpoint`
+Species: `third`
+Record: `training_examples/third-species-above-001/20260705T023951Z/record.json`
+
+Objective:
+Complete a third-species counterpoint above the given C-major cantus: four quarter-beat notes against each cantus note, with a single final cadence note.
+
+Prompt:
+Replace rests in V0 with parser-valid quarter-beat notes (duration 0.25) on every row, and a single whole note at beat 7. Keep V1 unchanged, including hold cells. Integer-beat downbeats must be consonant; dissonances on quarter-beat positions must be passing or neighbor tones approached and left by step. Avoid successive leaps and keep a phrase-level contour with one clear peak.
+
+Attempt issue codes:
+exercise_downbeat_dissonance=1, parallel_perfect=1
+
+Diagnosis excerpt:
+- error parallel_perfect (beat 1, V0-V1): Parallel perfect interval in V0-V1 from beat 0.75 to 1.
+- error exercise_downbeat_dissonance (beat 6, V0-V1): Third-species downbeats must be consonant: V0-V1 interval class 5 is not allowed at beat 6.
+
+Attempt:
+```text
+# Title: Third Species Above Exercise 001 Attempt
+# tempo 80
+
+0 | G4:0.25@80 | C3:0.25@70
+0.25 | A4:0.25@80 | -
+0.5 | B4:0.25@80 | -
+0.75 | C5:0.25@80 | -
+1 | D5:0.25@80 | D3:0.25@70
+1.25 | C5:0.25@80 | -
+1.5 | B4:0.25@80 | -
+1.75 | A4:0.25@80 | -
+2 | G4:0.25@80 | E3:0.25@70
+2.25 | F4:0.25@80 | -
+2.5 | E4:0.25@80 | -
+2.75 | G4:0.25@80 | -
+3 | A4:0.25@80 | F3:0.25@70
+3.25 | G4:0.25@80 | -
+3.5 | F4:0.25@80 | -
+3.75 | A4:0.25@80 | -
+4 | B4:0.25@80 | G3:0.25@70
+4.25 | A4:0.25@80 | -
+4.5 | G4:0.25@80 | -
+4.75 | B4:0.25@80 | -
+5 | E5:0.25@80 | A3:0.25@70
+5.25 | D5:0.25@80 | -
+5.5 | C5:0.25@80 | -
+5.75 | A4:0.25@80 | -
+6 | C5:0.25@80 | G3:0.25@70
+6.25 | B4:0.25@80 | -
+6.5 | D5:0.25@80 | -
+6.75 | B4:0.25@80 | -
+7 | C5:1@82 | C3:1@70
+```
+
+Correction:
+```text
+# Title: Third Species Above Exercise 001 Solution
+# tempo 80
+
+0 | G4:0.25@80 | C3:0.25@70
+0.25 | A4:0.25@80 | -
+0.5 | B4:0.25@80 | -
+0.75 | C5:0.25@80 | -
+1 | A4:0.25@80 | D3:0.25@70
+1.25 | B4:0.25@80 | -
+1.5 | C5:0.25@80 | -
+1.75 | D5:0.25@80 | -
+2 | G4:0.25@80 | E3:0.25@70
+2.25 | F4:0.25@80 | -
+2.5 | E4:0.25@80 | -
+2.75 | G4:0.25@80 | -
+3 | A4:0.25@80 | F3:0.25@70
+3.25 | G4:0.25@80 | -
+3.5 | F4:0.25@80 | -
+3.75 | A4:0.25@80 | -
+4 | B4:0.25@80 | G3:0.25@70
+4.25 | A4:0.25@80 | -
+4.5 | G4:0.25@80 | -
+4.75 | B4:0.25@80 | -
+5 | E5:0.25@80 | A3:0.25@70
+5.25 | D5:0.25@80 | -
+5.5 | C5:0.25@80 | -
+5.75 | A4:0.25@80 | -
+6 | B4:0.25@80 | G3:0.25@70
+6.25 | C5:0.25@80 | -
+6.5 | D5:0.25@80 | -
+6.75 | B4:0.25@80 | -
+7 | C5:1@82 | C3:1@70
+```
+
+Result:
+errors=0, warnings=0, beats=29, mean_complexity=4.385
+
+Lesson:
+Check every quarter-to-downbeat attack pair for parallels, and put a consonance on every integer beat; re-routing the approach note and the downbeat choice fixes both without touching the rest of the line.
+
+## Example 10: Three-Voice First Species: All Pairs Count
+
+Exercise: `three-voice-first-species-001`
+Skill: `species-counterpoint`
+Species: `first`
+Record: `training_examples/three-voice-first-species-001/20260705T040102Z/record.json`
+
+Objective:
+Compose BOTH outer voices in first species around the Fux Dorian cantus in the middle voice. Every one of the three voice pairs is checked: this drill exists because three consecutive capstone compositions failed only in the least-watched pair.
+
+Prompt:
+The cantus is V1 (middle). Fill V0 above and V2 below with one note per beat. All three pairs (V0-V1, V1-V2, V0-V2) must be consonant on every beat, with no parallel perfect intervals in ANY pair. Fourths are permitted between the upper pair when the lowest voice supports them, but never against V2. Prefer complete triads; approach every perfect interval by contrary or oblique motion in every pair, not just the pairs involving the cantus.
+
+Attempt issue codes:
+direct_perfect=1, parallel_perfect=2
+
+Diagnosis excerpt:
+- error parallel_perfect (beat 7, V0-V2): Parallel perfect interval in V0-V2 from beat 6 to 7.
+- error parallel_perfect (beat 8, V0-V2): Parallel perfect interval in V0-V2 from beat 7 to 8.
+- warning direct_perfect (beat 10, V1-V2): Similar motion into a perfect interval in V1-V2 at beat 10.
+
+Attempt:
+```text
+# Title: Three-Voice First Species Exercise 001
+# tempo 80
+
+0 | A4:1@80 | D4:1@70 | D3:1@76
+1 | D5:1@80 | F4:1@70 | D3:1@76
+2 | G4:1@80 | E4:1@70 | E3:1@76
+3 | A4:1@80 | D4:1@70 | F3:1@76
+4 | C5:1@80 | G4:1@70 | E3:1@76
+5 | D5:1@80 | F4:1@70 | D3:1@76
+6 | C5:1@80 | A4:1@70 | F3:1@76
+7 | B4:1@80 | G4:1@70 | E3:1@76
+8 | A4:1@80 | F4:1@70 | D3:1@76
+9 | C#5:1@80 | E4:1@70 | A3:1@76
+10 | D5:1@80 | D4:1@70 | D3:1@76
+```
+
+Correction:
+```text
+# Title: Three-Voice First Species Exercise 001
+# tempo 80
+
+0 | A4:1@80 | D4:1@70 | D3:1@76
+1 | D5:1@80 | F4:1@70 | D3:1@76
+2 | G4:1@80 | E4:1@70 | E3:1@76
+3 | A4:1@80 | D4:1@70 | F3:1@76
+4 | C5:1@80 | G4:1@70 | E3:1@76
+5 | D5:1@80 | F4:1@70 | D3:1@76
+6 | C5:1@80 | A4:1@70 | F3:1@76
+7 | C5:1@80 | G4:1@70 | E3:1@76
+8 | D5:1@80 | F4:1@70 | D3:1@76
+9 | C#5:1@80 | E4:1@70 | A3:1@76
+10 | D5:1@80 | D4:1@70 | D3:1@76
+```
+
+Result:
+errors=0, warnings=1, beats=11, mean_complexity=4.941
+
+Lesson:
+Three voices means three pairs; the outer pair carries neither cantus nor the ear's focus and is where parallels hide. Check V0-V2 attack by attack, and approach its perfect intervals by contrary or oblique motion.

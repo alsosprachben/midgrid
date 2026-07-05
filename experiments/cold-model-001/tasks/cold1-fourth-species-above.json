@@ -1,0 +1,49 @@
+{
+  "evaluation_defaults": {
+    "fail_on": "error",
+    "high_complexity_threshold": 30.0,
+    "wide_spacing_threshold": 24,
+    "strict_parallels": true
+  },
+  "recording": {
+    "corrected_fail_on": "error"
+  },
+  "id": "cold1-fourth-species-above",
+  "title": "Fourth Species Above an A-minor Cantus (cold-model task)",
+  "skill": "species-counterpoint",
+  "species": "fourth",
+  "objective": "Syncopated (fourth-species) counterpoint above the given A-minor cantus.",
+  "prompt": "V0 rests on beat 0, then attacks a duration-1 note on every half-beat (0.5, 1.5, ...), sustaining across each downbeat; write '-' in V0 on integer rows while a note sustains, and close with a single note at beat 10. Half-beat attacks (preparations and resolutions) must be consonant; a dissonant downbeat is a suspension and must resolve down by step at the next half-beat. Cadence with G# into the final octave.",
+  "seed_midgrid": "# Title: Cold Model Task 2\n# tempo 80\n\n0 | . | A3:0.5@70\n0.5 | . | -\n1 | . | C4:0.5@70\n1.5 | . | -\n2 | . | B3:0.5@70\n2.5 | . | -\n3 | . | D4:0.5@70\n3.5 | . | -\n4 | . | C4:0.5@70\n4.5 | . | -\n5 | . | E4:0.5@70\n5.5 | . | -\n6 | . | D4:0.5@70\n6.5 | . | -\n7 | . | B3:0.5@70\n7.5 | . | -\n8 | . | C4:0.5@70\n8.5 | . | -\n9 | . | B3:0.5@70\n9.5 | . | -\n10 | . | A3:1@70\n",
+  "success_criteria": [
+    "Parser-valid MidGrid.",
+    "V1 unchanged including holds.",
+    "V0 attacks only on half-beats plus the final beat.",
+    "Half-beat attack intervals consonant; dissonant downbeats resolve down by step."
+  ],
+  "exercise_checks": {
+    "locked_voices": [
+      1
+    ],
+    "filled_voices": [
+      0
+    ],
+    "interval_rules": [
+      {
+        "label": "Fourth-species preparations and resolutions must be consonant",
+        "voice_pair": "V0-V1",
+        "beat_filter": "non_integer",
+        "allowed_interval_classes": [
+          0,
+          3,
+          4,
+          7,
+          8,
+          9
+        ],
+        "code": "exercise_offbeat_dissonance",
+        "severity": "error"
+      }
+    ]
+  }
+}
