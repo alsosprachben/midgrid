@@ -1,0 +1,41 @@
+# Title: Brass Chorale in D major
+# tempo 76
+# Voices: V0 trumpet, V1 french horn, V2 trombone, V3 tuba
+# Three phrases: half cadence (beat 6), deceptive cadence to Bm (beat 14),
+# authentic cadence with V7 resolution (beats 20-21).
+# Registration exercises the BrassProperties model in ../tuning: valve
+# attack fades (50-150 ms after the valve-time fix) and chiff transient.
+// Patch V0: 56
+// Patch V1: 60
+// Patch V2: 57
+// Patch V3: 58
+// Pan V0: 54
+// Pan V1: 84
+// Pan V2: 44
+// Pan V3: 64
+
+0     | D5:1@82   | F#4:1@78  | A3:1@78   | D3:1@80
+1     | C#5:1@80  | E4:1@76   | A3:1@76   | A2:1@78
+2     | B4:1@80   | D4:1@76   | F#3:1@76  | B2:0.5@78
+2.50  | .         | .         | .         | A2:0.5@76
+3     | B4:1@80   | D4:1@76   | G3:1@76   | G2:1@78
+4     | A4:1@80   | D4:1@76   | A3:1@76   | F#2:1@78
+5     | G4:1@80   | E4:0.5@76 | B3:1@76   | E2:1@78
+5.50  | .         | D4:0.5@76 | .         | .
+6     | A4:2@82   | C#4:2@78  | A3:2@78   | A2:2@80
+8     | D5:1@82   | F#4:1@78  | F#3:1@78  | B2:0.5@80
+8.50  | .         | .         | .         | A2:0.5@78
+9     | C#5:1@82  | F#4:1@78  | A3:1@78   | F#2:1@80
+10    | B4:0.5@80 | D4:1@76   | B3:1@76   | G2:1@78
+10.50 | A4:0.5@80 | .         | .         | .
+11    | G4:1@78   | E4:1@76   | B3:1@76   | E2:1@78
+12    | A4:1@82   | F#4:1@78  | D4:1@78   | A2:1@80
+13    | A4:1@80   | E4:1@76   | C#4:1@76  | A2:1@78
+14    | F#4:2@80  | D4:2@76   | D4:2@76   | B2:2@78
+16    | G4:1@80   | D4:1@76   | B3:1@76   | G2:1@78
+17    | A4:1@80   | D4:1@76   | A3:1@76   | F#2:1@78
+18    | B4:0.5@82 | G4:1@78   | G3:1@78   | E2:1@80
+18.50 | C#5:0.5@82 | .        | .         | .
+19    | D5:1@84   | F#4:1@80  | A3:1@80   | A2:1@82
+20    | C#5:1@84  | E4:1@80   | G3:1@80   | A2:1@82
+21    | D5:4@86   | D4:4@82   | F#3:4@80  | D3:4@84
