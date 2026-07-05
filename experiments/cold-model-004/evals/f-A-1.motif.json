@@ -59,13 +59,17 @@
       "beat_end": 15.5,
       "transposition": 7,
       "diat_offset": 4,
-      "kind": "free",
+      "kind": "tonal",
       "inverted": false,
       "contour": 1.0,
       "diatonic": 0.8461538461538461,
       "chromatic": 0.8461538461538461,
       "weighted": 0.9076923076923077,
       "chromatic_mismatch_at": [
+        0,
+        1
+      ],
+      "diatonic_mismatch_at": [
         0,
         1
       ]
@@ -83,7 +87,8 @@
       "diatonic": 1.0,
       "chromatic": 1.0,
       "weighted": 1.0,
-      "chromatic_mismatch_at": []
+      "chromatic_mismatch_at": [],
+      "diatonic_mismatch_at": []
     },
     {
       "voice": 0,
@@ -105,7 +110,8 @@
         8,
         11,
         12
-      ]
+      ],
+      "diatonic_mismatch_at": []
     },
     {
       "voice": 1,
@@ -120,7 +126,8 @@
       "diatonic": 1.0,
       "chromatic": 1.0,
       "weighted": 1.0,
-      "chromatic_mismatch_at": []
+      "chromatic_mismatch_at": [],
+      "diatonic_mismatch_at": []
     },
     {
       "voice": 2,
@@ -135,7 +142,8 @@
       "diatonic": 1.0,
       "chromatic": 1.0,
       "weighted": 1.0,
-      "chromatic_mismatch_at": []
+      "chromatic_mismatch_at": [],
+      "diatonic_mismatch_at": []
     }
   ],
   "recalls": [

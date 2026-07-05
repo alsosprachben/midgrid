@@ -12,9 +12,11 @@ similarity per layer instead of matching booleans:
 
 The layer at which similarity breaks classifies the transformation:
     chromatic d1 exact        -> REAL echo (strict transposition; 0 = restatement)
-    diatonic d1 exact only    -> DIATONIC echo (tonal/modal answer; the
+    diatonic d1 exact only    -> DIATONIC echo (modal transposition; the
                                  chromatic mismatch positions are the "note
                                  distance adjustments")
+    mismatches only at head   -> TONAL answer (head adjusted — the classic
+                                 fifth-to-fourth swap — tail exact)
     negated d1 match          -> INVERSION (rectus/inversus pairing)
     otherwise, high contour   -> FREE echo
 
@@ -111,19 +113,28 @@ def layer_scores(sub_notes, seg_notes, invert=False):
     chrom = agree(sc, ec)
     weighted = CONTOUR_W * contour + DIAT_W * diat + CHROM_W * chrom
     mism = [i for i, (x, y) in enumerate(zip(sc, ec)) if x != y]
+    mism_d = [i for i, (x, y) in enumerate(zip(sd, ed)) if x != y]
     return dict(contour=contour, diatonic=diat, chromatic=chrom,
-                weighted=weighted, chromatic_mismatch_at=mism)
+                weighted=weighted, chromatic_mismatch_at=mism,
+                diatonic_mismatch_at=mism_d)
 
 
-def classify(scores, invert):
+def classify(scores, invert, n_intervals):
     if scores["chromatic"] == 1.0:
         kind = "real"
     elif scores["diatonic"] == 1.0:
         kind = "diatonic"
-    elif scores["contour"] >= 0.8:
-        kind = "free"
     else:
-        kind = "weak"
+        # TONAL answer: every mismatch (either unit) confined to the head
+        # window, tail exact — the fifth-to-fourth head swap.
+        head = max(2, n_intervals // 3)
+        mism = set(scores["chromatic_mismatch_at"]) | set(scores["diatonic_mismatch_at"])
+        if mism and max(mism) < head and scores["contour"] >= 0.85:
+            kind = "tonal"
+        elif scores["contour"] >= 0.8:
+            kind = "free"
+        else:
+            kind = "weak"
     return ("inv-" + kind) if invert else kind
 
 
@@ -144,7 +155,7 @@ def find_echoes(voices, sub_voice, sub_start_idx, sub_notes, min_score):
                     beat_start=seg[0]["beat"], beat_end=seg[-1]["beat"],
                     transposition=seg[0]["midi"] - sub_notes[0]["midi"],
                     diat_offset=seg[0]["diat"] - sub_notes[0]["diat"],
-                    kind=classify(sc, invert), inverted=invert, **sc))
+                    kind=classify(sc, invert, n - 1), inverted=invert, **sc))
     # non-maximum suppression per voice: keep best-scoring, reject heavy overlap
     candidates.sort(key=lambda c: -c["weighted"])
     accepted = []
@@ -346,6 +357,10 @@ def main(argv):
         if e["kind"] == "diatonic" and e["chromatic_mismatch_at"]:
             adj = " adjusted at interval " + ",".join(
                 str(i) for i in e["chromatic_mismatch_at"])
+        elif e["kind"] == "tonal":
+            adj = " head-adjusted at interval " + ",".join(
+                str(i) for i in sorted(set(e["chromatic_mismatch_at"])
+                                       | set(e["diatonic_mismatch_at"])))
         print(f"  V{e['voice']} beats {e['beat_start']:g}-{e['beat_end']:g}  "
               f"{e['kind'].upper():<12} t={e['transposition']:+d}  "
               f"contour {e['contour']:.2f} diat {e['diatonic']:.2f} "
