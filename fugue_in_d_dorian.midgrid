@@ -1,0 +1,145 @@
+# Title: Fugue in D Dorian for Three Voices
+# tempo 78
+# Voices: V0 soprano, V1 alto, V2 bass
+# Composed dissonance-first from the expanded curriculum:
+#   - Subject designed canon-viable at the octave, two beats delay (from
+#     canon-at-octave-001), so the finale is a TRUE stretto: alto leads,
+#     bass follows in strict canon for the full subject.
+#   - Syncopated countersubject: suspension chains ride the answer's and
+#     subject's descending tails (9ths above the answer, 7-6 against the
+#     bass subject, 4-3 when inverted above the bass answer).
+#   - Episode 2 quotes the Fux Dorian cantus in the bass and reuses the
+#     verified fourth-species-above-002 solution as the soprano.
+#   - Beats 56-57: DELIBERATE voice fusion (parallel octaves S+A) handing
+#     the line from soprano to alto; the voice_fusion warning is the
+#     intended reading.
+#   - Dorian discipline: B natural throughout; C# spent only at the final
+#     cadence (beat 74), spiking complexity 77 and releasing into the
+#     Picardy D major.
+#   0-23   Exposition: subject (alto), answer (soprano) + sync CS (alto),
+#          subject (bass) + sync CS with 7-6 chain (soprano)
+#   24-31  Episode 1: lament bass descent to the dominant of A
+#   32-39  Entry: answer in bass + 4-3 chain CS (alto), free soprano
+#   40-47  Episode 2: Fux cantus (bass) under 7-6 suspensions (soprano)
+#   48-55  Entry: subject on F (alto), free soprano and bass
+#   56-63  Episode 3: fusion handoff S-to-A, descent to dominant pedal
+#   64-75  Finale: full canon stretto (alto 64, bass 66), V7 spike, cadence
+// Patch V0: 19
+// Patch V1: 19
+// Patch V2: 20
+// Pan V0: 44
+// Pan V1: 84
+// Pan V2: 64
+
+0     | .          | D4:1@84    | .
+1     | .          | F4:1@84    | .
+2     | .          | A4:1@84    | .
+3     | .          | D5:1@86    | .
+4     | .          | C5:1@84    | .
+5     | .          | B4:0.5@84  | .
+5.50  | .          | C5:0.5@84  | .
+6     | .          | A4:1@84    | .
+7     | .          | G4:1@82    | .
+8     | A4:1@86    | .          | .
+8.50  | .          | F4:1@76    | .
+9     | C5:1@86    | .          | .
+9.50  | .          | E4:1@76    | .
+10    | E5:1@86    | .          | .
+10.50 | .          | A4:1@76    | .
+11    | A5:1@88    | .          | .
+11.50 | .          | F4:1@76    | .
+12    | G5:1@86    | .          | .
+12.50 | .          | E4:1@76    | .
+13    | F5:0.5@84  | .          | .
+13.50 | G5:0.5@84  | D4:1@76    | .
+14    | E5:1@86    | .          | .
+14.50 | .          | C4:1@76    | .
+15    | D5:1@84    | .          | .
+15.50 | .          | B3:0.5@76  | .
+16    | .          | A3:1@76    | D3:1@86
+16.50 | B4:1@78    | .          | .
+17    | .          | .          | F3:1@86
+17.50 | A4:1@78    | .          | .
+18    | .          | .          | A3:1@84
+18.50 | C5:1@78    | .          | .
+19    | .          | .          | D4:1@86
+19.50 | B4:1@78    | .          | .
+20    | .          | E4:1@72    | C4:1@84
+20.50 | A4:1@78    | .          | .
+21    | .          | D4:1@72    | B3:0.5@84
+21.50 | G4:1@78    | .          | C4:0.5@84
+22    | .          | C4:1@72    | A3:1@84
+22.50 | F4:1@78    | .          | .
+23    | .          | D4:1@72    | G3:1@82
+23.50 | E4:0.5@76  | .          | .
+24    | F4:1@76    | A3:2@72    | D3:1@76
+25    | E4:1@76    | .          | C3:1@76
+26    | D4:1@76    | G3:1@72    | B2:1@76
+27    | C4:1@76    | E3:1@72    | A2:1@76
+28    | B3:1@76    | B2:1@72    | G2:1@76
+29    | A3:1@76    | C3:1@72    | F2:1@76
+30    | B3:1@76    | G3:2@72    | E2:1@76
+31    | D4:1@76    | .          | E2:1@76
+32    | E4:1@74    | .          | A2:1@86
+32.50 | .          | E3:1@76    | .
+33    | G4:1@74    | .          | C3:1@86
+33.50 | .          | G3:1@76    | .
+34    | G4:1@74    | .          | E3:1@84
+34.50 | .          | C4:1@76    | .
+35    | A4:1@74    | .          | A3:1@86
+35.50 | .          | C4:1@76    | .
+36    | E4:1@74    | .          | G3:1@84
+36.50 | .          | B3:1@76    | .
+37    | D4:1@74    | .          | F3:0.5@84
+37.50 | .          | A3:1@76    | G3:0.5@84
+38    | C4:1@74    | .          | E3:1@84
+38.50 | .          | G3:1@76    | .
+39    | B3:1@74    | .          | D3:1@82
+39.50 | .          | F3:1@76    | .
+40    | .          | F3:1@72    | D3:1@78
+40.50 | D5:1@80    | .          | .
+41    | .          | A3:1@72    | F3:1@78
+41.50 | D5:1@80    | .          | .
+42    | .          | G3:1@72    | E3:1@78
+42.50 | C5:1@80    | .          | .
+43    | .          | F3:1@72    | D3:1@78
+43.50 | B4:1@80    | .          | .
+44    | .          | D4:1@72    | G3:1@78
+44.50 | D5:1@80    | .          | .
+45    | .          | C4:1@72    | F3:1@78
+45.50 | F5:1@82    | .          | .
+46    | .          | C4:1@72    | A3:1@78
+46.50 | F5:1@82    | .          | .
+47    | .          | B3:1@72    | G3:1@78
+47.50 | E5:1@80    | .          | .
+48    | A4:1@74    | F3:1@84    | F2:2@78
+49    | C5:1@74    | A3:1@84    | .
+50    | E5:1@74    | C4:1@84    | A2:2@78
+51    | C5:1@74    | F4:1@86    | .
+52    | C5:1@74    | E4:1@84    | C3:2@78
+53    | B4:1@74    | D4:0.5@84  | .
+53.50 | .          | E4:0.5@84  | .
+54    | A4:1@74    | C4:1@84    | A2:1@78
+55    | G4:1@74    | B3:1@82    | E2:1@78
+56    | F4:1@80    | F3:1@80    | D3:1@76
+57    | E4:1@80    | E3:1@80    | C3:1@76
+58    | .          | D3:1@78    | B2:1@76
+59    | .          | .          | G2:1@76
+60    | .          | A3:1@74    | A2:1@78
+61    | .          | B3:1@74    | A2:1@78
+62    | .          | C4:1@76    | A2:1@78
+63    | .          | C4:1@76    | A2:1@78
+64    | .          | D4:1@86    | A2:1@78
+65    | .          | F4:1@86    | A2:1@78
+66    | F5:1@84    | A4:1@86    | D3:1@84
+67    | F5:1@84    | D5:1@88    | F3:1@84
+68    | E5:1@84    | C5:1@86    | A3:1@84
+69    | D5:1@84    | B4:0.5@86  | D4:1@86
+69.50 | .          | C5:0.5@86  | .
+70    | E5:1@84    | A4:1@84    | C4:1@84
+71    | G5:1@86    | G4:1@84    | B3:0.5@84
+71.50 | .          | .          | C4:0.5@84
+72    | D5:1@84    | F4:1@82    | A3:1@84
+73    | D5:1@84    | D4:1@82    | G3:1@82
+74    | G4:2@86    | C#4:2@84   | A2:2@84
+76    | F#4:4@88   | D4:4@86    | D2:4@90
