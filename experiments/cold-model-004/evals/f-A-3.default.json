@@ -1,0 +1,240 @@
+{
+  "schema": "midgrid.eval.v1",
+  "input": "experiments/cold-model-004/submissions/f-A-3.midgrid",
+  "lint": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  },
+  "parser": {
+    "ok": true,
+    "returncode": 0,
+    "stdout": "Saved /tmp/f-A-3.mid\nPerceptual contrapuntal analysis written to /tmp/f-A-3.report.txt\nPerceptual contrapuntal analysis JSON written to /tmp/f-A-3.report.json\n",
+    "stderr": "",
+    "midi_out": "/tmp/f-A-3.mid",
+    "report_text": "/tmp/f-A-3.report.txt",
+    "report_json": "/tmp/f-A-3.report.json"
+  },
+  "report_summary": {
+    "beat_count": 106,
+    "active_pair_count": 179,
+    "rest_pair_count": 139,
+    "motion_counts": {
+      "n/a": 139,
+      "unknown": 86,
+      "contrary": 46,
+      "similar": 33,
+      "oblique": 7,
+      "parallel": 7
+    },
+    "mean_perceptual_complexity": 5.871,
+    "max_perceptual_complexity": 38.5,
+    "max_perceptual_complexity_pair": {
+      "beat": 31.0,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 38.5,
+      "interval": "Tritone (+1 oct)"
+    }
+  },
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "voice_fusion",
+      "message": "V0-V1 move in parallel Unison (+1 oct) from beat 19 to 20 (1 transition, strength 10.0 from the ratio table): a rooted interval, so common-fate motion merges the voices into one bass-rooted stream. Legitimate as a deliberate handoff or doubling; otherwise restore independence with contrary or oblique motion.",
+      "beat": 20.0,
+      "start_beat": 19.0,
+      "voice_pair": "V0-V1",
+      "transitions": 1,
+      "strength": 10.0
+    },
+    {
+      "severity": "error",
+      "code": "voice_crossing",
+      "message": "V1 sounds below V2 at beat 20.",
+      "beat": 20.0,
+      "voices": [
+        1,
+        2
+      ],
+      "midis": [
+        60,
+        63
+      ]
+    },
+    {
+      "severity": "error",
+      "code": "voice_crossing",
+      "message": "V1 sounds below V2 at beat 23.",
+      "beat": 23.0,
+      "voices": [
+        1,
+        2
+      ],
+      "midis": [
+        60,
+        62
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "high_complexity",
+      "message": "V0-V1 reaches perceptual complexity 38.5 at beat 31.",
+      "beat": 31.0,
+      "voice_pair": "V0-V1",
+      "interval": "Tritone (+1 oct)",
+      "perceptual_complexity": 38.5,
+      "threshold": 30.0
+    },
+    {
+      "severity": "warning",
+      "code": "high_complexity",
+      "message": "V1-V2 reaches perceptual complexity 38.5 at beat 44.",
+      "beat": 44.0,
+      "voice_pair": "V1-V2",
+      "interval": "Tritone (+1 oct)",
+      "perceptual_complexity": 38.5,
+      "threshold": 30.0
+    },
+    {
+      "severity": "warning",
+      "code": "high_complexity",
+      "message": "V0-V2 reaches perceptual complexity 34.222 at beat 66.",
+      "beat": 66.0,
+      "voice_pair": "V0-V2",
+      "interval": "Tritone (+2 oct)",
+      "perceptual_complexity": 34.222,
+      "threshold": 30.0
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V0-V1 are 21 semitones apart at beat 9.",
+      "beat": 9.0,
+      "voice_pair": "V0-V1",
+      "interval_semitones": 21,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V0-V1 are 20 semitones apart at beat 10.",
+      "beat": 10.0,
+      "voice_pair": "V0-V1",
+      "interval_semitones": 20,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V0-V1 are 27 semitones apart at beat 12.",
+      "beat": 12.0,
+      "voice_pair": "V0-V1",
+      "interval_semitones": 27,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V0-V1 are 21 semitones apart at beat 13.",
+      "beat": 13.0,
+      "voice_pair": "V0-V1",
+      "interval_semitones": 21,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V0-V1 are 20 semitones apart at beat 14.",
+      "beat": 14.0,
+      "voice_pair": "V0-V1",
+      "interval_semitones": 20,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V0-V1 are 20 semitones apart at beat 15.",
+      "beat": 15.0,
+      "voice_pair": "V0-V1",
+      "interval_semitones": 20,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V0-V1 are 20 semitones apart at beat 25.",
+      "beat": 25.0,
+      "voice_pair": "V0-V1",
+      "interval_semitones": 20,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 20 semitones apart at beat 33.",
+      "beat": 33.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 20,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 24 semitones apart at beat 39.",
+      "beat": 39.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 24,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 28 semitones apart at beat 45.",
+      "beat": 45.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 28,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 31 semitones apart at beat 46.",
+      "beat": 46.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 31,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 28 semitones apart at beat 47.",
+      "beat": 47.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 28,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 24 semitones apart at beat 48.",
+      "beat": 48.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 24,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 24 semitones apart at beat 70.",
+      "beat": 70.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 24,
+      "threshold": 19
+    }
+  ],
+  "issue_counts": {
+    "error": 2,
+    "warning": 18,
+    "info": 0
+  }
+}
