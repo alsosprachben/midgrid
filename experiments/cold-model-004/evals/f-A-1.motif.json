@@ -1,0 +1,241 @@
+{
+  "file": "experiments/cold-model-004/submissions/f-A-1.midgrid",
+  "subject": {
+    "voice": 1,
+    "beat_start": 0.0,
+    "beat_end": 7.5,
+    "notes": [
+      "G4",
+      "D5",
+      "B-4",
+      "A4",
+      "G4",
+      "F#4",
+      "G4",
+      "A4",
+      "B-4",
+      "C5",
+      "D5",
+      "C5",
+      "B-4",
+      "A4"
+    ],
+    "chromatic_d1": [
+      7,
+      -4,
+      -1,
+      -2,
+      -1,
+      1,
+      2,
+      1,
+      2,
+      2,
+      -2,
+      -2,
+      -1
+    ],
+    "diatonic_d1": [
+      4,
+      -2,
+      -1,
+      -1,
+      -1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      -1,
+      -1,
+      -1
+    ]
+  },
+  "echoes": [
+    {
+      "voice": 0,
+      "note_index": 0,
+      "beat_start": 8.0,
+      "beat_end": 15.5,
+      "transposition": 7,
+      "diat_offset": 4,
+      "kind": "free",
+      "inverted": false,
+      "contour": 1.0,
+      "diatonic": 0.8461538461538461,
+      "chromatic": 0.8461538461538461,
+      "weighted": 0.9076923076923077,
+      "chromatic_mismatch_at": [
+        0,
+        1
+      ]
+    },
+    {
+      "voice": 2,
+      "note_index": 0,
+      "beat_start": 16.0,
+      "beat_end": 23.5,
+      "transposition": -24,
+      "diat_offset": -14,
+      "kind": "real",
+      "inverted": false,
+      "contour": 1.0,
+      "diatonic": 1.0,
+      "chromatic": 1.0,
+      "weighted": 1.0,
+      "chromatic_mismatch_at": []
+    },
+    {
+      "voice": 0,
+      "note_index": 39,
+      "beat_start": 32.0,
+      "beat_end": 39.5,
+      "transposition": 3,
+      "diat_offset": 2,
+      "kind": "diatonic",
+      "inverted": false,
+      "contour": 1.0,
+      "diatonic": 1.0,
+      "chromatic": 0.5384615384615384,
+      "weighted": 0.8846153846153846,
+      "chromatic_mismatch_at": [
+        1,
+        2,
+        7,
+        8,
+        11,
+        12
+      ]
+    },
+    {
+      "voice": 1,
+      "note_index": 80,
+      "beat_start": 48.0,
+      "beat_end": 55.5,
+      "transposition": -7,
+      "diat_offset": -4,
+      "kind": "real",
+      "inverted": false,
+      "contour": 1.0,
+      "diatonic": 1.0,
+      "chromatic": 1.0,
+      "weighted": 1.0,
+      "chromatic_mismatch_at": []
+    },
+    {
+      "voice": 2,
+      "note_index": 55,
+      "beat_start": 60.0,
+      "beat_end": 67.5,
+      "transposition": -24,
+      "diat_offset": -14,
+      "kind": "real",
+      "inverted": false,
+      "contour": 1.0,
+      "diatonic": 1.0,
+      "chromatic": 1.0,
+      "weighted": 1.0,
+      "chromatic_mismatch_at": []
+    }
+  ],
+  "recalls": [
+    {
+      "voice": 0,
+      "length": 14,
+      "first": {
+        "beat_start": 16.0,
+        "beat_end": 23.5
+      },
+      "second": {
+        "beat_start": 48.0,
+        "beat_end": 55.5
+      },
+      "transposition": 5
+    },
+    {
+      "voice": 1,
+      "length": 14,
+      "first": {
+        "beat_start": 0.0,
+        "beat_end": 7.5
+      },
+      "second": {
+        "beat_start": 48.0,
+        "beat_end": 55.5
+      },
+      "transposition": -7
+    },
+    {
+      "voice": 2,
+      "length": 14,
+      "first": {
+        "beat_start": 16.0,
+        "beat_end": 23.5
+      },
+      "second": {
+        "beat_start": 60.0,
+        "beat_end": 67.5
+      },
+      "transposition": 0
+    }
+  ],
+  "fusion": [
+    {
+      "pair": "V0-V1",
+      "beat_start": 8.0,
+      "beat_end": 13.5,
+      "comoves": 6,
+      "locked": 2
+    },
+    {
+      "pair": "V0-V2",
+      "beat_start": 49.5,
+      "beat_end": 55.0,
+      "comoves": 5,
+      "locked": 2
+    },
+    {
+      "pair": "V0-V1",
+      "beat_start": 10.5,
+      "beat_end": 15.5,
+      "comoves": 7,
+      "locked": 3
+    },
+    {
+      "pair": "V0-V2",
+      "beat_start": 47.5,
+      "beat_end": 52.5,
+      "comoves": 5,
+      "locked": 3
+    },
+    {
+      "pair": "V1-V2",
+      "beat_start": 64.0,
+      "beat_end": 68.5,
+      "comoves": 7,
+      "locked": 2
+    },
+    {
+      "pair": "V0-V2",
+      "beat_start": 18.5,
+      "beat_end": 22.5,
+      "comoves": 7,
+      "locked": 2
+    },
+    {
+      "pair": "V0-V1",
+      "beat_start": 34.5,
+      "beat_end": 38.5,
+      "comoves": 7,
+      "locked": 0
+    },
+    {
+      "pair": "V0-V1",
+      "beat_start": 50.5,
+      "beat_end": 54.5,
+      "comoves": 7,
+      "locked": 2
+    }
+  ],
+  "motivic_economy": 0.2926829268292683
+}

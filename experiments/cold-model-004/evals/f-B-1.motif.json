@@ -1,0 +1,183 @@
+{
+  "file": "experiments/cold-model-004/submissions/f-B-1.midgrid",
+  "subject": {
+    "voice": 1,
+    "beat_start": 0.0,
+    "beat_end": 7.0,
+    "notes": [
+      "G4",
+      "D5",
+      "B-4",
+      "A4",
+      "G4",
+      "F#4",
+      "G4",
+      "A4",
+      "B-4",
+      "A4"
+    ],
+    "chromatic_d1": [
+      7,
+      -4,
+      -1,
+      -2,
+      -1,
+      1,
+      2,
+      1,
+      -1
+    ],
+    "diatonic_d1": [
+      4,
+      -2,
+      -1,
+      -1,
+      -1,
+      1,
+      1,
+      1,
+      -1
+    ]
+  },
+  "echoes": [
+    {
+      "voice": 0,
+      "note_index": 0,
+      "beat_start": 8.0,
+      "beat_end": 15.0,
+      "transposition": 7,
+      "diat_offset": 4,
+      "kind": "free",
+      "inverted": false,
+      "contour": 1.0,
+      "diatonic": 0.7777777777777778,
+      "chromatic": 0.7777777777777778,
+      "weighted": 0.8666666666666667,
+      "chromatic_mismatch_at": [
+        0,
+        1
+      ]
+    },
+    {
+      "voice": 2,
+      "note_index": 0,
+      "beat_start": 16.0,
+      "beat_end": 23.0,
+      "transposition": -12,
+      "diat_offset": -7,
+      "kind": "real",
+      "inverted": false,
+      "contour": 1.0,
+      "diatonic": 1.0,
+      "chromatic": 1.0,
+      "weighted": 1.0,
+      "chromatic_mismatch_at": []
+    },
+    {
+      "voice": 0,
+      "note_index": 23,
+      "beat_start": 30.0,
+      "beat_end": 37.0,
+      "transposition": 3,
+      "diat_offset": 2,
+      "kind": "diatonic",
+      "inverted": false,
+      "contour": 1.0,
+      "diatonic": 1.0,
+      "chromatic": 0.5555555555555556,
+      "weighted": 0.8888888888888888,
+      "chromatic_mismatch_at": [
+        1,
+        2,
+        7,
+        8
+      ]
+    },
+    {
+      "voice": 2,
+      "note_index": 30,
+      "beat_start": 44.0,
+      "beat_end": 51.0,
+      "transposition": -24,
+      "diat_offset": -14,
+      "kind": "real",
+      "inverted": false,
+      "contour": 1.0,
+      "diatonic": 1.0,
+      "chromatic": 1.0,
+      "weighted": 1.0,
+      "chromatic_mismatch_at": []
+    },
+    {
+      "voice": 0,
+      "note_index": 45,
+      "beat_start": 53.0,
+      "beat_end": 60.0,
+      "transposition": 0,
+      "diat_offset": 0,
+      "kind": "real",
+      "inverted": false,
+      "contour": 1.0,
+      "diatonic": 1.0,
+      "chromatic": 1.0,
+      "weighted": 1.0,
+      "chromatic_mismatch_at": []
+    }
+  ],
+  "recalls": [
+    {
+      "voice": 0,
+      "length": 8,
+      "first": {
+        "beat_start": 10.0,
+        "beat_end": 15.0
+      },
+      "second": {
+        "beat_start": 55.0,
+        "beat_end": 60.0
+      },
+      "transposition": -7
+    },
+    {
+      "voice": 1,
+      "length": 7,
+      "first": {
+        "beat_start": 0.0,
+        "beat_end": 5.0
+      },
+      "second": {
+        "beat_start": 56.0,
+        "beat_end": 61.0
+      },
+      "transposition": -12
+    },
+    {
+      "voice": 1,
+      "length": 9,
+      "first": {
+        "beat_start": 8.0,
+        "beat_end": 15.0
+      },
+      "second": {
+        "beat_start": 44.0,
+        "beat_end": 51.0
+      },
+      "transposition": -7
+    },
+    {
+      "voice": 2,
+      "length": 11,
+      "first": {
+        "beat_start": 16.0,
+        "beat_end": 24.0
+      },
+      "second": {
+        "beat_start": 44.0,
+        "beat_end": 52.0
+      },
+      "transposition": -12
+    }
+  ],
+  "fusion": [],
+  "motivic_economy": 0.38961038961038963
+}
