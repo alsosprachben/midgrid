@@ -15,11 +15,15 @@ from midgrid_lint import lint_text
 
 PERFECT_CLASSES = {0, 7}
 
-# Simple-ratio interval classes (unison/octave 1:1/1:2, fifth 2:3, fourth 3:4).
-# Parallel motion across these fuses two voices into one perceived stream:
-# the meta-analysis reports that fusion instead of enforcing a rule, since
-# fusion is sometimes the intent (voice handoffs, registration doubling).
-FUSABLE_CLASSES = {0, 5, 7}
+# Voice fusion is graded from the same ratio table as perceptual complexity:
+# the simpler the interval's ratio, the more the voices' partials align, and
+# the more strongly common-fate motion fuses them into one perceived stream.
+# Each parallel transition contributes FUSION_SCALE / perceptual_complexity;
+# runs accumulate. Below FUSION_INFO nothing is reported; at or above
+# FUSION_WARN the run is a warning, in between it is informational.
+FUSION_SCALE = 10.0
+FUSION_INFO = 1.4
+FUSION_WARN = 5.0
 
 
 def report_path_with_suffix(mid_path: Path, suffix: str) -> Path:
@@ -128,78 +132,74 @@ def detect_parallel_and_direct_perfects(report: dict[str, Any]) -> list[dict[str
 
 
 def detect_voice_fusion(report: dict[str, Any]) -> list[dict[str, Any]]:
-    """Meta-analysis of the harmonic report: common-fate motion across
-    simple-ratio intervals collapses two voices into one perceived stream.
-
-    A fusion transition is parallel motion (equal, nonzero pitch deltas)
-    where both sonorities sit in FUSABLE_CLASSES. Consecutive transitions
-    merge into one reported run. Static doubling (pedal points, drones) is
-    not motion and is not reported."""
+    """Meta-analysis of the harmonic report: common-fate motion fuses two
+    voices toward one perceived stream, in proportion to how simple the
+    interval's ratio is. Strength is graded straight from the report's
+    perceptual_complexity (FUSION_SCALE / complexity per transition), so
+    parallel octaves grade far above parallel fourths, and imperfect
+    parallels only surface as sustained chains. Static doubling (pedal
+    points, drones) is not motion and is never reported."""
     issues = []
     beats = report.get("beats", [])
     previous_by_pair: dict[str, dict[str, Any]] = {}
     previous_beat_by_pair: dict[str, float] = {}
-    previous_midis: list[Any] = []
     runs: dict[str, dict[str, Any]] = {}
 
     def flush(label: str) -> None:
         run = runs.pop(label, None)
         if run is None:
             return
-        beats_span = f"beat {run['start']:g} to {run['end']:g}"
+        strength = run["strength"]
+        if strength < FUSION_INFO:
+            return
+        severity = "warning" if strength >= FUSION_WARN else "info"
         issues.append(issue(
-            "warning",
+            severity,
             "voice_fusion",
-            f"{label} move in parallel {run['intervals']} from {beats_span}: "
-            f"common-fate motion across simple ratios fuses the voices into one stream "
-            f"({run['transitions']} transition{'s' if run['transitions'] > 1 else ''}). "
-            f"Legitimate as a deliberate handoff or doubling; otherwise restore "
-            f"independence with contrary or oblique motion.",
+            f"{label} move in parallel {run['interval']} from beat {run['start']:g} "
+            f"to {run['end']:g}: fusion strength {strength:.1f} "
+            f"({run['transitions']} transition{'s' if run['transitions'] > 1 else ''}, "
+            f"graded from the interval ratio table). Common-fate motion merges the "
+            f"voices toward one stream; legitimate as a deliberate handoff or "
+            f"doubling, otherwise restore independence with contrary or oblique motion.",
             beat=run["end"],
             start_beat=run["start"],
             voice_pair=label,
             transitions=run["transitions"],
+            strength=round(strength, 2),
         ))
 
     for beat in beats:
         current_beat = beat["beat"]
-        midis = beat.get("sounding_midis", [])
         for pair in beat.get("pairs", []):
             label = pair["voice_pair"]
             prev = previous_by_pair.get(label)
             if prev is not None:
-                prev_class = interval_class(prev)
-                cur_class = interval_class(pair)
                 moving = False
                 try:
-                    hi, lo = (int(label[1]), int(label[4]))
-                    d_hi = midis[hi] - previous_midis[hi]
-                    moving = d_hi != 0
-                except (TypeError, ValueError, IndexError):
+                    moving = pair["midis"][0] != prev["midis"][0]
+                except (KeyError, IndexError, TypeError):
                     moving = pair.get("motion") == "parallel"
-                fused = (
-                    pair.get("motion") == "parallel"
-                    and moving
-                    and prev_class in FUSABLE_CLASSES
-                    and cur_class in FUSABLE_CLASSES
-                )
-                if fused:
+                complexity = pair.get("perceptual_complexity")
+                if pair.get("motion") == "parallel" and moving and complexity:
+                    step = FUSION_SCALE / max(float(complexity), 1.0)
                     run = runs.get(label)
                     if run is None:
                         runs[label] = {
                             "start": previous_beat_by_pair[label],
                             "end": current_beat,
                             "transitions": 1,
-                            "intervals": pair.get("interval", "perfect intervals"),
+                            "strength": step,
+                            "interval": pair.get("interval", "intervals"),
                         }
                     else:
                         run["end"] = current_beat
                         run["transitions"] += 1
+                        run["strength"] += step
                 else:
                     flush(label)
             previous_by_pair[label] = pair
             previous_beat_by_pair[label] = current_beat
-        previous_midis = midis
 
     for label in list(runs):
         flush(label)

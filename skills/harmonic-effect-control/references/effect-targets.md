@@ -129,7 +129,7 @@ Lesson:
 
 ## Voice Independence and Fusion
 
-Counterpoint is noise shaping: the vertical dimension distributes roughness over time (the pressure and release targets above), and the horizontal dimension keeps concurrent streams perceptually separate. Parallel motion across simple-ratio intervals (unison/octave, fifth, fourth) makes two voices share common fate on nearly-shared partials, and the ear merges them into one stream. The evaluator's `voice_fusion` diagnostic reports where that happens, and for how long.
+Counterpoint is noise shaping: the vertical dimension distributes roughness over time (the pressure and release targets above), and the horizontal dimension keeps concurrent streams perceptually separate. Parallel motion makes two voices share common fate, and the ear merges them into one stream in proportion to how simple the interval's ratio is. The evaluator's `voice_fusion` diagnostic grades that strength straight from the ratio table: parallel octaves warn from a single transition, fifths from a sustained chain, fourths and tenths surface as information, and imperfect parallels only register as exact chromatic chains. Strength accumulates over the run, so brief blends read differently from a texture that has genuinely lost a voice.
 
 Fusion is a knob, not a sin:
 
