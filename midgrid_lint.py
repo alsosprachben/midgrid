@@ -23,6 +23,7 @@ NOTE_RE = re.compile(
     r"(?:~(?P<patch>[0-9]+))?$"
 )
 PATCH_RE = re.compile(r"^//\s*Patch\s+(?:(V\d+)|([SATB])):\s*(\d+)\s*(?://.*)?$")
+PAN_RE = re.compile(r"^//\s*Pan\s+(?:(V\d+)|([SATB])):\s*(\d+)\s*(?://.*)?$")
 TEMPO_RE = re.compile(r"^#\s*tempo\s+([0-9]+(?:\.[0-9]+)?)(?:\s+([0-9]+(?:\.[0-9]+)?))?\s*$")
 
 
@@ -112,6 +113,14 @@ def lint_text(text: str, path: str) -> tuple[list[Finding], list[Finding]]:
                     patch = int(match.group(3))
                     if not (0 <= patch <= 127):
                         errors.append(Finding(path, line_no, None, "patch directive must be between 0 and 127"))
+            elif stripped.startswith("// Pan"):
+                match = PAN_RE.match(stripped)
+                if not match:
+                    errors.append(Finding(path, line_no, None, "invalid pan directive; use '// Pan V0: 64' or '// Pan S: 64'"))
+                else:
+                    pan = int(match.group(3))
+                    if not (0 <= pan <= 127):
+                        errors.append(Finding(path, line_no, None, "pan directive must be between 0 and 127 (0 left, 64 center, 127 right)"))
             continue
 
         if stripped.startswith(";"):

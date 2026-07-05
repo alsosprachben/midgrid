@@ -1,0 +1,52 @@
+# Title: Fugue Exposition Demo in D minor
+# tempo 84
+# Voices: V0 soprano, V1 alto, V2 bass
+# Plan: subject (alto, beats 0-7), tonal answer in dominant (soprano, 8-15)
+#       with countersubject (alto), subject (bass, 16-23) with countersubject
+#       inverted above (soprano), cadence on D major (24).
+# Registration for the ../tuning renderer: flue organ (19, Church Organ)
+# in the upper voices, with stretch-tuned pipe inharmonicity; reed organ
+# (20) in the bass. Pan values are standard MIDI (64 center); rendering
+# spatializes with the Brown-Duda head model by default (TUNING_HRTF=0
+# for the legacy pan law, which is steep: +-20 is already wide).
+# Caveat for timidity + FluidR3_GM playback: that soundfont pins patch 19
+# hard right and shifts all CC10 pans rightward (center measures at CC 30).
+// Patch V0: 19
+// Patch V1: 19
+// Patch V2: 20
+// Pan V0: 44
+// Pan V1: 84
+// Pan V2: 64
+
+0     | .        | D4:1@84   | .
+1     | .        | A4:1@84   | .
+2     | .        | F4:0.5@82 | .
+2.50  | .        | E4:0.5@82 | .
+3     | .        | D4:1@82   | .
+4     | .        | C#4:1@82  | .
+5     | .        | D4:0.5@82 | .
+5.50  | .        | E4:0.5@82 | .
+6     | .        | F4:1@84   | .
+7     | .        | E4:1@82   | .
+8     | A4:1@86  | F4:1@76   | .
+9     | D5:1@86  | G4:1@76   | .
+10    | C5:0.5@84 | A4:0.5@76 | .
+10.50 | B4:0.5@84 | G4:0.5@76 | .
+11    | A4:1@84  | F4:1@76   | .
+12    | G#4:1@84 | E4:1@76   | .
+13    | A4:0.5@84 | C4:1@76  | .
+13.50 | B4:0.5@84 | .        | .
+14    | C5:1@86  | E4:1@76   | .
+15    | B4:0.5@84 | D4:1@76  | .
+15.50 | A4:0.5@82 | .        | .
+16    | B-4:1@78 | F4:1@72   | D3:1@86
+17    | C5:1@78  | E4:1@72   | A3:1@86
+18    | D5:0.5@78 | F4:1@72  | F3:0.5@84
+18.50 | C5:0.5@78 | .        | E3:0.5@84
+19    | B-4:1@78 | F4:1@72   | D3:1@84
+20    | A4:1@78  | E4:1@72   | C#3:1@84
+21    | F4:1@76  | D4:1@72   | D3:0.5@84
+21.50 | .        | .         | E3:0.5@84
+22    | A4:1@78  | C4:1@72   | F3:1@86
+23    | G4:1@78  | C#4:1@74  | E3:1@84
+24    | F#4:2@84 | D4:2@80   | D3:2@86

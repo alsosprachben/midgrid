@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tuning Render"
+  short_description: "Render MIDI with the adaptive-tuning synthesizer"
+  default_prompt: "Use $tuning-render to render MIDI to audio with the ../tuning synthesizer and a chosen temperament."

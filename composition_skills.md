@@ -13,6 +13,7 @@ show exercise -> draft strict MidGrid -> evaluate -> repair -> record example ->
 - `skills/harmonic-effect-control`: use harmonic report metrics to shape aesthetic effects.
 - `skills/fugue-exposition`: build and inspect subject-answer-countersubject openings.
 - `skills/midgrid-repair-loop`: revise generated passages from `midgrid_eval.py` diagnostics with minimal edits.
+- `skills/tuning-render`: render finished MIDI to audio with the adaptive-tuning synthesizer in `../tuning`, choosing a temperament.
 
 ## Recommended Curriculum
 

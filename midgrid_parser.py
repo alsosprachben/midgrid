@@ -45,6 +45,7 @@ tempo_changes.sort(key=lambda x: x[0])
 lines = []
 patches = {}
 patch_directives = []
+pan_directives = []
 
 for line_index, line in enumerate(raw_lines):
     line_strip = line.strip()
@@ -70,6 +71,25 @@ for line_index, line in enumerate(raw_lines):
                 # Deduplicate patch directives for same line and voice
                 if not any(pd[0] == len(lines) and pd[1] == voice_idx and pd[2] == patch for pd in patch_directives):
                     patch_directives.append((len(lines), voice_idx, patch))
+    elif line_strip.startswith("// Pan"):
+        match = re.match(r'//\s*Pan\s+(?:(V\d+)|([A-Z])):\s*(\d+)', line_strip)
+        if match:
+            v_label = match.group(1)
+            s_label = match.group(2)
+            pan = int(match.group(3))
+
+            if v_label:
+                voice_idx = int(v_label[1:])
+            elif s_label:
+                voice_idx = voice_alias.get(s_label)
+                if voice_idx is None:
+                    raise ValueError(f"Unknown voice label '{s_label}' in Pan directive.")
+            else:
+                raise ValueError("Malformed Pan directive.")
+
+            # Deduplicate pan directives for same line and voice
+            if not any(pd[0] == len(lines) and pd[1] == voice_idx and pd[2] == pan for pd in pan_directives):
+                pan_directives.append((len(lines), voice_idx, pan))
     elif line_strip.startswith("# events"):
         break  # stop collecting grid lines at event section
     elif line_strip and not line_strip.startswith("#"):
@@ -198,70 +218,69 @@ for track in mid.tracks:
             event_dict.pop('time')
             other_midi_events.append((beat, msg.type, event_dict))
 
-# Compute per-row time deltas from beat positions
-row_deltas = []
-for idx, b in enumerate(beats):
-    if b is None:
-        row_deltas.append(0)
-    elif idx == 0:
-        row_deltas.append(int(b * mid.ticks_per_beat))
-    else:
-        prev = beats[idx-1] if beats[idx-1] is not None else 0.0
-        row_deltas.append(int((b - prev) * mid.ticks_per_beat))
-
+# Emit notes at absolute times: each row's beat label is the note's start,
+# and the note lasts its explicit duration, or implicitly until the next row.
 current_patches = patch_list.copy()
 for i in range(voice_count):
     track = tracks[i]
     if i not in current_patches or current_patches[i] != patch_list[i]:
         track.append(Message('program_change', program=patch_list[i], channel=i))
         current_patches[i] = patch_list[i]
-    current_note = None
-    current_time = 0  # track elapsed ticks in this track
 
-    row_idx = 0
-    for meta in notes[i]:
-        for (directive_row, voice_idx, patch_num) in patch_directives:
-            if directive_row == row_idx and voice_idx == i:
-                if current_patches[i] != patch_num:
-                    track.append(Message('program_change', program=patch_num, time=0, channel=i))
-                    current_patches[i] = patch_num
-
-        if meta['patch'] is not None and meta['patch'] != current_patches[i]:
-            track.append(Message('program_change', program=meta['patch'], time=0, channel=i))
-            current_patches[i] = meta['patch']
-
-        note = meta['midi']
-        dur = row_deltas[row_idx]
-        vel = meta['velocity']
-
+    scheduled = []
+    for row_idx, meta in enumerate(notes[i]):
+        start = beats[row_idx]
+        if start is None:
+            continue
         if meta['pitch'] == '-':
-            # Hold: extend the previous note-off by this duration
-            if track and track[-1].type == 'note_off':
-                track[-1].time += dur
-        elif meta['pitch'] == '.':
-            # Explicit rest
-            track.append(Message('note_off', note=0, velocity=0, time=dur, channel=i))
-            current_note = None
-        else:
-            if note != current_note:
-                if current_note is not None:
-                    # Turn off previous note
-                    track.append(Message('note_off', note=current_note, velocity=70, time=0, channel=i))
-                if note is not None:
-                    # Start new note
-                    track.append(Message('note_on', note=note, velocity=vel, time=0, channel=i))
-                current_note = note
+            # Hold: sustain the previous note through this row's span
+            if scheduled:
+                span = meta['duration'] if meta['duration'] is not None else 1.0
+                scheduled[-1]['end'] = max(scheduled[-1]['end'], start + span)
+        elif meta['midi'] is not None:
+            dur = meta['duration'] if meta['duration'] is not None else 1.0
+            scheduled.append({
+                'note': meta['midi'],
+                'start': start,
+                'end': start + dur,
+                'vel': meta['velocity'],
+                'patch': meta['patch'],
+            })
 
-            # Hold note for duration
-            if note is not None:
-                track.append(Message('note_off', note=note, velocity=70, time=dur, channel=i))
-                current_note = None
-            else:
-                track.append(Message('note_off', note=0, velocity=0, time=dur, channel=i))
-        row_idx += 1
+    # Voices are monophonic: truncate any note overlapping the next attack
+    for cur, nxt in zip(scheduled, scheduled[1:]):
+        if cur['end'] > nxt['start']:
+            cur['end'] = nxt['start']
 
-    if current_note is not None:
-        track.append(Message('note_off', note=current_note, velocity=70, time=0, channel=i))
+    voice_events = []  # (tick, priority, message); offs/patches before ons
+    for (directive_row, voice_idx, patch_num) in patch_directives:
+        if voice_idx == i and directive_row < len(beats) and beats[directive_row] is not None:
+            tick = int(beats[directive_row] * mid.ticks_per_beat)
+            voice_events.append((tick, 0, Message('program_change', program=patch_num, channel=i)))
+    for (directive_row, voice_idx, pan_value) in pan_directives:
+        if voice_idx == i and directive_row < len(beats) and beats[directive_row] is not None:
+            tick = int(beats[directive_row] * mid.ticks_per_beat)
+            voice_events.append((tick, 0, Message('control_change', control=10, value=pan_value, channel=i)))
+    for n in scheduled:
+        if n['end'] <= n['start']:
+            continue
+        start_tick = int(n['start'] * mid.ticks_per_beat)
+        end_tick = int(n['end'] * mid.ticks_per_beat)
+        if n['patch'] is not None:
+            voice_events.append((start_tick, 0, Message('program_change', program=n['patch'], channel=i)))
+        voice_events.append((start_tick, 1, Message('note_on', note=n['note'], velocity=n['vel'], channel=i)))
+        voice_events.append((end_tick, 0, Message('note_off', note=n['note'], velocity=70, channel=i)))
+    voice_events.sort(key=lambda e: (e[0], e[1]))
+
+    now = 0
+    for tick, _priority, msg in voice_events:
+        if msg.type == 'program_change':
+            if msg.program == current_patches[i]:
+                continue
+            current_patches[i] = msg.program
+        msg.time = max(0, tick - now)
+        track.append(msg)
+        now = tick
 
 mid.save(midgrid_out_path)
 print(f"Saved {midgrid_out_path}")

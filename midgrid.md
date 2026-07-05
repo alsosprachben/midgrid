@@ -21,8 +21,9 @@ A MidGrid file represents musical notes and timing in a text grid for input, whe
   0.00  | C4  | G#3
   0.25  | F4  | -
   ```
-- Voice aliases such as `S`, `A`, `T`, and `B` (for Soprano, Alto, Tenor, Bass) may be used in place of `V0`, `V1`, etc., in `// Patch` directives or voice assignments.
+- Voice aliases such as `S`, `A`, `T`, and `B` (for Soprano, Alto, Tenor, Bass) may be used in place of `V0`, `V1`, etc., in `// Patch` and `// Pan` directives or voice assignments.
 - Tempo changes can be specified using `# tempo <BPM> [at_beat]`, where BPM is a number and `at_beat` is optional (defaults to 0.0). Example: `# tempo 72.0 8.0`
+- Stereo placement per voice can be specified with `// Pan <voice>: <value>` directives, where value is a MIDI pan controller value from 0 (hard left) through 64 (center) to 127 (hard right). Example: `// Pan V1: 100`. A pan directive placed mid-file takes effect at the next grid row.
 
 ### Symbols
 

@@ -22,6 +22,7 @@ Rules:
 - Keep every row at the same voice count.
 - Use `#` for comments outside the grid.
 - Use `// Patch Vn: N` or `// Patch S: N`, `A`, `T`, `B`.
+- Use `// Pan Vn: N` for stereo placement (0 left, 64 center, 127 right).
 - Avoid `;` comments in files meant for the current parser; they are not skipped by `midgrid_parser.py`.
 
 ## Notes And Accidentals
