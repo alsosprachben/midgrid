@@ -1,0 +1,66 @@
+{
+  "schema": "midgrid.eval.v1",
+  "input": "/tmp/claude-1000/-home-ben-repos-midgrid/995da13a-46bc-415f-93c3-09ac5f2168de/scratchpad/fifth_neg.midgrid",
+  "lint": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  },
+  "parser": {
+    "ok": true,
+    "returncode": 0,
+    "stdout": "Saved /tmp/fifth_neg.mid\nPerceptual contrapuntal analysis written to /tmp/fifth_neg.report.txt\nPerceptual contrapuntal analysis JSON written to /tmp/fifth_neg.report.json\n",
+    "stderr": "",
+    "midi_out": "/tmp/fifth_neg.mid",
+    "report_text": "/tmp/fifth_neg.report.txt",
+    "report_json": "/tmp/fifth_neg.report.json"
+  },
+  "report_summary": {
+    "beat_count": 29,
+    "active_pair_count": 27,
+    "rest_pair_count": 2,
+    "motion_counts": {
+      "n/a": 2,
+      "unknown": 1,
+      "oblique": 22,
+      "contrary": 2,
+      "parallel": 2
+    },
+    "mean_perceptual_complexity": 3.654,
+    "max_perceptual_complexity": 8.0,
+    "max_perceptual_complexity_pair": {
+      "beat": 1.0,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 8.0,
+      "interval": "Minor 7th (+1 oct)"
+    }
+  },
+  "issues": [
+    {
+      "severity": "error",
+      "code": "parallel_perfect",
+      "message": "Parallel perfect interval in V0-V1 from beat 2.75 to 3.",
+      "beat": 3.0,
+      "previous_beat": 2.75,
+      "voice_pair": "V0-V1",
+      "previous_interval": "Perfect 5th (+1 oct)",
+      "interval": "Perfect 5th (+1 oct)"
+    },
+    {
+      "severity": "error",
+      "code": "parallel_perfect",
+      "message": "Parallel perfect interval in V0-V1 from beat 3.75 to 4.",
+      "beat": 4.0,
+      "previous_beat": 3.75,
+      "voice_pair": "V0-V1",
+      "previous_interval": "Perfect 5th (+1 oct)",
+      "interval": "Perfect 5th (+1 oct)"
+    }
+  ],
+  "issue_counts": {
+    "error": 2,
+    "warning": 0,
+    "info": 0
+  },
+  "exercise_issues": []
+}

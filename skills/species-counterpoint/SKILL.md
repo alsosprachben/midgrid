@@ -11,7 +11,7 @@ Teach by examples first, then rules. Use MidGrid to show the vertical interval a
 
 1. Select the species. Default to first species if the user does not specify one.
 2. Start from examples: run or request `python3 midgrid_examples.py --target-exercise-id EXERCISE_ID --format markdown` when working from the local curriculum; this includes nearby examples and excludes the target solution by default. Otherwise read `references/species-curriculum.md` for the stage, objective, and evaluation focus.
-3. For first species or early training, read `references/first-species-examples.md`; for second species, read `references/second-species-examples.md`.
+3. Read the species-matched reference: `references/first-species-examples.md`, `second-species-examples.md`, `third-species-examples.md`, `fourth-species-examples.md`, or `fifth-species-examples.md`.
 4. Use `$midgrid-strict-output` conventions: no prose inside cells, fixed voice columns, parser-safe notes.
 5. Compose or repair locally by beat: identify the bad interval, motion, leap, or cadence; change as few notes as possible.
 6. Prefer worked triples: positive example, negative example, corrected version.

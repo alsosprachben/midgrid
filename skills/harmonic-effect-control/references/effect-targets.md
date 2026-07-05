@@ -73,3 +73,56 @@ Repair intent:
 
 - Reduce the opening tritone-like roughness.
 - Preserve the second beat.
+
+## Recorded Training Example: fugue-cadential-tension-release
+
+From a completed three-voice fugue in D minor. Every section cadence deliberately spikes perceptual complexity on the dominant sonority and releases it at the resolution. The evaluator emits `high_complexity` warnings at these beats; they are correct by design because each spike resolves within one to two beats.
+
+Final cadence (V0 soprano, V1 alto, V2 bass):
+
+```text
+81 | A4:1@84  | D4:1@80   | D3:1@86
+82 | G4:2@84  | C#4:2@82  | A2:2@84
+84 | F#4:4@88 | D4:4@84   | D2:4@90
+```
+
+Report trace (V0-V1 pair):
+
+- beat 81: consonant support, complexity under 10
+- beat 82: G4 against C#4 is the dominant-seventh tritone, complexity 77 (warning)
+- beat 84: resolution by contrary motion (G4 down to F#4, C#4 up to D4), complexity 9
+
+Lesson:
+
+- Place maximum roughness on the pre-cadential dominant and resolve both tritone members by step in contrary motion.
+- A `high_complexity` warning is acceptable only when the report shows the complexity collapsing at the next structural beat; an unresolved spike is a defect.
+- Read the beat-pair complexity trace after composing a cadence; the spike-then-release shape should be visible in numbers, not just intended.
+
+## Recorded Training Example: complexity-release-repair-001
+
+Attempt (smoothed the second beat, left the pressure source):
+
+```text
+0 | F4:1@80 | B3:1@70
+1 | A4:1@80 | C4:1@70
+2 | E4:1@80 | C4:1@70
+```
+
+Evaluator diagnosis:
+
+- `high_complexity` at beat 0: F4 over B3 is a tritone, complexity 77. Editing beat 1 changed nothing about the warning.
+
+Correction (single-cell edit at the source):
+
+```text
+0 | F4:1@80 | A3:1@70
+1 | G4:1@80 | C4:1@70
+2 | E4:1@80 | C4:1@70
+```
+
+Complexity trace: 13 (sixth) -> 12 (fifth) -> 9 (third), a monotonic release with no warnings.
+
+Lesson:
+
+- Repair the source of a pressure spike, not its aftermath; prefer the smallest edit that converts the offending interval class.
+- Verify release as a declining complexity trace across the phrase, not by ear alone.

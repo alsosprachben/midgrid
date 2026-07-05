@@ -1,0 +1,50 @@
+{
+  "id": "fourth-species-above-001",
+  "title": "Fourth Species Above a Cantus",
+  "skill": "species-counterpoint",
+  "species": "fourth",
+  "objective": "Complete a fourth-species (syncopated) counterpoint above the given C-major cantus: whole-beat notes attacked on half-beats, sustained across each downbeat as suspensions.",
+  "prompt": "V0 rests on beat 0, then attacks a note of duration 1 on every half-beat (0.5, 1.5, 2.5, ...), each sustaining across the following downbeat; write '-' in V0 on integer rows while a note is sustaining. Half-beat attacks (preparations and resolutions) must be consonant. A downbeat interval may be dissonant only as a suspension, and must resolve down by step at the next half-beat. Close with a 4-3 suspension into the final octave at beat 7.",
+  "seed_midgrid": "# Title: Fourth Species Above Exercise 001\n# tempo 80\n\n0 | . | C3:0.5@70\n0.5 | . | -\n1 | . | D3:0.5@70\n1.5 | . | -\n2 | . | E3:0.5@70\n2.5 | . | -\n3 | . | F3:0.5@70\n3.5 | . | -\n4 | . | G3:0.5@70\n4.5 | . | -\n5 | . | A3:0.5@70\n5.5 | . | -\n6 | . | G3:0.5@70\n6.5 | . | -\n7 | . | C3:1@70\n",
+  "success_criteria": [
+    "Every row remains strict parser-valid MidGrid.",
+    "V1 cantus remains unchanged, including hold cells.",
+    "V0 attacks only on half-beat rows (plus the final note at beat 7), sustaining across downbeats.",
+    "Half-beat attack intervals are consonant.",
+    "Every dissonant downbeat resolves down by step at the next half-beat.",
+    "Corrected solution has no evaluator errors."
+  ],
+  "evaluation_defaults": {
+    "fail_on": "error",
+    "high_complexity_threshold": 30.0,
+    "wide_spacing_threshold": 24
+  },
+  "recording": {
+    "corrected_fail_on": "error"
+  },
+  "exercise_checks": {
+    "locked_voices": [
+      1
+    ],
+    "filled_voices": [
+      0
+    ],
+    "interval_rules": [
+      {
+        "label": "Fourth-species preparations and resolutions on half-beats must be consonant",
+        "voice_pair": "V0-V1",
+        "beat_filter": "non_integer",
+        "allowed_interval_classes": [
+          0,
+          3,
+          4,
+          7,
+          8,
+          9
+        ],
+        "code": "exercise_offbeat_dissonance",
+        "severity": "error"
+      }
+    ]
+  }
+}

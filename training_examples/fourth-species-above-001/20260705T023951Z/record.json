@@ -1,0 +1,19 @@
+{
+  "schema": "midgrid.training_example.v1",
+  "exercise_id": "fourth-species-above-001",
+  "exercise_title": "Fourth Species Above a Cantus",
+  "created_utc": "2026-07-05T02:39:51.428998+00:00",
+  "attempt": "attempt.midgrid",
+  "corrected": "corrected.midgrid",
+  "attempt_eval": "attempt.eval.json",
+  "corrected_eval": "corrected.eval.json",
+  "attempt_reports": {
+    "report_json": "attempt.report.json",
+    "report_text": "attempt.report.txt"
+  },
+  "corrected_reports": {
+    "report_json": "corrected.report.json",
+    "report_text": "corrected.report.txt"
+  },
+  "lesson": "Preparations must be consonant on the half-beat before they suspend; replacing the fourth with a third above the cantus keeps the chain intact and sets up the cadential 4-3."
+}

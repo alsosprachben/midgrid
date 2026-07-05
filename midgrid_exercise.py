@@ -129,6 +129,12 @@ def cell_is_note(cell: str) -> bool:
     return cell.strip() not in REST_OR_HOLD_CELLS
 
 
+def cell_is_sounding(cell: str) -> bool:
+    # A hold continues a sounding note, so it fills its row; syncopated
+    # species sustain across downbeats with '-' cells.
+    return cell.strip() in {"-", "_"} or cell_is_note(cell)
+
+
 def exercise_issue(severity: str, code: str, message: str, **fields: Any) -> dict[str, Any]:
     data = {"severity": severity, "code": code, "message": message}
     data.update(fields)
@@ -245,6 +251,7 @@ def append_exercise_checks(exercise: dict[str, Any], eval_data: dict[str, Any], 
             actual_rows=len(attempt_rows),
         ))
 
+    voices_sounded: set[int] = set()
     for row_index, (seed_row, attempt_row) in enumerate(zip(seed_rows, attempt_rows)):
         if seed_row["beat"] != attempt_row["beat"]:
             exercise_issues.append(exercise_issue(
@@ -272,7 +279,13 @@ def append_exercise_checks(exercise: dict[str, Any], eval_data: dict[str, Any], 
 
         for voice in checks.get("filled_voices", []):
             attempt_cell = attempt_row["cells"][voice].strip() if voice < len(attempt_row["cells"]) else ""
-            if not cell_is_note(attempt_cell):
+            if cell_is_note(attempt_cell):
+                voices_sounded.add(voice)
+            # Leading rests are legal (syncopated species enter after a rest);
+            # a voice must be continuously filled only once it has sounded.
+            if voice not in voices_sounded:
+                continue
+            if not cell_is_sounding(attempt_cell):
                 exercise_issues.append(exercise_issue(
                     "error",
                     "exercise_unfilled_voice",

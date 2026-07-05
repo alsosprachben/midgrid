@@ -1,0 +1,6 @@
+Beat 0.00:
+  V0-V1: interval=Tritone, motion=unknown, perceptual_complexity=77.0
+Beat 1.00:
+  V0-V1: interval=Major 6th, motion=similar, perceptual_complexity=8.0
+Beat 2.00:
+  V0-V1: interval=Major 3rd, motion=oblique, perceptual_complexity=9.0

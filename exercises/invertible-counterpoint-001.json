@@ -1,0 +1,47 @@
+{
+  "id": "invertible-counterpoint-001",
+  "title": "Invertible Countersubject at the Octave",
+  "skill": "fugue-exposition",
+  "species": "invertible",
+  "objective": "Write one countersubject that works both below and above the same fugue subject: section A (beats 0-7) states the subject in V0 with your countersubject beneath in V1; section B (beats 8-15) states the subject an octave lower in V1 with the same countersubject pitches now sounding above in V0.",
+  "prompt": "Fill V1 in beats 0-7 (below the subject) and V0 in beats 8-15 (above the subject) with the same countersubject: identical pitches in both sections, so dropping the subject an octave inverts the counterpoint at the octave. Do not alter the given subject notes. Use '-' to sustain across the subject's eighth-note rows. Integer-beat intervals must be consonant in both sections; thirds in one position become sixths in the other. Give the countersubject complementary rhythm and stepwise character.",
+  "seed_midgrid": "# Title: Invertible Counterpoint Exercise 001\n# tempo 84\n\n0 | D4:1@80 | .\n1 | A4:1@80 | .\n2 | F4:0.5@80 | .\n2.5 | E4:0.5@80 | .\n3 | D4:1@80 | .\n4 | C#4:1@80 | .\n5 | D4:0.5@80 | .\n5.5 | E4:0.5@80 | .\n6 | F4:1@80 | .\n7 | E4:1@80 | .\n8 | . | D3:1@80\n9 | . | A3:1@80\n10 | . | F3:0.5@80\n10.5 | . | E3:0.5@80\n11 | . | D3:1@80\n12 | . | C#3:1@80\n13 | . | D3:0.5@80\n13.5 | . | E3:0.5@80\n14 | . | F3:1@80\n15 | . | E3:1@80\n",
+  "success_criteria": [
+    "Every row remains strict parser-valid MidGrid.",
+    "The subject notes are unchanged in both sections.",
+    "The countersubject uses identical pitches in sections A and B.",
+    "Integer-beat intervals are consonant in both positions.",
+    "Corrected solution has no evaluator errors."
+  ],
+  "evaluation_defaults": {
+    "fail_on": "error",
+    "high_complexity_threshold": 30.0,
+    "wide_spacing_threshold": 24
+  },
+  "recording": {
+    "corrected_fail_on": "error"
+  },
+  "exercise_checks": {
+    "filled_voices": [
+      0,
+      1
+    ],
+    "interval_rules": [
+      {
+        "label": "Invertible counterpoint downbeats must be consonant in both positions",
+        "voice_pair": "V0-V1",
+        "beat_filter": "integer",
+        "allowed_interval_classes": [
+          0,
+          3,
+          4,
+          7,
+          8,
+          9
+        ],
+        "code": "exercise_downbeat_dissonance",
+        "severity": "error"
+      }
+    ]
+  }
+}

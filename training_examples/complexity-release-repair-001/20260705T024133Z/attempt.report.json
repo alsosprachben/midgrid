@@ -1,0 +1,99 @@
+{
+  "schema": "midgrid.report.v1",
+  "voice_count": 2,
+  "beats": [
+    {
+      "beat": 0.0,
+      "sounding_midis": [
+        65,
+        59
+      ],
+      "pairs": [
+        {
+          "voices": [
+            0,
+            1
+          ],
+          "voice_pair": "V0-V1",
+          "midis": [
+            65,
+            59
+          ],
+          "interval": "Tritone",
+          "interval_semitones": 6,
+          "phase_aligned": false,
+          "motion": "unknown",
+          "perceptual_complexity": 77.0
+        }
+      ]
+    },
+    {
+      "beat": 1.0,
+      "sounding_midis": [
+        69,
+        60
+      ],
+      "pairs": [
+        {
+          "voices": [
+            0,
+            1
+          ],
+          "voice_pair": "V0-V1",
+          "midis": [
+            69,
+            60
+          ],
+          "interval": "Major 6th",
+          "interval_semitones": 9,
+          "phase_aligned": false,
+          "motion": "similar",
+          "perceptual_complexity": 8.0
+        }
+      ]
+    },
+    {
+      "beat": 2.0,
+      "sounding_midis": [
+        64,
+        60
+      ],
+      "pairs": [
+        {
+          "voices": [
+            0,
+            1
+          ],
+          "voice_pair": "V0-V1",
+          "midis": [
+            64,
+            60
+          ],
+          "interval": "Major 3rd",
+          "interval_semitones": 4,
+          "phase_aligned": false,
+          "motion": "oblique",
+          "perceptual_complexity": 9.0
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "beat_count": 3,
+    "active_pair_count": 3,
+    "rest_pair_count": 0,
+    "motion_counts": {
+      "unknown": 1,
+      "similar": 1,
+      "oblique": 1
+    },
+    "mean_perceptual_complexity": 31.333,
+    "max_perceptual_complexity": 77.0,
+    "max_perceptual_complexity_pair": {
+      "beat": 0.0,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 77.0,
+      "interval": "Tritone"
+    }
+  }
+}

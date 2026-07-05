@@ -1,0 +1,6 @@
+Beat 0.00:
+  V0-V1: interval=Minor 6th [phase-aligned], motion=unknown, perceptual_complexity=13.0
+Beat 1.00:
+  V0-V1: interval=Perfect 5th, motion=similar, perceptual_complexity=5.0
+Beat 2.00:
+  V0-V1: interval=Major 3rd, motion=oblique, perceptual_complexity=9.0
