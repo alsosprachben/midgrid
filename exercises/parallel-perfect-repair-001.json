@@ -14,7 +14,8 @@
   "evaluation_defaults": {
     "fail_on": "none",
     "high_complexity_threshold": 30.0,
-    "wide_spacing_threshold": 19
+    "wide_spacing_threshold": 19,
+    "strict_parallels": true
   },
   "recording": {
     "corrected_fail_on": "error"

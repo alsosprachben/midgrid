@@ -63,6 +63,8 @@ def evaluation_args(exercise: dict[str, Any], fail_on: str | None = None) -> lis
     args.extend(["--high-complexity-threshold", str(defaults.get("high_complexity_threshold", 30.0))])
     args.extend(["--wide-spacing-threshold", str(defaults.get("wide_spacing_threshold", 19))])
     args.extend(["--fail-on", fail_on or defaults.get("fail_on", "error")])
+    if defaults.get("strict_parallels"):
+        args.append("--strict-parallels")
     return args
 
 

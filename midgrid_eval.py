@@ -15,6 +15,12 @@ from midgrid_lint import lint_text
 
 PERFECT_CLASSES = {0, 7}
 
+# Simple-ratio interval classes (unison/octave 1:1/1:2, fifth 2:3, fourth 3:4).
+# Parallel motion across these fuses two voices into one perceived stream:
+# the meta-analysis reports that fusion instead of enforcing a rule, since
+# fusion is sometimes the intent (voice handoffs, registration doubling).
+FUSABLE_CLASSES = {0, 5, 7}
+
 
 def report_path_with_suffix(mid_path: Path, suffix: str) -> Path:
     if mid_path.name.endswith(".mid"):
@@ -121,6 +127,85 @@ def detect_parallel_and_direct_perfects(report: dict[str, Any]) -> list[dict[str
     return issues
 
 
+def detect_voice_fusion(report: dict[str, Any]) -> list[dict[str, Any]]:
+    """Meta-analysis of the harmonic report: common-fate motion across
+    simple-ratio intervals collapses two voices into one perceived stream.
+
+    A fusion transition is parallel motion (equal, nonzero pitch deltas)
+    where both sonorities sit in FUSABLE_CLASSES. Consecutive transitions
+    merge into one reported run. Static doubling (pedal points, drones) is
+    not motion and is not reported."""
+    issues = []
+    beats = report.get("beats", [])
+    previous_by_pair: dict[str, dict[str, Any]] = {}
+    previous_beat_by_pair: dict[str, float] = {}
+    previous_midis: list[Any] = []
+    runs: dict[str, dict[str, Any]] = {}
+
+    def flush(label: str) -> None:
+        run = runs.pop(label, None)
+        if run is None:
+            return
+        beats_span = f"beat {run['start']:g} to {run['end']:g}"
+        issues.append(issue(
+            "warning",
+            "voice_fusion",
+            f"{label} move in parallel {run['intervals']} from {beats_span}: "
+            f"common-fate motion across simple ratios fuses the voices into one stream "
+            f"({run['transitions']} transition{'s' if run['transitions'] > 1 else ''}). "
+            f"Legitimate as a deliberate handoff or doubling; otherwise restore "
+            f"independence with contrary or oblique motion.",
+            beat=run["end"],
+            start_beat=run["start"],
+            voice_pair=label,
+            transitions=run["transitions"],
+        ))
+
+    for beat in beats:
+        current_beat = beat["beat"]
+        midis = beat.get("sounding_midis", [])
+        for pair in beat.get("pairs", []):
+            label = pair["voice_pair"]
+            prev = previous_by_pair.get(label)
+            if prev is not None:
+                prev_class = interval_class(prev)
+                cur_class = interval_class(pair)
+                moving = False
+                try:
+                    hi, lo = (int(label[1]), int(label[4]))
+                    d_hi = midis[hi] - previous_midis[hi]
+                    moving = d_hi != 0
+                except (TypeError, ValueError, IndexError):
+                    moving = pair.get("motion") == "parallel"
+                fused = (
+                    pair.get("motion") == "parallel"
+                    and moving
+                    and prev_class in FUSABLE_CLASSES
+                    and cur_class in FUSABLE_CLASSES
+                )
+                if fused:
+                    run = runs.get(label)
+                    if run is None:
+                        runs[label] = {
+                            "start": previous_beat_by_pair[label],
+                            "end": current_beat,
+                            "transitions": 1,
+                            "intervals": pair.get("interval", "perfect intervals"),
+                        }
+                    else:
+                        run["end"] = current_beat
+                        run["transitions"] += 1
+                else:
+                    flush(label)
+            previous_by_pair[label] = pair
+            previous_beat_by_pair[label] = current_beat
+        previous_midis = midis
+
+    for label in list(runs):
+        flush(label)
+    return issues
+
+
 def detect_voice_crossing(report: dict[str, Any]) -> list[dict[str, Any]]:
     issues = []
     for beat in report.get("beats", []):
@@ -183,9 +268,17 @@ def detect_wide_adjacent_spacing(report: dict[str, Any], threshold: int) -> list
     return issues
 
 
-def evaluate_report(report: dict[str, Any], high_complexity_threshold: float, wide_spacing_threshold: int) -> list[dict[str, Any]]:
+def evaluate_report(report: dict[str, Any], high_complexity_threshold: float, wide_spacing_threshold: int,
+                    strict_parallels: bool = False) -> list[dict[str, Any]]:
     issues = []
-    issues.extend(detect_parallel_and_direct_perfects(report))
+    if strict_parallels:
+        # Classical pedagogy mode (species drills): categorical prohibitions.
+        issues.extend(detect_parallel_and_direct_perfects(report))
+    else:
+        # Default: intervallic findings are meta-analysis of the harmonic
+        # layer. Parallel perfects are reported as stream fusion, which may
+        # be intentional; nothing intervallic is an error by category.
+        issues.extend(detect_voice_fusion(report))
     issues.extend(detect_voice_crossing(report))
     issues.extend(detect_high_complexity(report, high_complexity_threshold))
     issues.extend(detect_wide_adjacent_spacing(report, wide_spacing_threshold))
@@ -284,6 +377,7 @@ def evaluate(input_path: Path, args: argparse.Namespace, midi_out: Path) -> dict
         report,
         high_complexity_threshold=args.high_complexity_threshold,
         wide_spacing_threshold=args.wide_spacing_threshold,
+        strict_parallels=args.strict_parallels,
     ))
     result["issue_counts"] = count_by_severity(result["issues"])
     return result
@@ -296,6 +390,9 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--json", action="store_true", help="write diagnostics as JSON")
     parser.add_argument("--write-json", help="write diagnostics JSON to this path")
     parser.add_argument("--parse-with-lint-errors", action="store_true", help="try parser even if lint errors are present")
+    parser.add_argument("--strict-parallels", action="store_true",
+                        help="classical pedagogy mode: parallel/direct perfects are categorical "
+                             "errors instead of voice_fusion meta-analysis warnings")
     parser.add_argument("--high-complexity-threshold", type=float, default=30.0)
     parser.add_argument("--wide-spacing-threshold", type=int, default=19)
     parser.add_argument("--fail-on", choices=["error", "warning", "none"], default="error")

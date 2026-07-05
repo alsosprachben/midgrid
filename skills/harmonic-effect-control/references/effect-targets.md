@@ -126,3 +126,15 @@ Lesson:
 
 - Repair the source of a pressure spike, not its aftermath; prefer the smallest edit that converts the offending interval class.
 - Verify release as a declining complexity trace across the phrase, not by ear alone.
+
+## Voice Independence and Fusion
+
+Counterpoint is noise shaping: the vertical dimension distributes roughness over time (the pressure and release targets above), and the horizontal dimension keeps concurrent streams perceptually separate. Parallel motion across simple-ratio intervals (unison/octave, fifth, fourth) makes two voices share common fate on nearly-shared partials, and the ear merges them into one stream. The evaluator's `voice_fusion` diagnostic reports where that happens, and for how long.
+
+Fusion is a knob, not a sin:
+
+- Unintended fusion is the real content of the classical parallel-fifths rule: the texture silently loses a voice. Repair with contrary or oblique motion, exactly as the strict drills teach.
+- Intentional fusion is an effect target. Fuse two voices briefly to hand the listener's attention from one line to another; fuse at the octave to thicken a line (registration doubling); sustain a pedal under moving voices (static doubling is never flagged).
+- The strict species exercises (`evaluation_defaults.strict_parallels`) keep the categorical rules because over-constraint is good pedagogy; finished pieces are evaluated by the perceptual meta-analysis instead.
+
+When shaping a passage, decide the intended stream count per beat and check the fusion findings against it: independence where you promised independent voices, fusion only where you spend it deliberately.

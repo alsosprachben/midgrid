@@ -77,9 +77,11 @@ The evaluator writes schema `midgrid.eval.v1`:
 
 `parse_failed`: parser failed or did not produce a JSON report.
 
-`parallel_perfect`: consecutive parallel perfect fifth/octave class in a voice pair. Treat as a hard counterpoint error unless the style explicitly allows it.
+`voice_fusion` (default mode): parallel motion across simple-ratio interval classes (unison/octave, fifth, and fourth) reported as a run with start and end beats. This is meta-analysis of the harmonic layer, not a rule: common-fate motion across simple ratios fuses two voices into one perceived stream. That is a defect when it silently costs a voice, and a device when it is a deliberate handoff, doubling, or registration effect. Static doubling (pedal points) is not motion and is never reported. Counterpoint's goal is voice independence; read fusion findings as "here the texture locally has fewer voices than the page says."
 
-`direct_perfect`: similar motion into a perfect fifth/octave class. Treat as a warning; inspect melodic context before repair.
+`parallel_perfect` (only with `--strict-parallels`): consecutive parallel perfect fifth/octave class in a voice pair, as a categorical error. Classical pedagogy mode, used by the species exercises via `evaluation_defaults.strict_parallels`; deliberately over-constrained for drilling.
+
+`direct_perfect` (only with `--strict-parallels`): similar motion into a perfect fifth/octave class, as a warning.
 
 `voice_crossing`: an earlier voice column sounds below a later voice column, assuming top-to-bottom voice ordering.
 
