@@ -1,0 +1,128 @@
+{
+  "schema": "midgrid.eval.v1",
+  "input": "/tmp/claude-1000/-home-ben-repos-midgrid/995da13a-46bc-415f-93c3-09ac5f2168de/scratchpad/episode_neg.midgrid",
+  "lint": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  },
+  "parser": {
+    "ok": true,
+    "returncode": 0,
+    "stdout": "Saved /tmp/episode_neg.mid\nPerceptual contrapuntal analysis written to /tmp/episode_neg.report.txt\nPerceptual contrapuntal analysis JSON written to /tmp/episode_neg.report.json\n",
+    "stderr": "",
+    "midi_out": "/tmp/episode_neg.mid",
+    "report_text": "/tmp/episode_neg.report.txt",
+    "report_json": "/tmp/episode_neg.report.json"
+  },
+  "report_summary": {
+    "beat_count": 11,
+    "active_pair_count": 11,
+    "rest_pair_count": 0,
+    "motion_counts": {
+      "unknown": 1,
+      "oblique": 5,
+      "contrary": 4,
+      "similar": 1
+    },
+    "mean_perceptual_complexity": 9.636,
+    "max_perceptual_complexity": 38.5,
+    "max_perceptual_complexity_pair": {
+      "beat": 2.0,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 38.5,
+      "interval": "Tritone (+1 oct)"
+    }
+  },
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "high_complexity",
+      "message": "V0-V1 reaches perceptual complexity 38.5 at beat 2.",
+      "beat": 2.0,
+      "voice_pair": "V0-V1",
+      "interval": "Tritone (+1 oct)",
+      "perceptual_complexity": 38.5,
+      "threshold": 30.0
+    },
+    {
+      "severity": "error",
+      "code": "exercise_downbeat_dissonance",
+      "message": "Episode downbeats must be consonant: V0-V1 interval class 6 is not allowed at beat 2.",
+      "beat": 2.0,
+      "voice_pair": "V0-V1",
+      "interval": "Tritone (+1 oct)",
+      "interval_semitones": 18,
+      "interval_class": 6,
+      "allowed_interval_classes": [
+        0,
+        3,
+        4,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "severity": "error",
+      "code": "exercise_downbeat_dissonance",
+      "message": "Episode downbeats must be consonant: V0-V1 interval class 10 is not allowed at beat 3.",
+      "beat": 3.0,
+      "voice_pair": "V0-V1",
+      "interval": "Minor 7th",
+      "interval_semitones": 10,
+      "interval_class": 10,
+      "allowed_interval_classes": [
+        0,
+        3,
+        4,
+        7,
+        8,
+        9
+      ]
+    }
+  ],
+  "issue_counts": {
+    "error": 2,
+    "warning": 1,
+    "info": 0
+  },
+  "exercise_issues": [
+    {
+      "severity": "error",
+      "code": "exercise_downbeat_dissonance",
+      "message": "Episode downbeats must be consonant: V0-V1 interval class 6 is not allowed at beat 2.",
+      "beat": 2.0,
+      "voice_pair": "V0-V1",
+      "interval": "Tritone (+1 oct)",
+      "interval_semitones": 18,
+      "interval_class": 6,
+      "allowed_interval_classes": [
+        0,
+        3,
+        4,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "severity": "error",
+      "code": "exercise_downbeat_dissonance",
+      "message": "Episode downbeats must be consonant: V0-V1 interval class 10 is not allowed at beat 3.",
+      "beat": 3.0,
+      "voice_pair": "V0-V1",
+      "interval": "Minor 7th",
+      "interval_semitones": 10,
+      "interval_class": 10,
+      "allowed_interval_classes": [
+        0,
+        3,
+        4,
+        7,
+        8,
+        9
+      ]
+    }
+  ]
+}

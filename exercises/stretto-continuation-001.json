@@ -1,0 +1,50 @@
+{
+  "id": "stretto-continuation-001",
+  "title": "Continue the Subject Over Its Own Stretto Entry",
+  "skill": "fugue-exposition",
+  "species": "stretto",
+  "objective": "The leader states the subject head in V0; at beat 3 the follower enters in V1 with the subject an octave below. Compose the leader's continuation (beats 4-8) over the incoming subject, closing on the final octave.",
+  "prompt": "Fill V0 beats 4-8 with a continuation line against the locked follower. Do not alter the given subject notes in either voice. Integer-beat intervals must be consonant; move contrary or oblique against the follower and do not shadow it in parallel perfect intervals. End beat 8 on D4 over the follower's final D3. Note: this subject admits an octave stretto at a 3-beat delay; a 2-beat delay at the fifth fails on beat 3.",
+  "seed_midgrid": "# Title: Stretto Continuation Exercise 001\n# tempo 84\n\n0    | D4:1@80   | .\n1    | A4:1@80   | .\n2    | F4:0.5@80 | .\n2.5  | E4:0.5@80 | .\n3    | D4:1@80   | D3:1@76\n4    | .         | A3:1@76\n5    | .         | F3:0.5@76\n5.5  | .         | E3:0.5@76\n6    | .         | D3:1@76\n7    | .         | C#3:1@76\n8    | .         | D3:1@78\n",
+  "success_criteria": [
+    "Every row remains strict parser-valid MidGrid.",
+    "The subject head in V0 (beats 0-3) and the follower in V1 are unchanged.",
+    "V0 is filled from beat 4 through a final note at beat 8.",
+    "Integer-beat intervals are consonant.",
+    "Corrected solution has no evaluator errors."
+  ],
+  "evaluation_defaults": {
+    "fail_on": "error",
+    "high_complexity_threshold": 30.0,
+    "wide_spacing_threshold": 24
+  },
+  "recording": {
+    "corrected_fail_on": "error"
+  },
+  "exercise_checks": {
+    "locked_voices": [
+      1
+    ],
+    "filled_voices": [
+      0
+    ],
+    "interval_rules": [
+      {
+        "label": "Stretto downbeats must be consonant",
+        "voice_pair": "V0-V1",
+        "beat_filter": "integer",
+        "allowed_interval_classes": [
+          0,
+          3,
+          4,
+          7,
+          8,
+          9
+        ],
+        "code": "exercise_downbeat_dissonance",
+        "severity": "error",
+        "allow_rests": true
+      }
+    ]
+  }
+}

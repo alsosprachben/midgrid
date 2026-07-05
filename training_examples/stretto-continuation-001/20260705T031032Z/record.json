@@ -1,0 +1,19 @@
+{
+  "schema": "midgrid.training_example.v1",
+  "exercise_id": "stretto-continuation-001",
+  "exercise_title": "Continue the Subject Over Its Own Stretto Entry",
+  "created_utc": "2026-07-05T03:10:32.618413+00:00",
+  "attempt": "attempt.midgrid",
+  "corrected": "corrected.midgrid",
+  "attempt_eval": "attempt.eval.json",
+  "corrected_eval": "corrected.eval.json",
+  "attempt_reports": {
+    "report_json": "attempt.report.json",
+    "report_text": "attempt.report.txt"
+  },
+  "corrected_reports": {
+    "report_json": "corrected.report.json",
+    "report_text": "corrected.report.txt"
+  },
+  "lesson": "Do not shadow the incoming subject in octaves; the leader's continuation should move contrary or oblique against the follower, and this subject's own tail (C# D F E D) already harmonizes its head at the octave."
+}

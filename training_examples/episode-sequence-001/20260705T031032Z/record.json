@@ -1,0 +1,19 @@
+{
+  "schema": "midgrid.training_example.v1",
+  "exercise_id": "episode-sequence-001",
+  "exercise_title": "Sequence a Two-Beat Model Over a Descending Bass",
+  "created_utc": "2026-07-05T03:10:32.828497+00:00",
+  "attempt": "attempt.midgrid",
+  "corrected": "corrected.midgrid",
+  "attempt_eval": "attempt.eval.json",
+  "corrected_eval": "corrected.eval.json",
+  "attempt_reports": {
+    "report_json": "attempt.report.json",
+    "report_text": "attempt.report.txt"
+  },
+  "corrected_reports": {
+    "report_json": "corrected.report.json",
+    "report_text": "corrected.report.txt"
+  },
+  "lesson": "Transpose the sequence model by the interval the bass pattern dictates, checking every downbeat against the new bass note; a mechanical transposition one step too far turns every strong beat dissonant."
+}

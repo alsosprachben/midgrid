@@ -1,0 +1,49 @@
+{
+  "id": "episode-sequence-001",
+  "title": "Sequence a Two-Beat Model Over a Descending Bass",
+  "skill": "fugue-exposition",
+  "species": "episode",
+  "objective": "Over the locked bass (D minor, B-flat, C, arriving on F), compose an upper voice built from one two-beat melodic model stated at beats 0-1 and transposed down a third at 2-3 and again at 4-5, then cadence into the F arrival.",
+  "prompt": "Fill V0: state a two-beat model (for example eighth-eighth-quarter) at beats 0-1, transpose the same model down a third for beats 2-3 and again for beats 4-5 so it follows the bass, then close freely over beats 6-7. Adjust the transposition to the harmony, not mechanically: every integer-beat interval must be consonant. Weak-eighth dissonances are acceptable when stepwise and brief.",
+  "seed_midgrid": "# Title: Episode Sequence Exercise 001\n# tempo 84\n\n0    | .         | D3:1@72\n0.5  | .         | -\n1    | .         | F3:1@72\n2    | .         | B-2:1@72\n2.5  | .         | -\n3    | .         | D3:1@72\n4    | .         | C3:1@72\n4.5  | .         | -\n5    | .         | E3:1@72\n6    | .         | F3:2@72\n7    | .         | -\n",
+  "success_criteria": [
+    "Every row remains strict parser-valid MidGrid.",
+    "V1 bass remains unchanged, including hold cells.",
+    "Beats 2-3 and 4-5 restate the beats 0-1 model transposed down a third.",
+    "Integer-beat intervals are consonant.",
+    "Corrected solution has no evaluator errors."
+  ],
+  "evaluation_defaults": {
+    "fail_on": "error",
+    "high_complexity_threshold": 30.0,
+    "wide_spacing_threshold": 24
+  },
+  "recording": {
+    "corrected_fail_on": "error"
+  },
+  "exercise_checks": {
+    "locked_voices": [
+      1
+    ],
+    "filled_voices": [
+      0
+    ],
+    "interval_rules": [
+      {
+        "label": "Episode downbeats must be consonant",
+        "voice_pair": "V0-V1",
+        "beat_filter": "integer",
+        "allowed_interval_classes": [
+          0,
+          3,
+          4,
+          7,
+          8,
+          9
+        ],
+        "code": "exercise_downbeat_dissonance",
+        "severity": "error"
+      }
+    ]
+  }
+}
