@@ -25,6 +25,29 @@ FUSION_SCALE = 10.0
 FUSION_INFO = 1.4
 FUSION_WARN = 5.0
 
+# Fundamental orientation (per the fundamental-oriented definition of
+# contrapuntal intervals): for a just ratio n/d the implied fundamental
+# lies at lower/d, so when d is a power of 2 the lower note is
+# octave-equivalent to the fundamental and the interval is ROOTED
+# (2/1, 3/2, 5/4, 9/8, 5/2, ...). When d has an odd factor (4/3, 6/5,
+# 5/3, 8/5) the root is displaced away from the lower note. The odd part
+# of d is invariant under octave compounding, so rootedness is a pure
+# interval-class property: the eleventh is displaced like the fourth,
+# while the twelfth (3/1) is rooted. Parallel motion on a displaced
+# interval makes the unvoiced implied fundamental travel in parallel:
+# covert parallels with a phantom root, reported as its own diagnostic.
+# Ratio denominators by interval class (ratio = higher/lower):
+#   0:1  1:15  2:8  3:5  4:4  5:3  6:32  7:2  8:5  9:3  10:9  11:8
+ROOTED_CLASSES = {0, 2, 4, 6, 7, 11}
+
+# Salience of a displaced root scales inversely with the odd factor of the
+# denominator: 4/3 and 5/3 displace the root only a twelfth below the lower
+# note (loud phantom), 6/5 and 8/5 push it two octaves and a third down
+# (faint). Displaced runs are weighted by 3/odd_factor and warn earlier
+# than fusion runs, because a traveling fourth-class root is audible fast.
+DISPLACED_ODD_FACTOR = {1: 15, 3: 5, 5: 3, 8: 5, 9: 3, 10: 9}
+DISPLACED_WARN = 2.8
+
 
 def report_path_with_suffix(mid_path: Path, suffix: str) -> Path:
     if mid_path.name.endswith(".mid"):
@@ -152,22 +175,33 @@ def detect_voice_fusion(report: dict[str, Any]) -> list[dict[str, Any]]:
         strength = run["strength"]
         if strength < FUSION_INFO:
             return
-        severity = "warning" if strength >= FUSION_WARN else "info"
-        issues.append(issue(
-            severity,
-            "voice_fusion",
-            f"{label} move in parallel {run['interval']} from beat {run['start']:g} "
-            f"to {run['end']:g}: fusion strength {strength:.1f} "
-            f"({run['transitions']} transition{'s' if run['transitions'] > 1 else ''}, "
-            f"graded from the interval ratio table). Common-fate motion merges the "
-            f"voices toward one stream; legitimate as a deliberate handoff or "
-            f"doubling, otherwise restore independence with contrary or oblique motion.",
-            beat=run["end"],
-            start_beat=run["start"],
-            voice_pair=label,
-            transitions=run["transitions"],
-            strength=round(strength, 2),
-        ))
+        warn_at = FUSION_WARN if run["rooted"] else DISPLACED_WARN
+        severity = "warning" if strength >= warn_at else "info"
+        counts = f"({run['transitions']} transition{'s' if run['transitions'] > 1 else ''}, strength {strength:.1f} from the ratio table)"
+        span = f"from beat {run['start']:g} to {run['end']:g}"
+        if run["rooted"]:
+            issues.append(issue(
+                severity,
+                "voice_fusion",
+                f"{label} move in parallel {run['interval']} {span} {counts}: "
+                f"a rooted interval, so common-fate motion merges the voices into one "
+                f"bass-rooted stream. Legitimate as a deliberate handoff or doubling; "
+                f"otherwise restore independence with contrary or oblique motion.",
+                beat=run["end"], start_beat=run["start"], voice_pair=label,
+                transitions=run["transitions"], strength=round(strength, 2),
+            ))
+        else:
+            issues.append(issue(
+                severity,
+                "displaced_root_motion",
+                f"{label} travel in parallel {run['interval']} {span} {counts}: "
+                f"the interval's implied fundamental is displaced from the lower note "
+                f"(ratio denominator has an odd factor), so the unvoiced root travels "
+                f"in parallel with the pair. Break the traveling fourth-class motion, "
+                f"or voice the root so the displacement is intentional.",
+                beat=run["end"], start_beat=run["start"], voice_pair=label,
+                transitions=run["transitions"], strength=round(strength, 2),
+            ))
 
     for beat in beats:
         current_beat = beat["beat"]
@@ -183,6 +217,9 @@ def detect_voice_fusion(report: dict[str, Any]) -> list[dict[str, Any]]:
                 complexity = pair.get("perceptual_complexity")
                 if pair.get("motion") == "parallel" and moving and complexity:
                     step = FUSION_SCALE / max(float(complexity), 1.0)
+                    cls = interval_class(pair)
+                    if cls not in ROOTED_CLASSES:
+                        step *= 3.0 / DISPLACED_ODD_FACTOR.get(cls, 3)
                     run = runs.get(label)
                     if run is None:
                         runs[label] = {
@@ -191,6 +228,7 @@ def detect_voice_fusion(report: dict[str, Any]) -> list[dict[str, Any]]:
                             "transitions": 1,
                             "strength": step,
                             "interval": pair.get("interval", "intervals"),
+                            "rooted": interval_class(pair) in ROOTED_CLASSES,
                         }
                     else:
                         run["end"] = current_beat
