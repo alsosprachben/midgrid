@@ -1,0 +1,118 @@
+You are composing strict counterpoint in MidGrid text notation. Work ONLY from the materials in this message: do not read any files, do not run any tools, do not explore any repository. Everything you need is below.
+
+Your final message must be ONLY the complete MidGrid file text, beginning with the '# Title:' line. No explanations, no markdown code fences, no surrounding prose.
+
+=== MIDGRID FORMAT CONTRACT ===
+# MidGrid Parser Contract
+
+Use this contract for the current reference parser in `midgrid_parser.py`.
+
+## Safe File Shape
+
+```text
+# Title: Example
+# tempo 80
+// Patch V0: 73
+// Patch V1: 71
+
+0.00 | C4:1@80 | E3:1@70
+1.00 | D4:1@80 | F3:1@70
+2.00 | E4:1@80 | G3:1@70
+```
+
+Rules:
+
+- Start grid rows with a numeric beat.
+- Separate columns with `|`.
+- Keep every row at the same voice count.
+- Use `#` for comments outside the grid.
+- Use `// Patch Vn: N` or `// Patch S: N`, `A`, `T`, `B`.
+- Use `// Pan Vn: N` for stereo placement (0 left, 64 center, 127 right).
+- Avoid `;` comments in files meant for the current parser; they are not skipped by `midgrid_parser.py`.
+
+## Notes And Accidentals
+
+Safe notes:
+
+```text
+C4 C#4 D4 D#4 E4 F4 F#4 G4 G#4 A4 A#4 B4
+B-4 A-4 E-4
+```
+
+Prefer sharps. Avoid Unicode flats and `Bb`, `Eb`, `Ab`, etc. unless the parser has been extended.
+
+## Canonical Modifier Order
+
+The current parser is more restrictive than the format spec. Prefer:
+
+```text
+Pitch:duration@velocity~patch
+```
+
+Examples:
+
+```text
+C4
+C4:1
+C4@80
+C4:1@80
+C4:1@80~73
+```
+
+Avoid:
+
+```text
+C4@80:1
+C4~73:1
+C4:1~73@80
+```
+
+## Spatial Discipline
+
+Good:
+
+```text
+0 | E4:1@80 | C3:1@70
+1 | F4:1@80 | D3:1@70
+2 | G4:1@80 | E3:1@70
+```
+
+Bad:
+
+```text
+0 | (bright opening)E4@80 | C3@70
+1 | F4@80 suspension      | D3@70
+2 | G4@80                 | E3@70 // ok only if comment starts after all cells
+```
+
+## Validation
+
+For a file `draft.midgrid`, validate with:
+
+```bash
+python3 midgrid_parser.py draft.midgrid draft.mid
+```
+
+For syntax-only checks without MIDI dependencies, run `python3 midgrid_lint.py draft.midgrid`. The full parser should produce `draft.mid`, `draft.report.txt`, and `draft.report.json` when `mido` is installed.
+
+=== YOUR TASK ===
+Compose BOTH outer voices in first species around the given A-minor cantus in the middle voice (V1). All three voice pairs are checked.
+
+Fill V0 (above the cantus) and V2 (below it) with one note per beat. Keep V1 unchanged. Every pair - V0 against V1, V1 against V2, AND V0 against V2 - must be consonant on every beat with no parallel perfect intervals in ANY pair. Fourths are permitted between upper voices when the lowest voice supports them. Prefer complete triads; raise G# only at the penultimate beat; V0 stays above V1, V2 below V1.
+
+Keep every row of the grid below, in order, with the same beat labels. Fill the V0 column (first) and V2 column (third), currently '.'. V1 (middle) is the cantus firmus and must not change.
+
+# Title: Cold Model 2 Task h1
+# tempo 80
+
+0 | . | A3:1@70 | .
+1 | . | C4:1@70 | .
+2 | . | B3:1@70 | .
+3 | . | D4:1@70 | .
+4 | . | C4:1@70 | .
+5 | . | E4:1@70 | .
+6 | . | D4:1@70 | .
+7 | . | B3:1@70 | .
+8 | . | C4:1@70 | .
+9 | . | B3:1@70 | .
+10 | . | A3:1@70 | .

@@ -1,0 +1,268 @@
+{
+  "schema": "midgrid.eval.v1",
+  "input": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+  "lint": {
+    "ok": true,
+    "errors": [],
+    "warnings": [
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 7,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 7,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 8,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 8,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 9,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 9,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 10,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 10,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 11,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 11,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 12,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 12,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 13,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 13,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 14,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 14,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 15,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 15,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 16,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 16,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 17,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 18,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 18,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 19,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 20,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 21,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 22,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 23,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 23,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 24,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 25,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 26,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 26,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 27,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 33,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 33,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-002/submissions/h2-A-3.midgrid",
+        "line": 36,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      }
+    ]
+  },
+  "parser": {
+    "ok": true,
+    "returncode": 0,
+    "stdout": "Saved /tmp/h2-A-3.mid\nPerceptual contrapuntal analysis written to /tmp/h2-A-3.report.txt\nPerceptual contrapuntal analysis JSON written to /tmp/h2-A-3.report.json\n",
+    "stderr": "",
+    "midi_out": "/tmp/h2-A-3.mid",
+    "report_text": "/tmp/h2-A-3.report.txt",
+    "report_json": "/tmp/h2-A-3.report.json"
+  },
+  "report_summary": {
+    "beat_count": 31,
+    "active_pair_count": 33,
+    "rest_pair_count": 60,
+    "motion_counts": {
+      "n/a": 60,
+      "unknown": 11,
+      "contrary": 5,
+      "parallel": 3,
+      "similar": 7,
+      "oblique": 7
+    },
+    "mean_perceptual_complexity": 6.985,
+    "max_perceptual_complexity": 13.0,
+    "max_perceptual_complexity_pair": {
+      "beat": 10.0,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 13.0,
+      "interval": "Minor 6th"
+    }
+  },
+  "issues": [],
+  "issue_counts": {
+    "error": 0,
+    "warning": 0,
+    "info": 0
+  }
+}

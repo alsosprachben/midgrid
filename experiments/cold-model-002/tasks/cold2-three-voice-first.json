@@ -1,0 +1,83 @@
+{
+  "id": "cold2-three-voice-first",
+  "title": "Three-Voice First Species Around an A-minor Cantus (cold-model task)",
+  "skill": "species-counterpoint",
+  "species": "first",
+  "objective": "Compose BOTH outer voices in first species around the given A-minor cantus in the middle voice (V1). All three voice pairs are checked.",
+  "prompt": "Fill V0 (above the cantus) and V2 (below it) with one note per beat. Keep V1 unchanged. Every pair - V0 against V1, V1 against V2, AND V0 against V2 - must be consonant on every beat with no parallel perfect intervals in ANY pair. Fourths are permitted between upper voices when the lowest voice supports them. Prefer complete triads; raise G# only at the penultimate beat; V0 stays above V1, V2 below V1.",
+  "seed_midgrid": "# Title: Cold Model 2 Task h1\n# tempo 80\n\n0 | . | A3:1@70 | .\n1 | . | C4:1@70 | .\n2 | . | B3:1@70 | .\n3 | . | D4:1@70 | .\n4 | . | C4:1@70 | .\n5 | . | E4:1@70 | .\n6 | . | D4:1@70 | .\n7 | . | B3:1@70 | .\n8 | . | C4:1@70 | .\n9 | . | B3:1@70 | .\n10 | . | A3:1@70 | .\n",
+  "success_criteria": [
+    "Parser-valid MidGrid.",
+    "V1 unchanged.",
+    "V0 and V2 filled every beat, no crossing.",
+    "All three pairs consonant, no parallel perfects anywhere."
+  ],
+  "evaluation_defaults": {
+    "fail_on": "error",
+    "high_complexity_threshold": 30.0,
+    "wide_spacing_threshold": 24,
+    "strict_parallels": true
+  },
+  "recording": {
+    "corrected_fail_on": "error"
+  },
+  "exercise_checks": {
+    "locked_voices": [
+      1
+    ],
+    "filled_voices": [
+      0,
+      2
+    ],
+    "interval_rules": [
+      {
+        "label": "All intervals must be consonant (V0-V1)",
+        "voice_pair": "V0-V1",
+        "beat_filter": "integer",
+        "allowed_interval_classes": [
+          0,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9
+        ],
+        "code": "exercise_downbeat_dissonance",
+        "severity": "error"
+      },
+      {
+        "label": "All intervals must be consonant (V1-V2)",
+        "voice_pair": "V1-V2",
+        "beat_filter": "integer",
+        "allowed_interval_classes": [
+          0,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9
+        ],
+        "code": "exercise_downbeat_dissonance",
+        "severity": "error"
+      },
+      {
+        "label": "All intervals must be consonant (V0-V2)",
+        "voice_pair": "V0-V2",
+        "beat_filter": "integer",
+        "allowed_interval_classes": [
+          0,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9
+        ],
+        "code": "exercise_downbeat_dissonance",
+        "severity": "error"
+      }
+    ]
+  }
+}
