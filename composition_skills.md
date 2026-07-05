@@ -17,11 +17,11 @@ show exercise -> draft strict MidGrid -> evaluate -> repair -> record example ->
 
 ## Recommended Curriculum
 
-1. First species above and below a cantus.
-2. Second and third species dissonance control.
+1. First species above and below a cantus, major and minor (Fux Dorian cantus).
+2. Second and third species dissonance control, above and below.
 3. Fourth species suspension preparation and resolution.
 4. Fifth species florid line building.
-5. Imitation and invertible counterpoint.
+5. Imitation (canon at the octave), invertible counterpoint, and three-voice pair discipline.
 6. Fugue exposition.
 7. Episode sequencing.
 8. Full fugue with report-driven revision.

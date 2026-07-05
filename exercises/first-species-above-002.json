@@ -1,0 +1,49 @@
+{
+  "evaluation_defaults": {
+    "fail_on": "error",
+    "high_complexity_threshold": 30.0,
+    "wide_spacing_threshold": 24
+  },
+  "recording": {
+    "corrected_fail_on": "error"
+  },
+  "id": "first-species-above-002",
+  "title": "First Species Above the Fux Dorian Cantus",
+  "skill": "species-counterpoint",
+  "species": "first",
+  "objective": "Complete a first-species counterpoint above the authentic Fux Dorian cantus firmus, one note against one.",
+  "prompt": "Replace rests in V0 with one whole-beat note per row. Keep V1 unchanged. Every interval must be consonant. Minor-mode discipline: prefer B natural (Dorian) where the line rises, avoid outlining an augmented second, and raise the leading tone (C#) only at the cadence. Close scale-degree 7-8 over 2-1.",
+  "seed_midgrid": "# Title: First Species Above Exercise 002 (Dorian)\n# tempo 80\n\n0 | . | D3:1@70\n1 | . | F3:1@70\n2 | . | E3:1@70\n3 | . | D3:1@70\n4 | . | G3:1@70\n5 | . | F3:1@70\n6 | . | A3:1@70\n7 | . | G3:1@70\n8 | . | F3:1@70\n9 | . | E3:1@70\n10 | . | D3:1@70\n",
+  "success_criteria": [
+    "Every row remains strict parser-valid MidGrid.",
+    "V1 cantus remains unchanged.",
+    "All intervals consonant; no parallel or repeated perfect intervals.",
+    "C# appears only at the penultimate beat; no augmented-second outline.",
+    "Corrected solution has no evaluator errors."
+  ],
+  "exercise_checks": {
+    "locked_voices": [
+      1
+    ],
+    "filled_voices": [
+      0
+    ],
+    "interval_rules": [
+      {
+        "label": "First-species intervals must be consonant",
+        "voice_pair": "V0-V1",
+        "beat_filter": "integer",
+        "allowed_interval_classes": [
+          0,
+          3,
+          4,
+          7,
+          8,
+          9
+        ],
+        "code": "exercise_downbeat_dissonance",
+        "severity": "error"
+      }
+    ]
+  }
+}

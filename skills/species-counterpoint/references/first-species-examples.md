@@ -213,3 +213,27 @@ Lesson:
 - Use contrary and mixed motion so the lower line stays independent, consonant, and below the cantus.
 - The corrected passage evaluates with zero errors and zero warnings.
 
+
+## Minor Mode: first-species-above-002
+
+The Fux Dorian cantus (`D F E D G F A G F E D`) introduces the minor-mode decisions the C-major set never exercised. The recorded solution is Fux's own: `A A G A B C C B D C# D`.
+
+Attempt (leaps into perfect fifths, dissonant peak):
+
+```text
+4 | D4:1@80  | G3:1@70
+5 | C4:1@80  | F3:1@70
+...
+8 | E4:1@80  | F3:1@70
+```
+
+Evaluator diagnosis:
+
+- `parallel_perfect` at 4 and 5: fifths approached and left in parallel motion.
+- `exercise_downbeat_dissonance` at 8: E over F is a major seventh.
+
+Correction (Fux): `B3 C4` at beats 4-5 (thirds and fifths reached by contrary steps), `D4` at 8 (a sixth).
+
+Lesson:
+
+- In minor, keep B natural where the line rises (Dorian), avoid the augmented-second outline, and spend C# only on the penultimate beat.

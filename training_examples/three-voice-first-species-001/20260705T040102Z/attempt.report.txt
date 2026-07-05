@@ -1,0 +1,44 @@
+Beat 0.00:
+  V0-V1: interval=Perfect 5th, motion=unknown, perceptual_complexity=5.0
+  V0-V2: interval=Perfect 5th (+1 oct), motion=unknown, perceptual_complexity=2.5
+  V1-V2: interval=Unison (+1 oct) [phase-aligned], motion=unknown, perceptual_complexity=1.0
+Beat 1.00:
+  V0-V1: interval=Major 6th, motion=similar, perceptual_complexity=8.0
+  V0-V2: interval=Unison (+2 oct) [phase-aligned], motion=oblique, perceptual_complexity=0.889
+  V1-V2: interval=Minor 3rd (+1 oct), motion=oblique, perceptual_complexity=5.5
+Beat 2.00:
+  V0-V1: interval=Minor 3rd, motion=similar, perceptual_complexity=11.0
+  V0-V2: interval=Minor 3rd (+1 oct), motion=contrary, perceptual_complexity=5.5
+  V1-V2: interval=Unison (+1 oct) [phase-aligned], motion=contrary, perceptual_complexity=1.0
+Beat 3.00:
+  V0-V1: interval=Perfect 5th, motion=contrary, perceptual_complexity=5.0
+  V0-V2: interval=Major 3rd (+1 oct), motion=similar, perceptual_complexity=4.5
+  V1-V2: interval=Major 6th, motion=contrary, perceptual_complexity=8.0
+Beat 4.00:
+  V0-V1: interval=Perfect 4th [phase-aligned], motion=similar, perceptual_complexity=7.0
+  V0-V2: interval=Minor 6th (+1 oct) [phase-aligned], motion=contrary, perceptual_complexity=6.5
+  V1-V2: interval=Minor 3rd (+1 oct), motion=contrary, perceptual_complexity=5.5
+Beat 5.00:
+  V0-V1: interval=Major 6th, motion=contrary, perceptual_complexity=8.0
+  V0-V2: interval=Unison (+2 oct) [phase-aligned], motion=contrary, perceptual_complexity=0.889
+  V1-V2: interval=Minor 3rd (+1 oct), motion=parallel, perceptual_complexity=5.5
+Beat 6.00:
+  V0-V1: interval=Minor 3rd, motion=contrary, perceptual_complexity=11.0
+  V0-V2: interval=Perfect 5th (+1 oct), motion=contrary, perceptual_complexity=2.5
+  V1-V2: interval=Major 3rd (+1 oct), motion=similar, perceptual_complexity=4.5
+Beat 7.00:
+  V0-V1: interval=Major 3rd, motion=similar, perceptual_complexity=9.0
+  V0-V2: interval=Perfect 5th (+1 oct), motion=parallel, perceptual_complexity=2.5
+  V1-V2: interval=Minor 3rd (+1 oct), motion=similar, perceptual_complexity=5.5
+Beat 8.00:
+  V0-V1: interval=Major 3rd, motion=parallel, perceptual_complexity=9.0
+  V0-V2: interval=Perfect 5th (+1 oct), motion=parallel, perceptual_complexity=2.5
+  V1-V2: interval=Minor 3rd (+1 oct), motion=parallel, perceptual_complexity=5.5
+Beat 9.00:
+  V0-V1: interval=Major 6th, motion=contrary, perceptual_complexity=8.0
+  V0-V2: interval=Major 3rd (+1 oct), motion=similar, perceptual_complexity=4.5
+  V1-V2: interval=Perfect 5th, motion=contrary, perceptual_complexity=5.0
+Beat 10.00:
+  V0-V1: interval=Unison (+1 oct) [phase-aligned], motion=contrary, perceptual_complexity=1.0
+  V0-V2: interval=Unison (+2 oct) [phase-aligned], motion=contrary, perceptual_complexity=0.889
+  V1-V2: interval=Unison (+1 oct) [phase-aligned], motion=similar, perceptual_complexity=1.0

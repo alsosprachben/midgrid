@@ -1,0 +1,83 @@
+{
+  "id": "three-voice-first-species-001",
+  "title": "Three-Voice First Species: All Pairs Count",
+  "skill": "species-counterpoint",
+  "species": "first",
+  "objective": "Compose BOTH outer voices in first species around the Fux Dorian cantus in the middle voice. Every one of the three voice pairs is checked: this drill exists because three consecutive capstone compositions failed only in the least-watched pair.",
+  "prompt": "The cantus is V1 (middle). Fill V0 above and V2 below with one note per beat. All three pairs (V0-V1, V1-V2, V0-V2) must be consonant on every beat, with no parallel perfect intervals in ANY pair. Fourths are permitted between the upper pair when the lowest voice supports them, but never against V2. Prefer complete triads; approach every perfect interval by contrary or oblique motion in every pair, not just the pairs involving the cantus.",
+  "seed_midgrid": "# Title: Three-Voice First Species Exercise 001\n# tempo 80\n\n0 | . | D4:1@70 | .\n1 | . | F4:1@70 | .\n2 | . | E4:1@70 | .\n3 | . | D4:1@70 | .\n4 | . | G4:1@70 | .\n5 | . | F4:1@70 | .\n6 | . | A4:1@70 | .\n7 | . | G4:1@70 | .\n8 | . | F4:1@70 | .\n9 | . | E4:1@70 | .\n10 | . | D4:1@70 | .\n",
+  "success_criteria": [
+    "Every row remains strict parser-valid MidGrid.",
+    "V1 cantus remains unchanged.",
+    "V0 and V2 are filled on every beat; V0 stays above V1, V2 below V1.",
+    "All three voice pairs are consonant on every beat with no parallel perfects anywhere.",
+    "Corrected solution has no evaluator errors."
+  ],
+  "evaluation_defaults": {
+    "fail_on": "error",
+    "high_complexity_threshold": 30.0,
+    "wide_spacing_threshold": 24
+  },
+  "recording": {
+    "corrected_fail_on": "error"
+  },
+  "exercise_checks": {
+    "locked_voices": [
+      1
+    ],
+    "filled_voices": [
+      0,
+      2
+    ],
+    "interval_rules": [
+      {
+        "label": "Three-voice intervals must be consonant (V0-V1)",
+        "voice_pair": "V0-V1",
+        "beat_filter": "integer",
+        "allowed_interval_classes": [
+          0,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9
+        ],
+        "code": "exercise_downbeat_dissonance",
+        "severity": "error"
+      },
+      {
+        "label": "Three-voice intervals must be consonant (V1-V2)",
+        "voice_pair": "V1-V2",
+        "beat_filter": "integer",
+        "allowed_interval_classes": [
+          0,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9
+        ],
+        "code": "exercise_downbeat_dissonance",
+        "severity": "error"
+      },
+      {
+        "label": "Three-voice intervals must be consonant (V0-V2)",
+        "voice_pair": "V0-V2",
+        "beat_filter": "integer",
+        "allowed_interval_classes": [
+          0,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9
+        ],
+        "code": "exercise_downbeat_dissonance",
+        "severity": "error"
+      }
+    ]
+  }
+}

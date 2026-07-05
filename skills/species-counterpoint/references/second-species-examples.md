@@ -150,3 +150,24 @@ Correction strategy:
 - Use a single final note at beat 7.
 - Keep all V1 cantus and hold cells unchanged.
 - Make every integer-beat V0-V1 interval consonant.
+
+## Below the Cantus: second-species-below-001
+
+With the counterpoint underneath (Fux Dorian cantus above at the octave), the interval vocabulary inverts: thirds become sixths, and fourths against the upper voice are dissonant because the lower voice IS the bass.
+
+Attempt fragment (weak-to-strong octaves):
+
+```text
+3.5 | -       | D3:0.5@80
+4   | G4:0.5@70 | G3:0.5@80
+```
+
+Evaluator diagnosis:
+
+- `parallel_perfect` from 3.5 to 4: D3 under D4 moved to G3 under G4, octave to octave, both voices leaping a fourth.
+
+Correction: `B2` at beat 4 (a thirteenth, reached by contrary motion), recovering through `D3` on the weak half.
+
+Lesson:
+
+- Below-voice parallels hide in weak-to-strong arrivals; the below cadence is leading tone C#3 under the cantus's E, rising to the final octave.

@@ -1,0 +1,49 @@
+{
+  "id": "canon-at-octave-001",
+  "title": "Canon at the Octave, Two Beats Delay",
+  "skill": "fugue-exposition",
+  "species": "canon",
+  "objective": "Continue a two-voice canon at the octave: the follower (V1) sings exactly what the leader (V0) sang two beats earlier, an octave lower. The seed gives the leader's first two notes and their echoes.",
+  "prompt": "Fill both voices through beat 10. Canon constraint: every leader note at beat b must reappear in V1 at beat b+2 transposed down an octave, through the follower's beat 8. The last two beats are a free cadence in both voices (traditional license): close leading-tone to final over 5-1. Composing forward means every new leader note must be consonant with your own note of two beats ago; integer-beat intervals must be consonant and no parallel perfects. Watch sequences: transposing your last two notes up or down by the same interval creates parallel motion with your own echo.",
+  "seed_midgrid": "# Title: Canon at the Octave Exercise 001\n# tempo 80\n\n0  | D4:1@80 | .\n1  | F4:1@80 | .\n2  | .       | D3:1@76\n3  | .       | F3:1@76\n4  | .       | .\n5  | .       | .\n6  | .       | .\n7  | .       | .\n8  | .       | .\n9  | .       | .\n10 | .       | .\n",
+  "success_criteria": [
+    "Every row remains strict parser-valid MidGrid.",
+    "The given leader and follower openings are unchanged.",
+    "V1 equals V0 delayed two beats and transposed down an octave, through beat 8.",
+    "Integer-beat intervals are consonant with no parallel perfects.",
+    "The final two beats cadence with the leading tone rising to the final.",
+    "Corrected solution has no evaluator errors."
+  ],
+  "evaluation_defaults": {
+    "fail_on": "error",
+    "high_complexity_threshold": 30.0,
+    "wide_spacing_threshold": 24
+  },
+  "recording": {
+    "corrected_fail_on": "error"
+  },
+  "exercise_checks": {
+    "filled_voices": [
+      0,
+      1
+    ],
+    "interval_rules": [
+      {
+        "label": "Canon intervals must be consonant",
+        "voice_pair": "V0-V1",
+        "beat_filter": "integer",
+        "allowed_interval_classes": [
+          0,
+          3,
+          4,
+          7,
+          8,
+          9
+        ],
+        "code": "exercise_downbeat_dissonance",
+        "severity": "error",
+        "allow_rests": true
+      }
+    ]
+  }
+}

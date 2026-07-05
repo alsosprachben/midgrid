@@ -9,7 +9,7 @@ description: Compose, inspect, or repair strict MidGrid fugue expositions with s
 
 Build the exposition as a sequence of visible entries, then test whether the countersubject survives above and below the subject.
 
-1. Read `references/exposition-patterns.md`; for post-exposition work (episodes, stretto), read `references/stretto-and-episodes.md`.
+1. Read `references/exposition-patterns.md`; for post-exposition work (episodes, stretto), read `references/stretto-and-episodes.md`; for canon, `references/canon-patterns.md`.
 2. State the subject in one voice using strict MidGrid.
 3. Decide real or tonal answer. Prefer tonal answer when scale-degree 5 to 1 motion would destabilize the key.
 4. Add countersubject against the answer.

@@ -1,0 +1,19 @@
+{
+  "schema": "midgrid.training_example.v1",
+  "exercise_id": "second-species-below-001",
+  "exercise_title": "Second Species Below the Fux Dorian Cantus",
+  "created_utc": "2026-07-05T03:59:54.953632+00:00",
+  "attempt": "attempt.midgrid",
+  "corrected": "corrected.midgrid",
+  "attempt_eval": "attempt.eval.json",
+  "corrected_eval": "corrected.eval.json",
+  "attempt_reports": {
+    "report_json": "attempt.report.json",
+    "report_text": "attempt.report.txt"
+  },
+  "corrected_reports": {
+    "report_json": "corrected.report.json",
+    "report_text": "corrected.report.txt"
+  },
+  "lesson": "Below the cantus the vocabulary inverts: thirds become sixths and fourths become dissonant; watch weak-to-strong octave arrivals, which is where below-voice parallels hide."
+}
