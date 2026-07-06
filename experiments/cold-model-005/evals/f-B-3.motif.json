@@ -1,0 +1,173 @@
+{
+  "file": "experiments/cold-model-005/submissions/f-B-3.midgrid",
+  "subject": {
+    "voice": 1,
+    "beat_start": 0.0,
+    "beat_end": 7.0,
+    "notes": [
+      "G4",
+      "D5",
+      "B-4",
+      "A4",
+      "G4",
+      "F#4",
+      "G4",
+      "A4",
+      "B-4",
+      "A4"
+    ],
+    "chromatic_d1": [
+      7,
+      -4,
+      -1,
+      -2,
+      -1,
+      1,
+      2,
+      1,
+      -1
+    ],
+    "diatonic_d1": [
+      4,
+      -2,
+      -1,
+      -1,
+      -1,
+      1,
+      1,
+      1,
+      -1
+    ]
+  },
+  "echoes": [
+    {
+      "voice": 0,
+      "note_index": 0,
+      "beat_start": 8.0,
+      "beat_end": 15.0,
+      "transposition": 7,
+      "diat_offset": 4,
+      "kind": "tonal",
+      "inverted": false,
+      "contour": 1.0,
+      "diatonic": 0.7777777777777778,
+      "chromatic": 0.7777777777777778,
+      "weighted": 0.8666666666666667,
+      "chromatic_mismatch_at": [
+        0,
+        1
+      ],
+      "diatonic_mismatch_at": [
+        0,
+        1
+      ]
+    },
+    {
+      "voice": 2,
+      "note_index": 0,
+      "beat_start": 16.0,
+      "beat_end": 23.0,
+      "transposition": -24,
+      "diat_offset": -14,
+      "kind": "real",
+      "inverted": false,
+      "contour": 1.0,
+      "diatonic": 1.0,
+      "chromatic": 1.0,
+      "weighted": 1.0,
+      "chromatic_mismatch_at": [],
+      "diatonic_mismatch_at": []
+    },
+    {
+      "voice": 1,
+      "note_index": 27,
+      "beat_start": 30.0,
+      "beat_end": 37.0,
+      "transposition": -9,
+      "diat_offset": -5,
+      "kind": "diatonic",
+      "inverted": false,
+      "contour": 1.0,
+      "diatonic": 1.0,
+      "chromatic": 0.5555555555555556,
+      "weighted": 0.8888888888888888,
+      "chromatic_mismatch_at": [
+        1,
+        2,
+        7,
+        8
+      ],
+      "diatonic_mismatch_at": []
+    },
+    {
+      "voice": 0,
+      "note_index": 40,
+      "beat_start": 42.0,
+      "beat_end": 49.0,
+      "transposition": 5,
+      "diat_offset": 3,
+      "kind": "real",
+      "inverted": false,
+      "contour": 1.0,
+      "diatonic": 1.0,
+      "chromatic": 1.0,
+      "weighted": 1.0,
+      "chromatic_mismatch_at": [],
+      "diatonic_mismatch_at": []
+    },
+    {
+      "voice": 1,
+      "note_index": 54,
+      "beat_start": 54.0,
+      "beat_end": 63.0,
+      "transposition": -12,
+      "diat_offset": -7,
+      "kind": "weak",
+      "inverted": false,
+      "contour": 0.7777777777777778,
+      "diatonic": 0.6666666666666666,
+      "chromatic": 0.6666666666666666,
+      "weighted": 0.711111111111111,
+      "chromatic_mismatch_at": [
+        4,
+        5,
+        6
+      ],
+      "diatonic_mismatch_at": [
+        4,
+        5,
+        6
+      ]
+    }
+  ],
+  "recalls": [
+    {
+      "voice": 0,
+      "length": 8,
+      "first": {
+        "beat_start": 10.0,
+        "beat_end": 15.0
+      },
+      "second": {
+        "beat_start": 44.0,
+        "beat_end": 49.0
+      },
+      "transposition": -2
+    },
+    {
+      "voice": 1,
+      "length": 11,
+      "first": {
+        "beat_start": 6.0,
+        "beat_end": 15.0
+      },
+      "second": {
+        "beat_start": 40.0,
+        "beat_end": 49.0
+      },
+      "transposition": -14
+    }
+  ],
+  "fusion": [],
+  "motivic_economy": 0.33707865168539325
+}

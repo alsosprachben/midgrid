@@ -1,0 +1,248 @@
+{
+  "schema": "midgrid.eval.v1",
+  "input": "experiments/cold-model-005/submissions/f-C-1.midgrid",
+  "lint": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  },
+  "parser": {
+    "ok": true,
+    "returncode": 0,
+    "stdout": "Saved /tmp/f-C-1.mid\nPerceptual contrapuntal analysis written to /tmp/f-C-1.report.txt\nPerceptual contrapuntal analysis JSON written to /tmp/f-C-1.report.json\n",
+    "stderr": "",
+    "midi_out": "/tmp/f-C-1.mid",
+    "report_text": "/tmp/f-C-1.report.txt",
+    "report_json": "/tmp/f-C-1.report.json"
+  },
+  "report_summary": {
+    "beat_count": 95,
+    "active_pair_count": 219,
+    "rest_pair_count": 66,
+    "motion_counts": {
+      "n/a": 66,
+      "unknown": 8,
+      "similar": 37,
+      "contrary": 51,
+      "parallel": 24,
+      "oblique": 99
+    },
+    "mean_perceptual_complexity": 7.319,
+    "max_perceptual_complexity": 77.0,
+    "max_perceptual_complexity_pair": {
+      "beat": 37.0,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 77.0,
+      "interval": "Tritone"
+    }
+  },
+  "issues": [
+    {
+      "severity": "info",
+      "code": "voice_fusion",
+      "message": "V0-V1 move in parallel Major 3rd from beat 10.5 to 12 (2 transitions, strength 2.2 from the ratio table): a rooted interval, so common-fate motion merges the voices into one bass-rooted stream. Legitimate as a deliberate handoff or doubling; otherwise restore independence with contrary or oblique motion.",
+      "beat": 12.0,
+      "start_beat": 10.5,
+      "voice_pair": "V0-V1",
+      "transitions": 2,
+      "strength": 2.22
+    },
+    {
+      "severity": "info",
+      "code": "displaced_root_motion",
+      "message": "V0-V1 travel in parallel Perfect 4th from beat 19 to 20 (1 transition, strength 1.4 from the ratio table): the interval's implied fundamental is displaced from the lower note (ratio denominator has an odd factor), so the unvoiced root travels in parallel with the pair. Break the traveling fourth-class motion, or voice the root so the displacement is intentional.",
+      "beat": 20.0,
+      "start_beat": 19.0,
+      "voice_pair": "V0-V1",
+      "transitions": 1,
+      "strength": 1.43
+    },
+    {
+      "severity": "info",
+      "code": "displaced_root_motion",
+      "message": "V0-V2 travel in parallel Minor 6th (+1 oct) from beat 18.5 to 20 (2 transitions, strength 1.8 from the ratio table): the interval's implied fundamental is displaced from the lower note (ratio denominator has an odd factor), so the unvoiced root travels in parallel with the pair. Break the traveling fourth-class motion, or voice the root so the displacement is intentional.",
+      "beat": 20.0,
+      "start_beat": 18.5,
+      "voice_pair": "V0-V2",
+      "transitions": 2,
+      "strength": 1.85
+    },
+    {
+      "severity": "info",
+      "code": "displaced_root_motion",
+      "message": "V0-V2 travel in parallel Major 6th (+1 oct) from beat 34 to 35 (1 transition, strength 2.5 from the ratio table): the interval's implied fundamental is displaced from the lower note (ratio denominator has an odd factor), so the unvoiced root travels in parallel with the pair. Break the traveling fourth-class motion, or voice the root so the displacement is intentional.",
+      "beat": 35.0,
+      "start_beat": 34.0,
+      "voice_pair": "V0-V2",
+      "transitions": 1,
+      "strength": 2.5
+    },
+    {
+      "severity": "info",
+      "code": "voice_fusion",
+      "message": "V1-V2 move in parallel Major 3rd (+1 oct) from beat 37.5 to 38 (1 transition, strength 2.2 from the ratio table): a rooted interval, so common-fate motion merges the voices into one bass-rooted stream. Legitimate as a deliberate handoff or doubling; otherwise restore independence with contrary or oblique motion.",
+      "beat": 38.0,
+      "start_beat": 37.5,
+      "voice_pair": "V1-V2",
+      "transitions": 1,
+      "strength": 2.22
+    },
+    {
+      "severity": "info",
+      "code": "voice_fusion",
+      "message": "V1-V2 move in parallel Major 3rd (+1 oct) from beat 38.5 to 39 (1 transition, strength 2.2 from the ratio table): a rooted interval, so common-fate motion merges the voices into one bass-rooted stream. Legitimate as a deliberate handoff or doubling; otherwise restore independence with contrary or oblique motion.",
+      "beat": 39.0,
+      "start_beat": 38.5,
+      "voice_pair": "V1-V2",
+      "transitions": 1,
+      "strength": 2.22
+    },
+    {
+      "severity": "info",
+      "code": "displaced_root_motion",
+      "message": "V0-V1 travel in parallel Perfect 4th from beat 45 to 46 (1 transition, strength 1.4 from the ratio table): the interval's implied fundamental is displaced from the lower note (ratio denominator has an odd factor), so the unvoiced root travels in parallel with the pair. Break the traveling fourth-class motion, or voice the root so the displacement is intentional.",
+      "beat": 46.0,
+      "start_beat": 45.0,
+      "voice_pair": "V0-V1",
+      "transitions": 1,
+      "strength": 1.43
+    },
+    {
+      "severity": "info",
+      "code": "displaced_root_motion",
+      "message": "V0-V2 travel in parallel Minor 6th (+1 oct) from beat 44.5 to 46 (2 transitions, strength 1.8 from the ratio table): the interval's implied fundamental is displaced from the lower note (ratio denominator has an odd factor), so the unvoiced root travels in parallel with the pair. Break the traveling fourth-class motion, or voice the root so the displacement is intentional.",
+      "beat": 46.0,
+      "start_beat": 44.5,
+      "voice_pair": "V0-V2",
+      "transitions": 2,
+      "strength": 1.85
+    },
+    {
+      "severity": "info",
+      "code": "voice_fusion",
+      "message": "V0-V2 move in parallel Major 3rd (+1 oct) from beat 51.5 to 53 (2 transitions, strength 4.4 from the ratio table): a rooted interval, so common-fate motion merges the voices into one bass-rooted stream. Legitimate as a deliberate handoff or doubling; otherwise restore independence with contrary or oblique motion.",
+      "beat": 53.0,
+      "start_beat": 51.5,
+      "voice_pair": "V0-V2",
+      "transitions": 2,
+      "strength": 4.44
+    },
+    {
+      "severity": "info",
+      "code": "displaced_root_motion",
+      "message": "V0-V1 travel in parallel Perfect 4th from beat 63 to 64 (1 transition, strength 1.4 from the ratio table): the interval's implied fundamental is displaced from the lower note (ratio denominator has an odd factor), so the unvoiced root travels in parallel with the pair. Break the traveling fourth-class motion, or voice the root so the displacement is intentional.",
+      "beat": 64.0,
+      "start_beat": 63.0,
+      "voice_pair": "V0-V1",
+      "transitions": 1,
+      "strength": 1.43
+    },
+    {
+      "severity": "info",
+      "code": "displaced_root_motion",
+      "message": "V0-V2 travel in parallel Minor 6th (+2 oct) from beat 62.5 to 64 (2 transitions, strength 2.1 from the ratio table): the interval's implied fundamental is displaced from the lower note (ratio denominator has an odd factor), so the unvoiced root travels in parallel with the pair. Break the traveling fourth-class motion, or voice the root so the displacement is intentional.",
+      "beat": 64.0,
+      "start_beat": 62.5,
+      "voice_pair": "V0-V2",
+      "transitions": 2,
+      "strength": 2.08
+    },
+    {
+      "severity": "warning",
+      "code": "high_complexity",
+      "message": "V0-V1 reaches perceptual complexity 77 at beat 37.",
+      "beat": 37.0,
+      "voice_pair": "V0-V1",
+      "interval": "Tritone",
+      "perceptual_complexity": 77.0,
+      "threshold": 30.0
+    },
+    {
+      "severity": "warning",
+      "code": "high_complexity",
+      "message": "V0-V1 reaches perceptual complexity 77 at beat 39.",
+      "beat": 39.0,
+      "voice_pair": "V0-V1",
+      "interval": "Tritone",
+      "perceptual_complexity": 77.0,
+      "threshold": 30.0
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 27 semitones apart at beat 60.",
+      "beat": 60.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 27,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 24 semitones apart at beat 62.",
+      "beat": 62.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 24,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 25 semitones apart at beat 62.5.",
+      "beat": 62.5,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 25,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 27 semitones apart at beat 63.",
+      "beat": 63.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 27,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 27 semitones apart at beat 64.",
+      "beat": 64.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 27,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 24 semitones apart at beat 65.",
+      "beat": 65.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 24,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 22 semitones apart at beat 65.5.",
+      "beat": 65.5,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 22,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 20 semitones apart at beat 67.",
+      "beat": 67.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 20,
+      "threshold": 19
+    }
+  ],
+  "issue_counts": {
+    "error": 0,
+    "warning": 10,
+    "info": 11
+  }
+}
