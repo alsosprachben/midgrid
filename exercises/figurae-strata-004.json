@@ -1,0 +1,50 @@
+{
+  "id": "figurae-strata-004",
+  "title": "Stratified Countersubject",
+  "skill": "figurae",
+  "objective": "Compose a countersubject in a different rhythmic stratum than the given subject (the Contrapunctus IX rule): double-speed cells riding above the subject, not a note-for-note harmonization.",
+  "prompt": "Replace rests in V0 with a parser-valid counter-line against the given G-minor subject in V1: half-beat notes (duration 0.5) on every half-beat row from 0 through 7.5, and a final note of duration 2 at beat 8. The counter-line lives at DOUBLE the subject's prevailing rate - do not shadow the subject's attack pattern or its contour. Integer-beat tones must be consonant against the subject; dissonant half-beat tones must sit inside named cells (passing, neighbor, enclosure, escape). Shape the line as figurae cells with direction changes, one clear peak, and a leading-tone approach to the final octave or tenth.",
+  "seed_midgrid": "# Title: Figurae Strata Exercise 004\n# tempo 80\n\n0 | . | G3:1@72\n0.5 | . | -\n1 | . | D4:1@72\n1.5 | . | -\n2 | . | B-3:0.5@72\n2.5 | . | A3:0.5@72\n3 | . | G3:1@72\n3.5 | . | -\n4 | . | F#3:1@72\n4.5 | . | -\n5 | . | G3:0.5@72\n5.5 | . | A3:0.5@72\n6 | . | B-3:1@72\n6.5 | . | -\n7 | . | A3:1@72\n7.5 | . | -\n8 | . | G3:2@72\n",
+  "success_criteria": [
+    "Every row remains strict parser-valid MidGrid.",
+    "V1 subject remains unchanged, including hold cells.",
+    "V0 attacks on every half-beat row through 7.5 plus a final note at beat 8 - roughly double the subject's attack rate.",
+    "Integer-beat intervals are consonant; dissonant half-beat tones are cell interiors.",
+    "No rhythmic_homorhythm finding: the pair is rate-stratified, not harmonized.",
+    "Corrected solution has no evaluator errors."
+  ],
+  "evaluation_defaults": {
+    "fail_on": "error",
+    "high_complexity_threshold": 30.0,
+    "wide_spacing_threshold": 24,
+    "strict_parallels": false
+  },
+  "recording": {
+    "corrected_fail_on": "error"
+  },
+  "exercise_checks": {
+    "locked_voices": [
+      1
+    ],
+    "filled_voices": [
+      0
+    ],
+    "interval_rules": [
+      {
+        "label": "Integer-beat cell boundaries must be consonant",
+        "voice_pair": "V0-V1",
+        "beat_filter": "integer",
+        "allowed_interval_classes": [
+          0,
+          3,
+          4,
+          7,
+          8,
+          9
+        ],
+        "code": "exercise_downbeat_dissonance",
+        "severity": "error"
+      }
+    ]
+  }
+}

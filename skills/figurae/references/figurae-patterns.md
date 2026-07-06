@@ -186,6 +186,52 @@ on downbeats. When you add a tone, ask: what strong-beat target does its
 direction promise, and is that target consonant? If there is no answer,
 the tone is fill — cut it or put it inside a cell.
 
+## 11. Rhythmic strata (the Contrapunctus IX rule)
+
+Direction is not the only independence axis. Voices that attack at the
+same instants share one clock and fuse into harmonized homophony no
+matter how their pitches move — a countersubject that shadows the
+subject's rhythm note-for-note is a harmony part, not a counter-melody.
+The model is Contrapunctus IX: a racing subject in constant eighths
+against the main theme in augmentation, an order of magnitude slower.
+The two ideas occupy disjoint rhythmic bands, so the ear cannot merge
+them even on rooted intervals.
+
+The rule: **put the countersubject at a different rate, attacking in the
+other voice's gaps.** Against a quarter-note subject, write the CS in
+half-beat cells (double speed) or in long syncopated notes (half speed,
+suspension chains); land the CS's strong tones where the subject holds.
+Worked pair — the same subject head, first harmonized (the failure), then
+stratified (the fix):
+
+Harmonized (one clock, two "voices"; subject in V1):
+
+```text
+0   | B-4:1@78 | G3:1@72
+1   | F5:1@78  | D4:1@72
+2   | D5:1@78  | B-3:1@72
+3   | C5:1@78  | A3:1@72
+```
+
+Stratified (double-speed cells in the gaps; co-attacks only at phrase
+boundaries):
+
+```text
+0   | B-4:0.5@78 | G3:1@72
+0.5 | C5:0.5@76  | -
+1   | A4:0.5@76  | D4:1@72
+1.5 | B-4:0.5@76 | -
+2   | D5:0.5@78  | B-3:1@72
+2.5 | B-4:0.5@76 | -
+3   | C5:0.5@76  | A3:1@72
+3.5 | A4:0.5@74  | -
+```
+
+The evaluator's `rhythmic_homorhythm` finding measures this piece-wide:
+per-pair fraction of time on a shared attack clock. Keep the mean below
+about 0.8; deliberate chorale homophony is the only texture that should
+sit near 1.0.
+
 ## Verification
 
 - `python3 midgrid_eval.py FILE --fail-on none` — no `melodic_fusion`

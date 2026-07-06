@@ -265,6 +265,76 @@ def melodic_fusion(voices, window_beats=4.0, min_comoves=5, min_agree=0.85):
     return regions
 
 
+def rhythmic_fusion(voices, window_beats=8.0, min_attacks=6, min_co=0.9,
+                    max_ratio=1.5):
+    """Homorhythm regions: sliding windows where two voices attack at the
+    same instants (co-attack fraction >= min_co) at SIMILAR rates (attack
+    count ratio < max_ratio). Both conditions matter: a running-eighths
+    line over a theme in augmentation co-attacks at every theme note but
+    is rate-stratified (the Contrapunctus IX regime, ratio >= max_ratio);
+    harmonization is same clock at the same rate."""
+    regions = []
+    step = 1.0
+    end = max((n["beat"] for v in voices for n in v), default=0.0)
+    for a in range(len(voices)):
+        for b in range(a + 1, len(voices)):
+            atk_a = sorted(n["beat"] for n in voices[a])
+            atk_b = sorted(n["beat"] for n in voices[b])
+            cur = None
+            t0 = 0.0
+            while t0 + window_beats <= end + step:
+                wa = set(t for t in atk_a if t0 <= t < t0 + window_beats)
+                wb = set(t for t in atk_b if t0 <= t < t0 + window_beats)
+                ok = False
+                if len(wa) >= min_attacks and len(wb) >= min_attacks:
+                    co = len(wa & wb) / min(len(wa), len(wb))
+                    ratio = max(len(wa), len(wb)) / min(len(wa), len(wb))
+                    ok = co >= min_co and ratio < max_ratio
+                if ok:
+                    if cur and t0 <= cur["beat_end"]:
+                        cur["beat_end"] = t0 + window_beats
+                        cur["co_attacks"] = max(cur["co_attacks"], len(wa & wb))
+                    else:
+                        if cur:
+                            regions.append(cur)
+                        cur = dict(pair=f"V{a}-V{b}", beat_start=t0,
+                                   beat_end=t0 + window_beats,
+                                   co_attacks=len(wa & wb),
+                                   rate_ratio=round(max(len(wa), len(wb))
+                                                    / min(len(wa), len(wb)), 2))
+                elif cur:
+                    regions.append(cur)
+                    cur = None
+                t0 += step
+            if cur:
+                regions.append(cur)
+    regions.sort(key=lambda r: (r["beat_start"], r["pair"]))
+    return regions
+
+
+def homorhythm_fractions(voices):
+    """Per-pair fraction of the pair's active span spent in homorhythm
+    regions (from rhythmic_fusion). 1.0 = the pair shares one attack clock
+    throughout (harmonization); low values = rate-stratified counterpoint
+    (Contrapunctus IX regime)."""
+    from collections import defaultdict
+    regs = rhythmic_fusion(voices)
+    spans = {}
+    for a in range(len(voices)):
+        for b in range(a + 1, len(voices)):
+            if not voices[a] or not voices[b]:
+                continue
+            lo = max(voices[a][0]["beat"], voices[b][0]["beat"])
+            hi = min(voices[a][-1]["beat"], voices[b][-1]["beat"])
+            if hi > lo:
+                spans[f"V{a}-V{b}"] = (lo, hi)
+    homo = defaultdict(float)
+    for r in regs:
+        homo[r["pair"]] += r["beat_end"] - r["beat_start"]
+    return {pair: min(1.0, homo.get(pair, 0.0) / (hi - lo))
+            for pair, (lo, hi) in spans.items()}
+
+
 def parse_segment(spec: str, voices):
     m = re.match(r"^V(\d+):([\d.]+)-([\d.]+)$", spec)
     if not m:
@@ -375,6 +445,11 @@ def main(argv):
     for r in fusion[:8]:
         print(f"  {r['pair']} beats {r['beat_start']:g}-{r['beat_end']:g} "
               f"(comoves {r['comoves']}, locked {r['locked']})")
+    strata = homorhythm_fractions(voices)
+    if strata:
+        mean_h = sum(strata.values()) / len(strata)
+        print(f"\nHomorhythm (co-attack clock): mean {mean_h:.2f}  " +
+              " ".join(f"{k}:{v:.2f}" for k, v in sorted(strata.items())))
     print(f"\nMotivic economy: {economy:.0%} of {total_attacks} attacks "
           f"in subject-family spans")
 
@@ -388,7 +463,7 @@ def main(argv):
                          chromatic_d1=d1_chrom(sub_notes),
                          diatonic_d1=d1_diat(sub_notes)),
             echoes=echoes, recalls=recalls, fusion=fusion,
-            motivic_economy=economy), indent=2))
+            homorhythm=strata, motivic_economy=economy), indent=2))
         print(f"\nJSON written to {args.write_json}")
     return 0
 

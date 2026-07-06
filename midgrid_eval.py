@@ -59,6 +59,21 @@ DISPLACED_WARN = 2.8
 # at the 4.0 floor are informational and anything longer warns.
 MELODIC_FUSION_WARN_LEN = 4.5
 
+# Rhythmic stratification is the third independence dimension (after pitch
+# direction and attack displacement): voices that share one attack clock
+# are harmonized homophony however their pitches move — the opposite of
+# the Contrapunctus IX regime, where subjects live in disjoint rhythmic
+# bands (running eighths against the theme in augmentation). Reported as
+# one piece-level finding from per-pair homorhythm fractions
+# (midgrid_motif.homorhythm_fractions). Rate-stratified pairs (attack
+# ratio >= 1.5, the augmentation/diminution regime) are exempt: their
+# co-attacks are the slow voice riding the fast voice's grid. Corpus
+# calibration: warm G minor 0.51, D dorian 0.59 (syncopated CS),
+# Contrapunctus homage 0.70, cold pack-style runs 0.86-0.97, homorhythmic
+# warm D minor 1.00, deliberate chorale homophony 0.96.
+HOMORHYTHM_INFO = 0.5
+HOMORHYTHM_WARN = 0.8
+
 
 def report_path_with_suffix(mid_path: Path, suffix: str) -> Path:
     if mid_path.name.endswith(".mid"):
@@ -286,6 +301,35 @@ def detect_melodic_fusion(input_path: Path) -> list[dict[str, Any]]:
     return issues_list
 
 
+def detect_rhythmic_stratification(input_path: Path) -> list[dict[str, Any]]:
+    """One piece-level finding: how much of each voice pair's time is spent
+    on a shared attack clock. High mean homorhythm = counter-melodies are
+    really harmony parts; stratify by rate (double-speed figurae, augmented
+    lines, attacks in the other voice's gaps)."""
+    from midgrid_motif import homorhythm_fractions, parse_midgrid
+
+    fractions = homorhythm_fractions(parse_midgrid(input_path))
+    if not fractions:
+        return []
+    mean_h = sum(fractions.values()) / len(fractions)
+    if mean_h < HOMORHYTHM_INFO:
+        return []
+    severity = "warning" if mean_h >= HOMORHYTHM_WARN else "info"
+    detail = ", ".join(f"{k} {v:.2f}" for k, v in sorted(fractions.items()))
+    return [issue(
+        severity,
+        "rhythmic_homorhythm",
+        f"Voice pairs share one attack clock for {mean_h:.0%} of their time "
+        f"({detail}): counter-lines are harmonizing rather than moving in "
+        f"independent rhythmic strata. Deliberate in homophony/chorale "
+        f"textures; in counterpoint, put the countersubject at a different "
+        f"rate (double-speed cells or augmentation) attacking in the other "
+        f"voice's gaps.",
+        mean_homorhythm=round(mean_h, 3),
+        pair_fractions={k: round(v, 3) for k, v in fractions.items()},
+    )]
+
+
 def detect_voice_crossing(report: dict[str, Any]) -> list[dict[str, Any]]:
     issues = []
     for beat in report.get("beats", []):
@@ -461,6 +505,8 @@ def evaluate(input_path: Path, args: argparse.Namespace, midi_out: Path) -> dict
     ))
     if not args.strict_parallels and not args.no_melodic_fusion:
         result["issues"].extend(detect_melodic_fusion(input_path))
+    if not args.strict_parallels and not args.no_rhythmic_stratification:
+        result["issues"].extend(detect_rhythmic_stratification(input_path))
     result["issue_counts"] = count_by_severity(result["issues"])
     return result
 
@@ -477,6 +523,8 @@ def main(argv: list[str]) -> int:
                              "errors instead of voice_fusion meta-analysis warnings")
     parser.add_argument("--no-melodic-fusion", action="store_true",
                         help="disable the melodic_fusion directional meta-analysis")
+    parser.add_argument("--no-rhythmic-stratification", action="store_true",
+                        help="disable the rhythmic_homorhythm attack-clock meta-analysis")
     parser.add_argument("--high-complexity-threshold", type=float, default=30.0)
     parser.add_argument("--wide-spacing-threshold", type=int, default=19)
     parser.add_argument("--fail-on", choices=["error", "warning", "none"], default="error")

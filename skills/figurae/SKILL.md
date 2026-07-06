@@ -32,6 +32,12 @@ writing is directional independence.
    descending cell, give the other an ascending, contrary, or oblique cell
    (a held tone is oblique). Never let a pair share prevailing direction
    for more than about 4 beats.
+3b. Keep the voices rhythmically stratified (the Contrapunctus IX rule):
+   a countersubject or counter-line lives at a DIFFERENT rate than the
+   subject — double-speed cells or half-speed syncopated lines — and
+   attacks in the other voice's gaps, not on its beats. A counter-line
+   that shares the subject's attack clock is a harmonization, not
+   counterpoint.
 4. Build episodes by sequencing one cell at a constant diatonic offset;
    the repetition is the engine, the offset is the harmony.
 5. Verify: `python3 midgrid_eval.py FILE` must show no `melodic_fusion`

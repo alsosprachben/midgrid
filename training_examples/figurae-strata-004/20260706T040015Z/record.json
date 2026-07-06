@@ -1,0 +1,19 @@
+{
+  "schema": "midgrid.training_example.v1",
+  "exercise_id": "figurae-strata-004",
+  "exercise_title": "Stratified Countersubject",
+  "created_utc": "2026-07-06T04:00:15.122856+00:00",
+  "attempt": "attempt.midgrid",
+  "corrected": "corrected.midgrid",
+  "attempt_eval": "attempt.eval.json",
+  "corrected_eval": "corrected.eval.json",
+  "attempt_reports": {
+    "report_json": "attempt.report.json",
+    "report_text": "attempt.report.txt"
+  },
+  "corrected_reports": {
+    "report_json": "corrected.report.json",
+    "report_text": "corrected.report.txt"
+  },
+  "lesson": "The attempt harmonized the subject note-for-note in tenths - pleasant, and not counterpoint: one attack clock, one stream (rhythmic_homorhythm 1.00). The correction moves the counter-line into a different rhythmic stratum, double-speed figurae cells riding the subject's grid the way Contrapunctus IX runs eighths against the theme in augmentation. Rate separation is a stream-segregation cue as strong as direction: voices in different rhythm bands cannot fuse, so the counter-line finally becomes a second melody instead of a harmony part."
+}
