@@ -48,6 +48,17 @@ ROOTED_CLASSES = {0, 2, 4, 6, 7, 11}
 DISPLACED_ODD_FACTOR = {1: 15, 3: 5, 5: 3, 8: 5, 9: 3, 10: 9}
 DISPLACED_WARN = 2.8
 
+# Melodic fusion is the directional-domain twin of voice_fusion: two voices
+# sustaining same-direction co-movement share one directional predictor and
+# collapse toward a single perceived stream even when no instantaneous
+# interval is perfect (auditory common fate acting on contour rather than
+# on ratio alignment). Regions come from midgrid_motif.melodic_fusion
+# (4-beat sliding window). Calibration on the repo corpus: the warm
+# capstones produce at most bare-minimum 4.0-beat regions (paired cadence
+# descents), while every fused cold control runs 4.5-7.5 beats, so regions
+# at the 4.0 floor are informational and anything longer warns.
+MELODIC_FUSION_WARN_LEN = 4.5
+
 
 def report_path_with_suffix(mid_path: Path, suffix: str) -> Path:
     if mid_path.name.endswith(".mid"):
@@ -244,6 +255,37 @@ def detect_voice_fusion(report: dict[str, Any]) -> list[dict[str, Any]]:
     return issues
 
 
+def detect_melodic_fusion(input_path: Path) -> list[dict[str, Any]]:
+    """Directional meta-analysis of the grid itself: sustained regions where
+    a voice pair co-moves in the same direction. Severity is graded by how
+    far the region outlasts the detection window; `locked` counts steps
+    where the chromatic motion is identical (the strongest common-fate
+    cue)."""
+    from midgrid_motif import melodic_fusion, parse_midgrid
+
+    issues_list = []
+    for region in melodic_fusion(parse_midgrid(input_path)):
+        length = region["beat_end"] - region["beat_start"]
+        severity = "warning" if length >= MELODIC_FUSION_WARN_LEN else "info"
+        issues_list.append(issue(
+            severity,
+            "melodic_fusion",
+            f"{region['pair']} co-move in the same direction from beat "
+            f"{region['beat_start']:g} to {region['beat_end']:g} "
+            f"({region['comoves']} co-movements, {region['locked']} locked steps): "
+            f"the voices share one directional predictor and collapse toward a "
+            f"single stream even without parallel perfects. Give one voice "
+            f"contrary or oblique cells, or make the doubling deliberate.",
+            beat=region["beat_end"],
+            start_beat=region["beat_start"],
+            voice_pair=region["pair"],
+            comoves=region["comoves"],
+            locked=region["locked"],
+            length_beats=round(length, 2),
+        ))
+    return issues_list
+
+
 def detect_voice_crossing(report: dict[str, Any]) -> list[dict[str, Any]]:
     issues = []
     for beat in report.get("beats", []):
@@ -417,6 +459,8 @@ def evaluate(input_path: Path, args: argparse.Namespace, midi_out: Path) -> dict
         wide_spacing_threshold=args.wide_spacing_threshold,
         strict_parallels=args.strict_parallels,
     ))
+    if not args.strict_parallels and not args.no_melodic_fusion:
+        result["issues"].extend(detect_melodic_fusion(input_path))
     result["issue_counts"] = count_by_severity(result["issues"])
     return result
 
@@ -431,6 +475,8 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--strict-parallels", action="store_true",
                         help="classical pedagogy mode: parallel/direct perfects are categorical "
                              "errors instead of voice_fusion meta-analysis warnings")
+    parser.add_argument("--no-melodic-fusion", action="store_true",
+                        help="disable the melodic_fusion directional meta-analysis")
     parser.add_argument("--high-complexity-threshold", type=float, default=30.0)
     parser.add_argument("--wide-spacing-threshold", type=int, default=19)
     parser.add_argument("--fail-on", choices=["error", "warning", "none"], default="error")
