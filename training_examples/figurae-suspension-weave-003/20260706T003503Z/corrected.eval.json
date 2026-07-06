@@ -1,0 +1,55 @@
+{
+  "schema": "midgrid.eval.v1",
+  "input": "/tmp/claude-1000/-home-ben-repos-midgrid/995da13a-46bc-415f-93c3-09ac5f2168de/scratchpad/figex/weave-003-corrected.midgrid",
+  "lint": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  },
+  "parser": {
+    "ok": true,
+    "returncode": 0,
+    "stdout": "Saved /tmp/weave-003-corrected.mid\nPerceptual contrapuntal analysis written to /tmp/weave-003-corrected.report.txt\nPerceptual contrapuntal analysis JSON written to /tmp/weave-003-corrected.report.json\n",
+    "stderr": "",
+    "midi_out": "/tmp/weave-003-corrected.mid",
+    "report_text": "/tmp/weave-003-corrected.report.txt",
+    "report_json": "/tmp/weave-003-corrected.report.json"
+  },
+  "report_summary": {
+    "beat_count": 15,
+    "active_pair_count": 15,
+    "rest_pair_count": 0,
+    "motion_counts": {
+      "unknown": 1,
+      "oblique": 12,
+      "parallel": 1,
+      "similar": 1
+    },
+    "mean_perceptual_complexity": 6.867,
+    "max_perceptual_complexity": 38.5,
+    "max_perceptual_complexity_pair": {
+      "beat": 2.0,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 38.5,
+      "interval": "Tritone (+1 oct)"
+    }
+  },
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "high_complexity",
+      "message": "V0-V1 reaches perceptual complexity 38.5 at beat 2.",
+      "beat": 2.0,
+      "voice_pair": "V0-V1",
+      "interval": "Tritone (+1 oct)",
+      "perceptual_complexity": 38.5,
+      "threshold": 30.0
+    }
+  ],
+  "issue_counts": {
+    "error": 0,
+    "warning": 1,
+    "info": 0
+  },
+  "exercise_issues": []
+}

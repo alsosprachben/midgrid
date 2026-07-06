@@ -1,0 +1,51 @@
+{
+  "id": "figurae-cells-001",
+  "title": "Figurae Cells Above a Cantus",
+  "skill": "figurae",
+  "objective": "Decorate the line above the given C-major cantus into florid half-beat figuration in which every dissonance sits inside a named directional cell (passing, neighbor, enclosure, escape).",
+  "prompt": "Replace rests in V0 with parser-valid half-beat notes (duration 0.5) on every half-beat row from 0 through 5.5, and a single final note of duration 2 at beat 6. Integer-beat tones carry the harmony and must be consonant against the cantus. Every dissonant half-beat tone must be the interior of a named cell from the figurae reference: passing (+1 +1 or -1 -1), neighbor (-1 +1), enclosure (-2 +1), or escape (+1 -3), resolving where the cell promises. Use at least four cells with dissonant interiors, including at least one enclosure (its interior may be consonant). Keep V0 directionally shaped: one clear peak, no aimless fill.",
+  "seed_midgrid": "# Title: Figurae Cells Exercise 001\n# tempo 80\n\n0 | . | C3:2@70\n0.5 | . | -\n1 | . | -\n1.5 | . | -\n2 | . | F3:2@70\n2.5 | . | -\n3 | . | -\n3.5 | . | -\n4 | . | G3:2@70\n4.5 | . | -\n5 | . | -\n5.5 | . | -\n6 | . | C3:2@70\n",
+  "success_criteria": [
+    "Every row remains strict parser-valid MidGrid.",
+    "V1 cantus remains unchanged, including hold cells.",
+    "V0 attacks on every half-beat row through 5.5, one final note of duration 2 at beat 6.",
+    "Integer-beat intervals are consonant.",
+    "Every dissonant half-beat tone is the interior of a named cell and resolves as the cell promises.",
+    "At least four dissonant-interior cells are used, plus at least one enclosure.",
+    "Corrected solution has no evaluator errors."
+  ],
+  "evaluation_defaults": {
+    "fail_on": "error",
+    "high_complexity_threshold": 30.0,
+    "wide_spacing_threshold": 24,
+    "strict_parallels": true
+  },
+  "recording": {
+    "corrected_fail_on": "error"
+  },
+  "exercise_checks": {
+    "locked_voices": [
+      1
+    ],
+    "filled_voices": [
+      0
+    ],
+    "interval_rules": [
+      {
+        "label": "Integer-beat cell boundaries must be consonant",
+        "voice_pair": "V0-V1",
+        "beat_filter": "integer",
+        "allowed_interval_classes": [
+          0,
+          3,
+          4,
+          7,
+          8,
+          9
+        ],
+        "code": "exercise_downbeat_dissonance",
+        "severity": "error"
+      }
+    ]
+  }
+}

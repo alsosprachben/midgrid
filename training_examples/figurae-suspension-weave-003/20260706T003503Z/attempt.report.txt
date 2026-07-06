@@ -1,0 +1,30 @@
+Beat 0.00:
+  V0-V1: interval=Perfect 5th, motion=unknown, perceptual_complexity=5.0
+Beat 0.50:
+  V0-V1: interval=Perfect 5th, motion=oblique, perceptual_complexity=5.0
+Beat 1.00:
+  V0-V1: interval=Perfect 5th, motion=parallel, perceptual_complexity=5.0
+Beat 1.50:
+  V0-V1: interval=Perfect 5th, motion=oblique, perceptual_complexity=5.0
+Beat 2.00:
+  V0-V1: interval=Perfect 5th, motion=parallel, perceptual_complexity=5.0
+Beat 2.50:
+  V0-V1: interval=Perfect 5th, motion=oblique, perceptual_complexity=5.0
+Beat 3.00:
+  V0-V1: interval=Perfect 5th, motion=parallel, perceptual_complexity=5.0
+Beat 3.50:
+  V0-V1: interval=Perfect 5th, motion=oblique, perceptual_complexity=5.0
+Beat 4.00:
+  V0-V1: interval=Perfect 5th, motion=parallel, perceptual_complexity=5.0
+Beat 4.50:
+  V0-V1: interval=Perfect 5th, motion=oblique, perceptual_complexity=5.0
+Beat 5.00:
+  V0-V1: interval=Perfect 5th, motion=parallel, perceptual_complexity=5.0
+Beat 5.50:
+  V0-V1: interval=Perfect 5th, motion=oblique, perceptual_complexity=5.0
+Beat 6.00:
+  V0-V1: interval=Perfect 5th, motion=oblique, perceptual_complexity=5.0
+Beat 6.50:
+  V0-V1: interval=Perfect 5th, motion=oblique, perceptual_complexity=5.0
+Beat 7.00:
+  V0-V1: interval=Unison [phase-aligned], motion=contrary, perceptual_complexity=2.0

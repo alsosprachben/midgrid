@@ -1,0 +1,55 @@
+{
+  "schema": "midgrid.eval.v1",
+  "input": "/tmp/claude-1000/-home-ben-repos-midgrid/995da13a-46bc-415f-93c3-09ac5f2168de/scratchpad/figex/cells-001-attempt.midgrid",
+  "lint": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  },
+  "parser": {
+    "ok": true,
+    "returncode": 0,
+    "stdout": "Saved /tmp/cells-001-attempt.mid\nPerceptual contrapuntal analysis written to /tmp/cells-001-attempt.report.txt\nPerceptual contrapuntal analysis JSON written to /tmp/cells-001-attempt.report.json\n",
+    "stderr": "",
+    "midi_out": "/tmp/cells-001-attempt.mid",
+    "report_text": "/tmp/cells-001-attempt.report.txt",
+    "report_json": "/tmp/cells-001-attempt.report.json"
+  },
+  "report_summary": {
+    "beat_count": 13,
+    "active_pair_count": 13,
+    "rest_pair_count": 0,
+    "motion_counts": {
+      "unknown": 1,
+      "oblique": 10,
+      "parallel": 1,
+      "contrary": 1
+    },
+    "mean_perceptual_complexity": 5.038,
+    "max_perceptual_complexity": 9.0,
+    "max_perceptual_complexity_pair": {
+      "beat": 5.5,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 9.0,
+      "interval": "Major 3rd"
+    }
+  },
+  "issues": [
+    {
+      "severity": "error",
+      "code": "parallel_perfect",
+      "message": "Parallel perfect interval in V0-V1 from beat 3.5 to 4.",
+      "beat": 4.0,
+      "previous_beat": 3.5,
+      "voice_pair": "V0-V1",
+      "previous_interval": "Perfect 5th",
+      "interval": "Perfect 5th"
+    }
+  ],
+  "issue_counts": {
+    "error": 1,
+    "warning": 0,
+    "info": 0
+  },
+  "exercise_issues": []
+}

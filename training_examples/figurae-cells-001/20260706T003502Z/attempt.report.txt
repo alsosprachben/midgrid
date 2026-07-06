@@ -1,0 +1,26 @@
+Beat 0.00:
+  V0-V1: interval=Major 3rd (+1 oct), motion=unknown, perceptual_complexity=4.5
+Beat 0.50:
+  V0-V1: interval=Perfect 4th (+1 oct) [phase-aligned], motion=oblique, perceptual_complexity=3.5
+Beat 1.00:
+  V0-V1: interval=Perfect 5th (+1 oct), motion=oblique, perceptual_complexity=2.5
+Beat 1.50:
+  V0-V1: interval=Major 6th (+1 oct), motion=oblique, perceptual_complexity=4.0
+Beat 2.00:
+  V0-V1: interval=Major 3rd (+1 oct), motion=oblique, perceptual_complexity=4.5
+Beat 2.50:
+  V0-V1: interval=Major 2nd (+1 oct), motion=oblique, perceptual_complexity=8.5
+Beat 3.00:
+  V0-V1: interval=Perfect 5th, motion=oblique, perceptual_complexity=5.0
+Beat 3.50:
+  V0-V1: interval=Perfect 5th, motion=oblique, perceptual_complexity=5.0
+Beat 4.00:
+  V0-V1: interval=Perfect 5th, motion=parallel, perceptual_complexity=5.0
+Beat 4.50:
+  V0-V1: interval=Major 6th, motion=oblique, perceptual_complexity=8.0
+Beat 5.00:
+  V0-V1: interval=Perfect 5th, motion=oblique, perceptual_complexity=5.0
+Beat 5.50:
+  V0-V1: interval=Major 3rd, motion=oblique, perceptual_complexity=9.0
+Beat 6.00:
+  V0-V1: interval=Unison (+1 oct) [phase-aligned], motion=contrary, perceptual_complexity=1.0
