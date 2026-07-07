@@ -1,0 +1,891 @@
+{
+  "schema": "midgrid.eval.v1",
+  "input": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+  "lint": {
+    "ok": true,
+    "errors": [],
+    "warnings": [
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 10,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 10,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 11,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 11,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 12,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 12,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 13,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 13,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 14,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 14,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 15,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 15,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 16,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 16,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 17,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 17,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 18,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 18,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 19,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 19,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 20,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 20,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 21,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 22,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 22,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 23,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 24,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 24,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 25,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 26,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 27,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 28,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 28,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 29,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 30,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 30,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 31,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 32,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 33,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 34,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 36,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 36,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 38,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 38,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 42,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 42,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 44,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 44,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 50,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 50,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 53,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 53,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 56,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 56,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 58,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 58,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 60,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 60,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 62,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 62,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 66,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 66,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 67,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 68,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 68,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 74,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 74,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 80,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 82,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 82,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 84,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 84,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 86,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 88,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 88,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 90,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 90,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 99,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 99,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 104,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 105,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 105,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 108,
+        "column": 0,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 108,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 114,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 114,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 117,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 117,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 120,
+        "column": 1,
+        "message": "empty cell; prefer explicit rest '.'"
+      },
+      {
+        "path": "experiments/cold-model-007/submissions/f-A-2.midgrid",
+        "line": 120,
+        "column": 2,
+        "message": "empty cell; prefer explicit rest '.'"
+      }
+    ]
+  },
+  "parser": {
+    "ok": true,
+    "returncode": 0,
+    "stdout": "Saved /tmp/f-A-2.mid\nPerceptual contrapuntal analysis written to /tmp/f-A-2.report.txt\nPerceptual contrapuntal analysis JSON written to /tmp/f-A-2.report.json\n",
+    "stderr": "",
+    "midi_out": "/tmp/f-A-2.mid",
+    "report_text": "/tmp/f-A-2.report.txt",
+    "report_json": "/tmp/f-A-2.report.json"
+  },
+  "report_summary": {
+    "beat_count": 113,
+    "active_pair_count": 197,
+    "rest_pair_count": 142,
+    "motion_counts": {
+      "n/a": 142,
+      "unknown": 78,
+      "similar": 41,
+      "parallel": 18,
+      "contrary": 46,
+      "oblique": 14
+    },
+    "mean_perceptual_complexity": 6.876,
+    "max_perceptual_complexity": 77.0,
+    "max_perceptual_complexity_pair": {
+      "beat": 29.0,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 77.0,
+      "interval": "Tritone"
+    }
+  },
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "voice_fusion",
+      "message": "V0-V2 move in parallel Unison (+2 oct) from beat 18 to 18.5 (1 transition, strength 10.0 from the ratio table): a rooted interval, so common-fate motion merges the voices into one bass-rooted stream. Legitimate as a deliberate handoff or doubling; otherwise restore independence with contrary or oblique motion.",
+      "beat": 18.5,
+      "start_beat": 18.0,
+      "voice_pair": "V0-V2",
+      "transitions": 1,
+      "strength": 10.0
+    },
+    {
+      "severity": "info",
+      "code": "displaced_root_motion",
+      "message": "V1-V2 travel in parallel Major 6th (+1 oct) from beat 18.5 to 19 (1 transition, strength 2.5 from the ratio table): the interval's implied fundamental is displaced from the lower note (ratio denominator has an odd factor), so the unvoiced root travels in parallel with the pair. Break the traveling fourth-class motion, or voice the root so the displacement is intentional.",
+      "beat": 19.0,
+      "start_beat": 18.5,
+      "voice_pair": "V1-V2",
+      "transitions": 1,
+      "strength": 2.5
+    },
+    {
+      "severity": "warning",
+      "code": "voice_fusion",
+      "message": "V0-V2 move in parallel Unison (+2 oct) from beat 22.5 to 23 (1 transition, strength 10.0 from the ratio table): a rooted interval, so common-fate motion merges the voices into one bass-rooted stream. Legitimate as a deliberate handoff or doubling; otherwise restore independence with contrary or oblique motion.",
+      "beat": 23.0,
+      "start_beat": 22.5,
+      "voice_pair": "V0-V2",
+      "transitions": 1,
+      "strength": 10.0
+    },
+    {
+      "severity": "info",
+      "code": "displaced_root_motion",
+      "message": "V1-V2 travel in parallel Major 6th (+1 oct) from beat 22.5 to 23 (1 transition, strength 2.5 from the ratio table): the interval's implied fundamental is displaced from the lower note (ratio denominator has an odd factor), so the unvoiced root travels in parallel with the pair. Break the traveling fourth-class motion, or voice the root so the displacement is intentional.",
+      "beat": 23.0,
+      "start_beat": 22.5,
+      "voice_pair": "V1-V2",
+      "transitions": 1,
+      "strength": 2.5
+    },
+    {
+      "severity": "info",
+      "code": "voice_fusion",
+      "message": "V1-V2 move in parallel Major 3rd (+1 oct) from beat 27 to 28 (1 transition, strength 2.2 from the ratio table): a rooted interval, so common-fate motion merges the voices into one bass-rooted stream. Legitimate as a deliberate handoff or doubling; otherwise restore independence with contrary or oblique motion.",
+      "beat": 28.0,
+      "start_beat": 27.0,
+      "voice_pair": "V1-V2",
+      "transitions": 1,
+      "strength": 2.22
+    },
+    {
+      "severity": "warning",
+      "code": "voice_fusion",
+      "message": "V1-V2 move in parallel Unison (+1 oct) from beat 32.5 to 33 (1 transition, strength 10.0 from the ratio table): a rooted interval, so common-fate motion merges the voices into one bass-rooted stream. Legitimate as a deliberate handoff or doubling; otherwise restore independence with contrary or oblique motion.",
+      "beat": 33.0,
+      "start_beat": 32.5,
+      "voice_pair": "V1-V2",
+      "transitions": 1,
+      "strength": 10.0
+    },
+    {
+      "severity": "info",
+      "code": "voice_fusion",
+      "message": "V0-V2 move in parallel Perfect 5th (+2 oct) from beat 71 to 72 (1 transition, strength 4.5 from the ratio table): a rooted interval, so common-fate motion merges the voices into one bass-rooted stream. Legitimate as a deliberate handoff or doubling; otherwise restore independence with contrary or oblique motion.",
+      "beat": 72.0,
+      "start_beat": 71.0,
+      "voice_pair": "V0-V2",
+      "transitions": 1,
+      "strength": 4.5
+    },
+    {
+      "severity": "warning",
+      "code": "high_complexity",
+      "message": "V0-V1 reaches perceptual complexity 77 at beat 29.",
+      "beat": 29.0,
+      "voice_pair": "V0-V1",
+      "interval": "Tritone",
+      "perceptual_complexity": 77.0,
+      "threshold": 30.0
+    },
+    {
+      "severity": "warning",
+      "code": "high_complexity",
+      "message": "V1-V2 reaches perceptual complexity 38.5 at beat 54.",
+      "beat": 54.0,
+      "voice_pair": "V1-V2",
+      "interval": "Tritone (+1 oct)",
+      "perceptual_complexity": 38.5,
+      "threshold": 30.0
+    },
+    {
+      "severity": "warning",
+      "code": "high_complexity",
+      "message": "V0-V1 reaches perceptual complexity 77 at beat 57.",
+      "beat": 57.0,
+      "voice_pair": "V0-V1",
+      "interval": "Tritone",
+      "perceptual_complexity": 77.0,
+      "threshold": 30.0
+    },
+    {
+      "severity": "warning",
+      "code": "high_complexity",
+      "message": "V1-V2 reaches perceptual complexity 38.5 at beat 63.",
+      "beat": 63.0,
+      "voice_pair": "V1-V2",
+      "interval": "Tritone (+1 oct)",
+      "perceptual_complexity": 38.5,
+      "threshold": 30.0
+    },
+    {
+      "severity": "warning",
+      "code": "high_complexity",
+      "message": "V0-V1 reaches perceptual complexity 77 at beat 67.",
+      "beat": 67.0,
+      "voice_pair": "V0-V1",
+      "interval": "Tritone",
+      "perceptual_complexity": 77.0,
+      "threshold": 30.0
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 27 semitones apart at beat 16.",
+      "beat": 16.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 27,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 20 semitones apart at beat 18.",
+      "beat": 18.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 20,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 21 semitones apart at beat 18.5.",
+      "beat": 18.5,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 21,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 21 semitones apart at beat 19.",
+      "beat": 19.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 21,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 20 semitones apart at beat 21.",
+      "beat": 21.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 20,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 24 semitones apart at beat 22.",
+      "beat": 22.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 24,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 21 semitones apart at beat 22.5.",
+      "beat": 22.5,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 21,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 21 semitones apart at beat 23.",
+      "beat": 23.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 21,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 24 semitones apart at beat 24.",
+      "beat": 24.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 24,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 24 semitones apart at beat 26.",
+      "beat": 26.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 24,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 24 semitones apart at beat 45.",
+      "beat": 45.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 24,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 24 semitones apart at beat 46.",
+      "beat": 46.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 24,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 24 semitones apart at beat 48.",
+      "beat": 48.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 24,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V0-V1 are 20 semitones apart at beat 52.",
+      "beat": 52.0,
+      "voice_pair": "V0-V1",
+      "interval_semitones": 20,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 22 semitones apart at beat 57.",
+      "beat": 57.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 22,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V0-V1 are 21 semitones apart at beat 61.",
+      "beat": 61.0,
+      "voice_pair": "V0-V1",
+      "interval_semitones": 21,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 22 semitones apart at beat 67.",
+      "beat": 67.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 22,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "wide_adjacent_spacing",
+      "message": "Adjacent voices V1-V2 are 22 semitones apart at beat 71.",
+      "beat": 71.0,
+      "voice_pair": "V1-V2",
+      "interval_semitones": 22,
+      "threshold": 19
+    },
+    {
+      "severity": "warning",
+      "code": "melodic_fusion",
+      "message": "V0-V1 co-move in the same direction from beat 19 to 23.5 (5 co-movements, 3 locked steps): the voices share one directional predictor and collapse toward a single stream even without parallel perfects. Give one voice contrary or oblique cells, or make the doubling deliberate.",
+      "beat": 23.5,
+      "start_beat": 19.0,
+      "voice_pair": "V0-V1",
+      "comoves": 5,
+      "locked": 3,
+      "length_beats": 4.5
+    },
+    {
+      "severity": "warning",
+      "code": "rhythmic_homorhythm",
+      "message": "Voice pairs share one attack clock for 100% of their time (V0-V1 1.00, V0-V2 1.00, V1-V2 1.00): counter-lines are harmonizing rather than moving in independent rhythmic strata. Deliberate in homophony/chorale textures; in counterpoint, put the countersubject at a different rate (double-speed cells or augmentation) attacking in the other voice's gaps.",
+      "mean_homorhythm": 1.0,
+      "pair_fractions": {
+        "V0-V1": 1.0,
+        "V0-V2": 1.0,
+        "V1-V2": 1.0
+      }
+    }
+  ],
+  "issue_counts": {
+    "error": 0,
+    "warning": 28,
+    "info": 4
+  }
+}
