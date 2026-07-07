@@ -1,0 +1,44 @@
+{
+  "schema": "midgrid.eval.v1",
+  "input": "/tmp/claude-1000/-home-ben-repos-midgrid/995da13a-46bc-415f-93c3-09ac5f2168de/scratchpad/figex/inv-001-corrected.midgrid",
+  "lint": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  },
+  "parser": {
+    "ok": true,
+    "returncode": 0,
+    "stdout": "Saved /tmp/inv-001-corrected.mid\nPerceptual contrapuntal analysis written to /tmp/inv-001-corrected.report.txt\nPerceptual contrapuntal analysis JSON written to /tmp/inv-001-corrected.report.json\n",
+    "stderr": "",
+    "midi_out": "/tmp/inv-001-corrected.mid",
+    "report_text": "/tmp/inv-001-corrected.report.txt",
+    "report_json": "/tmp/inv-001-corrected.report.json"
+  },
+  "report_summary": {
+    "beat_count": 32,
+    "active_pair_count": 32,
+    "rest_pair_count": 0,
+    "motion_counts": {
+      "unknown": 1,
+      "oblique": 24,
+      "similar": 5,
+      "parallel": 2
+    },
+    "mean_perceptual_complexity": 8.469,
+    "max_perceptual_complexity": 13.0,
+    "max_perceptual_complexity_pair": {
+      "beat": 4.5,
+      "voice_pair": "V0-V1",
+      "perceptual_complexity": 13.0,
+      "interval": "Minor 6th"
+    }
+  },
+  "issues": [],
+  "issue_counts": {
+    "error": 0,
+    "warning": 0,
+    "info": 0
+  },
+  "exercise_issues": []
+}

@@ -1,0 +1,19 @@
+{
+  "schema": "midgrid.training_example.v1",
+  "exercise_id": "invertible-counterpoint-001",
+  "exercise_title": "Invertible Countersubject at the Octave",
+  "created_utc": "2026-07-07T00:58:06.688567+00:00",
+  "attempt": "attempt.midgrid",
+  "corrected": "corrected.midgrid",
+  "attempt_eval": "attempt.eval.json",
+  "corrected_eval": "corrected.eval.json",
+  "attempt_reports": {
+    "report_json": "attempt.report.json",
+    "report_text": "attempt.report.txt"
+  },
+  "corrected_reports": {
+    "report_json": "corrected.report.json",
+    "report_text": "corrected.report.txt"
+  },
+  "lesson": "The attempt was the old worked-exposition countersubject: note-for-note quarters shadowing the subject (rhythmic_homorhythm 1.00) - a harmonization wearing a countersubject's name. The correction applies the species curriculum to the fugue itself: syncopated second species, attacking in the subject's gaps with tones held across its beats (co-attack 0.4), stepwise cells rising to one peak, cadencing on the leading tone. Invertibility survives because downbeats use only unisons, thirds, and sixths - fifths are barred since they invert to fourths. The answer is a cantus; the countersubject is species counterpoint against it, in its own rhythmic stratum."
+}

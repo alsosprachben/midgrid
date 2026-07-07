@@ -49,6 +49,10 @@ Countersubject:
 - Does it work above the answer?
 - Does it later work below the subject or another entry?
 - Does it cause parallel perfect intervals?
+- Does it live in its own rhythmic stratum (double speed, half speed, or
+  syncopated against the entry), or does it merely shadow the entry's
+  attacks? The skeleton above is 1:1 for syntax clarity only — a real
+  countersubject must not be.
 
 Texture:
 
@@ -65,40 +69,56 @@ Voices: S A T B
 Task: choose entry order, answer type, and countersubject rhythm before writing full MidGrid.
 ```
 
-## Recorded Training Example: d-minor-exposition-with-invertible-countersubject
+## Recorded Training Example: invertible countersubject in its own rhythmic stratum
 
-A complete worked exposition (three voices, D minor) that passed the evaluator with no errors. Use it as the model for subject design, tonal answer choice, and countersubject invertibility.
+The worked model for subject design, tonal answer choice, and
+countersubject writing. Full attempt/correction pair recorded under
+`invertible-counterpoint-001`; the ATTEMPT there is the old
+harmonization-style countersubject, kept as the named negative.
 
 Subject (8 beats): `D4 A4 F4-E4 D4 C#4 D4-E4 F4 E4` — fifth leap up, stepwise descent through the leading tone, rise back to the third.
 
-Tonal answer: the head's 1-to-5 (`D` to `A`) is answered 5-to-1 (`A4` to `D5`); the tail continues as a real transposition up a fifth (`C5-B4 A4 G#4 A4-B4 C5 B4`). The G# effects the modulation to the dominant minor.
+Tonal answer: the head's 1-to-5 (`D` to `A`) is answered 5-to-1; the tail continues as a real transposition. The raised leading tone (G# against an A entry) effects the modulation to the dominant minor.
 
-Countersubject degrees: `6 7 8-7 6 5 3 5 4` (in A minor: `F G A-G F E C E D`), rhythmically complementary to the subject (quarters against its eighths and vice versa).
+Countersubject: **species counterpoint against the answer, in a different
+rhythmic stratum** — the answer is a cantus, so write against it exactly
+as the species curriculum taught. This one is syncopated second species:
+it attacks in the subject's gaps (off-halves), holds tones across the
+subject's beats, and never shadows its attack pattern. A countersubject
+that attacks wherever the subject attacks is a harmonization, whatever
+its intervals (see rhythmic_homorhythm in the evaluator, and the
+Contrapunctus IX rule in the figurae reference).
 
-Invertibility proof, required before trusting the countersubject:
-
-Below the answer (beats 8-11, CS in alto):
-
-```text
-8  | A4:1@86   | F4:1@76
-9  | D5:1@86   | G4:1@76
-10 | C5:0.5@84 | A4:0.5@76
-11 | A4:1@84   | F4:1@76
-```
-
-Above the subject (beats 16-19, CS in soprano, subject in bass):
+Below the subject (section A; the subject holds while the CS moves, and
+vice versa):
 
 ```text
-16 | B-4:1@78 | F4:1@72 | D3:1@86
-17 | C5:1@78  | E4:1@72 | A3:1@86
-18 | D5:0.5@78 | F4:1@72 | F3:0.5@84
-19 | B-4:1@78 | F4:1@72 | D3:1@84
+0   | D4:1@80   | F3:0.5@72
+0.5 | -         | A3:1@72
+1   | A4:1@80   | -
+1.5 | -         | D4:1@72
+2   | F4:0.5@80 | -
+2.5 | E4:0.5@80 | C4:0.5@72
+3   | D4:1@80   | B-3:0.5@72
+3.5 | -         | A3:1@72
+4   | C#4:1@80  | -
+4.5 | -         | F3:1@72
+5   | D4:0.5@80 | -
+5.5 | E4:0.5@80 | A3:1@72
+6   | F4:1@80   | -
+6.5 | -         | C#4:1@72
+7   | E4:1@80   | -
+7.5 | -         | A3:0.5@72
 ```
 
-The thirds below the answer become sixths and tenths above the subject; both positions are consonant, so the countersubject is invertible at the octave.
+Above the subject an octave lower (section B), the SAME pitches: thirds
+become sixths, the octave at beat 1 becomes a unison. Invertibility at
+the octave demands that every integer-beat interval be a unison, third,
+or sixth — never a fifth, because fifths invert to fourths.
 
 Lesson:
 
 - Choose a tonal answer when the subject opens with scale-degree 5-to-1 or 1-to-5 motion.
-- Prove the countersubject in at least two vertical positions before writing later entries; in the full fugue this countersubject also served in the bass (a third position) without repair.
-- Give the countersubject complementary rhythm so each line stays audible in the grid and in the ear.
+- The countersubject is species counterpoint against the answer-as-cantus: pick a species (second, third, or syncopated) and stay in its stratum. Do not harmonize the subject's rhythm note for note.
+- Prove the countersubject in at least two vertical positions before writing later entries, on downbeat unisons/thirds/sixths only.
+- Verify with the evaluator: no rhythmic_homorhythm finding, no melodic_fusion, no parallels in either position.
