@@ -46,8 +46,10 @@ def parse_pitch(tok):
 
 def parse_dur(tok):
     m = re.search(r'(\d+)(\.*)', tok)
-    num = int(m.group(1)); dots = len(m.group(2))
-    return Fraction(4, num) * (2 - Fraction(1, 2**dots))   # quarter-note units
+    numstr = m.group(1); dots = len(m.group(2)); num = int(numstr)
+    # kern: 1=whole, 2=half, ... ; 0=breve (2 wholes), 00=longa, 000=maxima.
+    base = Fraction(4 * (2 ** len(numstr))) if num == 0 else Fraction(4, num)
+    return base * (2 - Fraction(1, 2**dots))               # quarter-note units
 
 def neighbor(midi, up, scale):
     pc = midi % 12
