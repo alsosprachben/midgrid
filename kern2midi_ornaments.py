@@ -23,6 +23,14 @@ PC = {'c':0,'d':2,'e':4,'f':5,'g':7,'a':9,'b':11}
 MAJOR_STEPS = [0,2,4,5,7,9,11]
 NAT_MINOR_STEPS = [0,2,3,5,7,8,10]
 
+def parse_mm(lines, default=144):
+    for l in lines:
+        if l.startswith('*'):
+            m = re.search(r'\*MM(\d+)', l)
+            if m:
+                return int(m.group(1))
+    return default
+
 def parse_key(lines):
     tonic_pc, minor = 2, True                        # default D minor
     for l in lines:
@@ -45,10 +53,16 @@ def parse_pitch(tok):
     return 12*(octave+1) + PC[letters[0].lower()] + tok.count('#') - tok.count('-')
 
 def parse_dur(tok):
-    m = re.search(r'(\d+)(\.*)', tok)
-    numstr = m.group(1); dots = len(m.group(2)); num = int(numstr)
-    # kern: 1=whole, 2=half, ... ; 0=breve (2 wholes), 00=longa, 000=maxima.
-    base = Fraction(4 * (2 ** len(numstr))) if num == 0 else Fraction(4, num)
+    m = re.search(r'(\d+)(?:%(\d+))?(\.*)', tok)
+    numstr = m.group(1); den = m.group(2); dots = len(m.group(3)); num = int(numstr)
+    # kern: 1=whole, 2=half, ... ; 0=breve (2 wholes), 00=longa, 000=maxima;
+    # N%D is a rational reciprocal duration (e.g. 12%5 -> reciprocal 12/5).
+    if num == 0:
+        base = Fraction(4 * (2 ** len(numstr)))
+    elif den:
+        base = Fraction(4) / Fraction(num, int(den))
+    else:
+        base = Fraction(4, num)
     return base * (2 - Fraction(1, 2**dots))               # quarter-note units
 
 def neighbor(midi, up, scale):
@@ -149,8 +163,10 @@ def parse_score(lines, scale):
             voices[vid].append(p)
     return voices
 
-def main(inp, outp, bpm=144, vel=88):
+def main(inp, outp, bpm=None, vel=88):
     lines = [l.rstrip('\n') for l in open(inp)]
+    if bpm is None:
+        bpm = parse_mm(lines)                        # honour the score's *MM (quarter BPM)
     voices = parse_score(lines, parse_key(lines))
     ppq = 480; mid = MidiFile(ticks_per_beat=ppq)
     for vi, vid in enumerate(sorted(voices)):
@@ -176,4 +192,4 @@ def main(inp, outp, bpm=144, vel=88):
 
 if __name__ == '__main__':
     a = sys.argv
-    main(a[1], a[2], int(a[3]) if len(a) > 3 else 144)
+    main(a[1], a[2], int(a[3]) if len(a) > 3 else None)
