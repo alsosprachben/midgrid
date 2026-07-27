@@ -122,6 +122,10 @@ def parse_score(lines, scale):
                 if pending.get(vid):
                     voices[vid].append(pending.pop(vid))
                 layout[ci]['time'] = t + dur; continue
+            if 'q' in tok or 'Q' in tok:             # grace note: ZERO metric time
+                gd = min(dur, Fraction(1, 8))        # a quick acciaccatura, before the beat
+                voices[vid].append({'onset': max(Fraction(0), t - gd), 'dur': gd, 'midi': midi})
+                continue                             # do NOT advance the clock
             if pending.get(vid) and tie in ('mid', 'end') and midi == pending[vid]['midi']:
                 pending[vid]['dur'] += dur; layout[ci]['time'] = t + dur
                 if tie == 'end':
