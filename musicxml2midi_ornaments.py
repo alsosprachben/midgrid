@@ -4,8 +4,9 @@ as kern2midi_ornaments.py, with a MusicXML reader in front (for pieces that exis
 only as MusicXML, e.g. the keyboard toccatas). Reuses realize()/neighbor().
 
 Handles: multi-part, multi-staff, multi-voice (<backup>/<forward>), chords,
-grace notes (zero metric time), ties, and <notations><ornaments> markup
-(trill-mark, mordent=lower, inverted-mordent=upper/Schneller, turn, inverted-turn).
+grace notes (struck ON THE BEAT of the following note -- Baroque appoggiatura),
+ties, and <notations><ornaments> markup (trill-mark, mordent=lower,
+inverted-mordent=upper short trill / Pralltriller, turn, inverted-turn).
 All voices render as one piano; the synth's keyboard pan places notes by pitch.
 
 Accepts .musicxml/.xml (plain) or .mxl (zipped container)."""
@@ -64,9 +65,12 @@ def note_ornament(note):
             return code
     return None
 
+GRACE_TYPE = {'half': Fraction(2), 'quarter': Fraction(1), 'eighth': Fraction(1, 2),
+              '16th': Fraction(1, 4), '32nd': Fraction(1, 8), '64th': Fraction(1, 16)}
+
 def parse_musicxml(root):
     """Return (voices dict {vid:[{onset,dur,midi}]}, scale, quarter_bpm)."""
-    voices = defaultdict(list); pending = {}
+    voices = defaultdict(list); pending = {}; pend_grace = defaultdict(list)
     scale = {0,2,4,5,7,9,11}; bpm = None
     for part in root.findall('{*}part'):
         pid = part.get('id'); divisions = 1; measure_start = Fraction(0)
@@ -106,19 +110,36 @@ def parse_musicxml(root):
                         prev_onset_rel = cursor; cursor_advance = dur
                     if midi is None:                                # rest
                         if pending.get(vid): voices[vid].append(pending.pop(vid))
-                    elif is_grace:                                  # zero metric time
-                        gd = min(Fraction(1, 8), Fraction(1, 4))
-                        voices[vid].append({'onset': max(Fraction(0), onset - gd), 'dur': gd, 'midi': midi})
+                    elif is_grace:                                  # zero metric time, realized
+                        gtype = el.findtext('{*}type')             # ON the beat of the next note
+                        gnom = GRACE_TYPE.get(gtype, Fraction(1, 4))
+                        pend_grace[vid].append({'midi': midi, 'dur': gnom})
                         cursor_advance = Fraction(0)
                     elif pending.get(vid) and tie == 'end' and pending[vid]['midi'] == midi:
                         pending[vid]['dur'] += dur
                         voices[vid].append(pending.pop(vid))
                     else:
                         if pending.get(vid): voices[vid].append(pending.pop(vid))
-                        if tie == 'start':
+                        gl = pend_grace.pop(vid, None)             # lay grace(s) on the beat
+                        if gl and not is_chord:
+                            gtot = min(sum(x['dur'] for x in gl), dur / 4)  # crisp on-beat grace
+                            wsum = sum(x['dur'] for x in gl) or 1
+                            at = onset
+                            for x in gl:
+                                gd = gtot * x['dur'] / wsum
+                                voices[vid].append({'onset': at, 'dur': gd, 'midi': x['midi']}); at += gd
+                            onset = onset + gtot; dur = dur - gtot  # main note shortened, starts after
+                        orn = note_ornament(el)
+                        if tie == 'start' and orn:                 # ornament on a tied note: realize
+                            seq = realize(midi, dur, orn, scale)   #   at onset, carry final principal
+                            at = onset                             #   as the tie (was DROPPED)
+                            for m, d in seq[:-1]:
+                                voices[vid].append({'onset': at, 'dur': d, 'midi': m}); at += d
+                            lm, ld = seq[-1]
+                            pending[vid] = {'onset': at, 'dur': ld, 'midi': lm}
+                        elif tie == 'start':
                             pending[vid] = {'onset': onset, 'dur': dur, 'midi': midi}
                         else:
-                            orn = note_ornament(el)
                             if orn:
                                 at = onset
                                 for m, d in realize(midi, dur, orn, scale):

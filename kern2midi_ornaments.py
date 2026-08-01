@@ -1,14 +1,24 @@
 #!/usr/bin/env python3
 """kern (N monophonic spines, splits/merges allowed) -> piano MIDI, realizing
-ornaments per C.P.E. Bach (Versuch, 1753):
-  * trill  (t/T): start ON THE UPPER auxiliary, on the beat, alternate rapidly,
-                  end on the principal (so a written termination flows on).
-  * mordent(m/M): principal - lower auxiliary - principal, on the beat, snapped.
-  * inv.mordent/Schneller (w/W): principal - upper - principal.
+ornaments the BAROQUE / Bach-specific way -- J.S. Bach's own Explication
+(Clavier-Buechlein fuer W.F. Bach, 1720) as refined by C.P.E. Bach (Versuch,
+1753). Every ornament begins ON THE BEAT.
+  Bach's wavy-line sign is an UPPER-note TRILL: it begins on the note ABOVE, so
+  the first motion falls to the principal, alternates rapidly, and ends on the
+  principal. It is NOT a mordent (a mordent's sign has a vertical stroke through
+  it; Bach's here do not -- verified against the Henle urtext of Canon alla
+  Ottava). Craig Sapp's AoF kern encodes these signs variously as t/T, m/M, and
+  w/W ("mordent"/"inverted mordent" in Humdrum), but they are all the same trill,
+  so ALL of t/T/m/M/w/W realize as a trill from above.
+  * trill (t/T/m/M/w/W): upper-auxiliary start, on the beat, alternate, end on
+                  the principal. Long/cadential notes get a supported (appui)
+                  start -- lean on the upper note, then trill (Henle draws these
+                  with a prefix hook); short notes give a plain Pralltriller.
   * turn (S/s/$): upper - principal - lower - principal.
-Auxiliaries are the DIATONIC neighbours in the parsed key (kern's t/T etc. size
-hint is honoured only where it agrees; the diatonic neighbour is musically right,
-e.g. Bb's lower neighbour is A -- a semitone -- even though the token is 'M').
+  * grace / Vorschlag (q/Q): struck ON THE BEAT of the following note, stealing
+                  time from it (Baroque appoggiatura), NOT anticipated before it.
+Auxiliaries are the DIATONIC neighbours in the parsed key (so g#'s upper is A, a
+semitone; g's upper is A, a whole tone -- musically right regardless of token).
 
 Handles **kern spine splits (*^) and merges (*v *v): a voice that divides into a
 divisi (e.g. Contrapunctus 11's final cadence) is tracked with absolute time and
@@ -72,31 +82,50 @@ def neighbor(midi, up, scale):
         if not up and (pc - d) % 12 in scale: return midi - d
     return midi + (2 if up else -2)
 
-def realize(midi, dur, orn, scale):
-    """Return [(midi, dur), ...] filling `dur`, per C.P.E. Bach."""
-    g = min(Fraction(1, 8), dur / 4)                 # a 32nd note (quarter units)
-    if orn in 'mM':                                  # lower mordent
-        return [(midi, g), (neighbor(midi, False, scale), g), (midi, dur - 2*g)]
-    if orn in 'wW':                                  # inverted mordent / Schneller
-        return [(midi, g), (neighbor(midi, True, scale), g), (midi, dur - 2*g)]
-    if orn in 'Ss$':                                 # turn: upper-principal-lower-principal
-        hi = neighbor(midi, True, scale); lo = neighbor(midi, False, scale)
-        q = min(g, dur/4)
-        return [(hi, q), (midi, q), (lo, q), (midi, dur - 3*q)]
-    if orn in 'tT':                                  # trill: upper-start, end on principal
-        hi = neighbor(midi, True, scale); pair = 2*g
-        k = max(1, int(dur / pair)); seq = []
+def _trill(principal, upper, dur, g, appuy=False):
+    """Trill from ABOVE (Bach's wavy sign): begin on the `upper` auxiliary, so the
+    first motion falls to the principal, alternate rapidly, END on the principal
+    (held for the remainder -> flows into a tie or the next note).  With `appuy`
+    (a supported/cadential trill) it leans on the upper note first, then trills --
+    the sign drawn in Henle with a prefix hook; self-scaled to longer notes."""
+    if appuy:
+        lean = min(dur / 3, 3 * g)                   # dwell on the upper note (the "appui")
+        rem = dur - lean; pair = 2 * g
+        k = max(1, int((rem - g) / pair))            # then trill, resolving DOWN to the principal
+        body = []
         for _ in range(k):
-            seq += [(hi, g), (midi, g)]
-        rem = dur - k*pair
-        if rem > 0:
-            m0, d0 = seq[-1]; seq[-1] = (m0, d0 + rem)
-        return seq
+            body += [(principal, g), (upper, g)]
+        return [(upper, lean)] + body + [(principal, rem - k * pair)]
+    pair = 2 * g
+    k = max(1, int(dur / pair)); seq = []
+    for _ in range(k):
+        seq += [(upper, g), (principal, g)]
+    rem = dur - k * pair                             # hold the final principal
+    if rem > 0:
+        m0, d0 = seq[-1]; seq[-1] = (m0, d0 + rem)
+    return seq
+
+def realize(midi, dur, orn, scale):
+    """Return [(midi, dur), ...] filling `dur`, per J.S. Bach's own Explication
+    (Clavier-Buechlein 1720) as refined by C.P.E. Bach (Versuch 1753).  Bach's
+    wavy-line sign is an UPPER-note trill (begins above, first motion downward),
+    NOT a mordent -- so t/T/m/M/w/W (however the source encodes the sign) all
+    realize as a trill from above.  Long/cadential notes get a supported (appui)
+    start; short notes a plain Pralltriller.  Every ornament begins on the beat."""
+    g = min(Fraction(1, 8), dur / 4)                 # a 32nd-note pulse (quarter units)
+    hi = neighbor(midi, True, scale)
+    lo = neighbor(midi, False, scale)
+    if orn in 'Ss$':                                 # turn: upper-principal-lower-principal
+        q = min(g, dur / 4)
+        return [(hi, q), (midi, q), (lo, q), (midi, dur - 3 * q)]
+    if orn in 'tTmMwW':                              # every wavy sign -> trill from above
+        return _trill(midi, hi, dur, g, appuy=(dur >= 1))
     return [(midi, dur)]
 
 def parse_score(lines, scale):
     """Track spine layout (splits/merges) and return {voice_id: [note,...]}."""
-    voices = defaultdict(list); pending = {}; layout = None; next_vid = 0
+    voices = defaultdict(list); pending = {}; graces = defaultdict(list)
+    layout = None; next_vid = 0
     for l in lines:
         if not l:
             continue
@@ -138,26 +167,43 @@ def parse_score(lines, scale):
                 if pending.get(vid):
                     voices[vid].append(pending.pop(vid))
                 layout[ci]['time'] = t + dur; continue
-            if 'q' in tok or 'Q' in tok:             # grace note: ZERO metric time
-                gd = min(dur, Fraction(1, 8))        # a quick acciaccatura, before the beat
-                voices[vid].append({'onset': max(Fraction(0), t - gd), 'dur': gd, 'midi': midi})
-                continue                             # do NOT advance the clock
+            if 'q' in tok or 'Q' in tok:             # grace note: ZERO metric time, realized
+                graces[vid].append({'midi': midi, 'dur': dur})   # ON the beat of the NEXT note
+                continue                             # (Baroque Vorschlag) -- do NOT advance the clock
+            wdur = dur                               # written value drives the metric clock...
+            onset = t                                # ...but a pending grace steals from the sound
+            gl = graces.pop(vid, None)
+            if gl and tie != 'end':                  # lay the grace(s) on the beat, before the note
+                gtot = min(sum(x['dur'] for x in gl), dur / 4)   # a crisp on-beat grace (<= 1/4 note)
+                wsum = sum(x['dur'] for x in gl) or 1
+                at = t
+                for x in gl:
+                    gd = gtot * x['dur'] / wsum
+                    voices[vid].append({'onset': at, 'dur': gd, 'midi': x['midi']}); at += gd
+                onset = t + gtot; dur = dur - gtot   # main note starts after the grace, shortened
             if pending.get(vid) and tie in ('mid', 'end') and midi == pending[vid]['midi']:
-                pending[vid]['dur'] += dur; layout[ci]['time'] = t + dur
+                pending[vid]['dur'] += dur; layout[ci]['time'] = t + wdur
                 if tie == 'end':
                     voices[vid].append(pending.pop(vid))
                 continue
             if pending.get(vid):
                 voices[vid].append(pending.pop(vid))
-            if tie == 'start':
-                pending[vid] = {'onset': t, 'dur': dur, 'midi': midi}
+            if tie == 'start' and orn:               # ornament on a tied note: realize it at the
+                seq = realize(midi, dur, orn, scale) #   onset, then carry the final principal as the
+                at = onset                           #   tie so the held note flows on (was DROPPED)
+                for m, d in seq[:-1]:
+                    voices[vid].append({'onset': at, 'dur': d, 'midi': m}); at += d
+                lm, ld = seq[-1]
+                pending[vid] = {'onset': at, 'dur': ld, 'midi': lm}
+            elif tie == 'start':
+                pending[vid] = {'onset': onset, 'dur': dur, 'midi': midi}
             elif orn:
-                at = t
+                at = onset
                 for m, d in realize(midi, dur, orn, scale):
                     voices[vid].append({'onset': at, 'dur': d, 'midi': m}); at += d
             else:
-                voices[vid].append({'onset': t, 'dur': dur, 'midi': midi})
-            layout[ci]['time'] = t + dur
+                voices[vid].append({'onset': onset, 'dur': dur, 'midi': midi})
+            layout[ci]['time'] = t + wdur
     for vid, p in pending.items():
         if p:
             voices[vid].append(p)
