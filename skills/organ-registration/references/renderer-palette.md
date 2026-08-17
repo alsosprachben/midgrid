@@ -1,85 +1,99 @@
 # Renderer palette — the executable bridge
 
-How a drawn stop becomes sound in `../tuning`. The engine is a monotimbral
-physical-model additive synth: one note-on → one voice. So a **stop = a voice
-class (chosen by GM program) + a pitch transposition**, and a **chorus = the
-same note emitted several times, transposed, one rank per channel**. The
-renderer resolves the voice class from the channel's *live* program at
-note-attack (`midilib.py`), so program changes mid-piece re-register on the fly.
+How a drawn stop becomes sound in `../tuning`. The engine is a physical-model
+additive synth. The flue and reed **organ voices are registerable**: one organ
+note builds its whole stop list of ranks internally, and you **draw stops with a
+CC11 bitfield**, swell with **CC7**, and roll a crescendo with **CC4** — all live,
+acting on notes already sounding. (Non-organ voices are one plain series.)
 
-## Family → voice class → GM program
+## Control map (organ voices: FlueOrgan prog 19, ReedOrgan prog 20)
 
-Voice classes are defined in `../tuning/tonelib.py`; the GM→class routing is
-`../tuning/patch_map.py`. Pick the program to select the class:
+| MIDI | Role |
+|---|---|
+| **velocity** | static per-note level / voice balance |
+| **CC11** | **stop bitfield** — bit *i* draws rank *i* of the voice's stop list |
+| **CC4**  | **crescendo pedal** — 0→127 rolls the stop list in cumulatively (max'd with CC11) |
+| **CC7**  | **swell** — one shutter over the division: drops level **and** rolls off the highs |
 
-| Stop family (Geer) | Voice class | Program(s) | Character in the model |
-|--------------------|-------------|-----------:|------------------------|
-| **Principal / Diapason** (chorus, mixtures) | `FlueOrganProperties` | 16–19 | full spectrum, octave-emphasis, **dynamic inharmonicity → locks to `hybrid`** |
-| **Flute** (Gedackt, Rohrflöte) | `BlownPipeProperties` | 72–79 | odd-only, near-sine, soft & round |
-| **String** (Gamba, Salicional) | `BowedStringProperties` | 40–44 | 1/n saw-ish, keen, subtle shimmer |
-| **Solo / colour reed** (Dulzian, Krummhorn, Vox Humana) | `ReedOrganProperties` | 20–23, 64–71 | odd-only, hollow, phase-locked, no chiff |
-| **Chorus reed** (Trumpet / Trompette 8′) | `BrightBrassProperties` | 56 (57,59) | bright, edgy, tongued "rip" — cuts through a pleno |
-| **Pedal reed** (Posaune / Bombarde 16′) | `DarkBrassProperties` | 58 (60) | round, dark, slower speech — gravity without edge |
+Selecting an organ program defaults the drawn set to **8′-only**, so an organ
+MIDI with no registration automation sounds as a single principal — exactly as
+before this feature. Everything you hear beyond that you draw.
 
-Notes:
-- Use **FlueOrgan (19)** for *all* principal/mixture ranks — it is the only
-  organ voice with dynamic inharmonicity, so under `hybrid` tuning its octave
-  partials lock to the tuner's stretched octaves instead of beating. The other
-  organ voices are phase-locked (harmonic), which is fine for reeds/flutes.
-- **Brass = reeds** here: the tongued attack and full/ bright spectrum read as
-  organ chorus reeds. Bright = manual Trompette; Dark = pedal Posaune.
+### Stop bitfield bits
 
-## Footage → transposition (semitones)
+- **Flue (prog 19)** — bit 0 = 8′, 1 = 4′, 2 = 2′, 3 = 2⅔′, 4 = 16′, 5 = 5⅓′.
+- **Reed (prog 20)** — bit 0 = 8′, 1 = 16′, 2 = 4′.
 
-A rank sounds at a fixed interval from the key; emit the note transposed:
+CC11 value = sum of `1<<bit` for the drawn stops (e.g. 8′+4′+2′+2⅔′ = `0b1111`
+= 15; add 16′ = `0b11111` = 31). Defined in `stop_ranks` on the classes in
+`../tuning/tonelib.py`; edit there to change footages or the pyramid gains.
 
-| Stop | Semitones | | Stop | Semitones |
-|------|----------:|-|------|----------:|
-| 16′  | **−12** | | 2⅔′ (Quint) | **+19** |
-| 8′   | **0**   | | 2′ (Super)  | **+24** |
-| 4′   | **+12** | | 1⅗′ (Tierce)| **+28** |
-|      |         | | 1⅓′ (mixture)| **+31** |
+### Why the ranks lock (inharmonicity)
 
-A **Mixture** = a stack of the upper octave/fifth ranks (e.g. +19, +24, +31)
-at low velocity. Clamp transposed notes to MIDI 0–127.
+Each rank is a full harmonic series placed a footage interval away on the note's
+**own inharmonic-stretched grid** (4′ at harmonic index 2, 2′ at 4, 2⅔′ at 3,
+16′ at 0.5, 5⅓′ at 1.5). A 4′ fundamental therefore lands *exactly* on the 8′'s
+stretched 2nd partial, so the ranks reinforce and **lock under `hybrid`** instead
+of beating — the alignment is automatic, no per-rank tuning needed. Mixtures ride
+the harmonic series (authentic). Footage → interval, for reference:
 
-## Realization recipe
+| Stop | vs 8′ | harmonic index |  | Stop | vs 8′ | harmonic index |
+|------|------|---:|-|------|------|---:|
+| 16′ | −12 | 0.5 | | 2⅔′ | +19 | 3 |
+| 8′  | 0   | 1   | | 2′  | +24 | 4 |
+| 4′  | +12 | 2   | | 5⅓′ | +7  | 1.5 |
 
-1. **One rank per channel**, program set once at tick 0 (a rank keeps one voice
-   for the whole piece). Only 0–7 are used by a typical SATB source, but you
-   own all 16 — spend them on ranks.
-2. **Divisions:** route the bass/pedal line's ranks to their own channels
-   (Pedal), the upper voices' ranks to others (Great/Positiv). Independence =
-   separate channels/programs, exactly like separate divisions.
-3. **Pyramid via velocity:** 8′ at (near) source velocity; 4′ ~0.85; 2′/2⅔′
-   ~0.6; mixtures lower; a solo reed *above* its accompaniment. This both
-   models the pyramid and controls level.
-4. **Terrace by section:** to change registration at a section tick, either
-   change the channel's `program` there, or simply **start/stop emitting a
-   rank's notes** at that tick (a stop drawn/retired). Gate low pedal ranks
-   (16′/Posaune) to real pedal notes (e.g. source note ≤ G3) so high bass
-   flourishes don't get a subsonic doubling.
+## Family → voice class (choosing the color)
 
-## Worked stop recipes
+Organ families you register with CC11/CC4/CC7 on one channel:
 
-- **Organo Pleno (Great):** FLUE 19 @ 0, +12, +19, +24 (vel 1.0/0.85/0.62/0.62).
-- **Positiv 8′+4′ (lighter chorus / fugue):** FLUE 19 @ 0, +12.
-- **Flute solo + accompaniment:** BlownPipe 74 @ 0 (solo, louder) over FLUE 19
-  @ 0 quiet on another division.
-- **Pedal foundation:** FLUE 19 @ −12 (16′) + @ 0 (8′), + DARK 58 @ −12
-  (Posaune 16′) at pillars.
-- **Grand close:** Great pleno + BRIGHT 56 @ 0 (Trompette 8′); Pedal 16′+8′+
-  Posaune.
+| Family | Voice class | Program | Notes |
+|--------|-------------|--------:|-------|
+| **Principal chorus** | `FlueOrganProperties` | **19** | the registerable flue; principals + mixtures, locks to `hybrid` |
+| **Reed chorus** | `ReedOrganProperties` | **20** | the registerable reed; 8′/16′/4′ chorus, hollow reed tone |
+
+Colors the stop list doesn't cover still go on **their own channel** as a plain
+(non-registerable) voice — draw them by simply having notes there or not:
+
+| Family | Voice class | Program | Use |
+|--------|-------------|--------:|-----|
+| Flute (Gedackt) | `BlownPipeProperties` | 72–79 | soft solo / accompaniment |
+| String (Gamba) | `BowedStringProperties` | 40–44 | warmth under a chorus |
+| Chorus reed (Trompette) | `BrightBrassProperties` | 56 | bright solo reed atop a pleno |
+| Pedal reed (Posaune) | `DarkBrassProperties` | 58 | round pedal reed (brass isn't registerable) |
+
+## Realization recipe (CC-driven)
+
+1. **One organ channel per division** — Great on prog 19, Pedal on prog 19 (a
+   second channel), a Positiv/reed on prog 19/20 as needed. Independence =
+   separate channels, exactly like separate divisions.
+2. **Draw the registration per section** with a **CC11** event at each section
+   tick (program-change first, then CC11, at the same tick). Terraced, discrete —
+   the Baroque way.
+3. **Pedal gravity** = draw 16′ (+8′) on the pedal channel; a Posaune adds a
+   reed channel (prog 20 with 16′, or brass prog 58 on its own channel).
+4. **Swell / crescendo** where wanted: a **CC7** ramp for an expressive swell on
+   held notes, or a **CC4** sweep to roll stops in as a crescendo. Leave CC7 at
+   127 for a purely terraced (stop-only) Baroque registration.
+
+Velocity still sets the static per-voice level; draw the *color and weight* with
+stops, not by riding velocity.
+
+## Worked stop masks
+
+- **Organo Pleno (Great flue):** CC11 = `0b1111` (8′+4′+2′+2⅔′).
+- **Lighter fugal chorus:** CC11 = `0b11` (8′+4′).
+- **Grand close:** Great `0b11111` (add 16′); pedal reed channel drawn.
+- **Pedal foundation:** pedal flue CC11 = `0b10001` (16′+8′).
+- **Crescendo instead of masks:** hold CC11 = `1` (8′) and sweep CC4 0→127.
 
 ## Tuning, reverb, and the clipping ceiling
 
 - **Tuning:** `hybrid` for Baroque (meantone-quality thirds; principals lock).
   See `$tuning-render` and the [[hybrid-tuner-for-baroque]] memory.
-- **Reverb:** organs get the **hall**, not the piano chamber —
-  `sox DRY OUT vol <V> pad 0 5 reverb 100 20 100 100 0 -9` (see
-  [[reverb-by-voice]]).
-- **Density is the ceiling.** A full pleno on several voices is many
-  simultaneous ranks — it *will* clip if `vol` is too hot. After reverb,
-  **always** run `sox FILE -n stats` and require **Flat factor 0.00**; if not,
-  lower `vol` (dense pleno often needs ~0.5), thin the upperwork, or append
-  `gain -n -1`. Loud is built from the *pyramid and the reed*, not from `vol`.
+- **Reverb:** organs get the **hall** —
+  `sox DRY OUT vol <V> pad 0 5 reverb 100 20 100 100 0 -9` (see [[reverb-by-voice]]).
+- **Density is the ceiling.** A full pleno is many simultaneous ranks — it *will*
+  clip if `vol` is hot. After reverb **always** run `sox FILE -n stats` and
+  require **Flat factor 0.00**; if not, lower `vol` (dense pleno often ~0.5) or
+  append `gain -n -1`. Loudness comes from the drawn pyramid, not a hot `vol`.

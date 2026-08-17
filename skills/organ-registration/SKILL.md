@@ -29,9 +29,11 @@ random and listen to what happens.
 4. **Draw the chorus** (`references/stop-families-and-footage.md`): build up
    by pitch — 8′ foundation, add 4′, then 2′ and a quint/mixture for a full
    *Organo Pleno*; keep upper ranks softer than the 8′ so blend stays pyramidal.
-5. **Realize it** (`references/renderer-palette.md`): map each stop to a GM
-   program (voice class) + a transposition, one rank per channel; place
-   program changes / rank on-off at section ticks; set weight with velocity.
+5. **Realize it** (`references/renderer-palette.md`): put one organ channel per
+   division (flue prog 19, reed prog 20) and **draw the stops with a CC11
+   bitfield** per section (the engine stacks the ranks itself and they lock to
+   `hybrid`); add **CC7** for a live swell and **CC4** for a crescendo pedal.
+   velocity sets static level.
 6. **Render and check** (`$tuning-render` conventions): `hybrid` tuning for
    Baroque, organ **hall** reverb, and **verify `sox FILE -n stats` → Flat
    factor 0.00** (dense plena clip — drop `vol` or thin the upperwork).
@@ -65,18 +67,19 @@ drawn stops → footages → renderer realization:
 Piece: <name / key / form>
 Design: <one line — the terraced plan>
 
-Section        Division  Stops (footages)              Renderer (prog @ xpose, vel)
--------------  --------  ----------------------------  ----------------------------
-Prelude        Great     Principal 8+4+2 2/3+2         FLUE 19 @0/+12/+19/+24
-               Pedal     Principal 16+8 + Posaune 16   FLUE 19 @-12/0 ; DARK 58 @-12
-Fugue (expo)   Great     Principal 8+4                 FLUE 19 @0/+12
-               Pedal     Principal 16+8                FLUE 19 @-12/0
-Close          Great     full pleno + Trompette 8      + BRIGHT 56 @0
-               Pedal     16+8 + Posaune 16             ...
+Section        Division  Stops (footages)          Channel  CC11 mask
+-------------  --------  ------------------------  -------  ---------
+Prelude        Great     Principal 8+4+2+2 2/3     ch0 p19  0b1111  (15)
+               Pedal     Principal 16+8            ch1 p19  0b10001 (17)
+Fugue (expo)   Great     Principal 8+4             ch0 p19  0b11    (3)
+               Pedal     Principal 16+8            ch1 p19  0b10001 (17)
+Close          Great     full pleno + 16'          ch0 p19  0b11111 (31)
+               Pedal     16+8 + reed Posaune       ch1/ch2  ...
 ```
 
-Then realize with one rank per channel, program set once, rank on/off at the
-section ticks. If the user wants only the plan, output only the table.
+Then realize with one channel per division and a CC11 event at each section tick
+(program-change first, then CC11). If the user wants only the plan, output only
+the table.
 
 ## References
 

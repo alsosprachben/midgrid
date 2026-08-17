@@ -35,36 +35,40 @@ Piece: Buxtehude, Prelude & Fugue in D minor, BuxWV 140
 Design: terraced Werkprinzip — pleno / lighter fugal chorus / grand close;
         independent 16' pedal throughout.
 
-Section (beats)   Division  Stops (footages)            Renderer (prog @ xpose, vel×)
-----------------  --------  --------------------------  -----------------------------
-Prelude 0-120     Great     Principal 8+4+2 2/3+2       FLUE 19 @0(1.0)/+12(.85)/+19(.62)/+24(.62)
-                  Pedal     Principal 16+8 + Posaune16  FLUE 19 @-12(1.0)/0(.90); DARK 58 @-12(.72)
-Fugue 120-636     Great     Principal 8+4              FLUE 19 @0(1.0)/+12(.80)
-                  Pedal     Principal 16+8            FLUE 19 @-12(.90)/0(.85)
-Close 636-end     Great     full pleno + Trompette 8  FLUE 19 @0/+12/+19/+24 + BRIGHT 56 @0(.55)
-                  Pedal     16+8 + Posaune 16         FLUE 19 @-12/0 ; DARK 58 @-12(.78)
+Section (beats)   Division  Stops (footages)          Channel  CC11 mask
+----------------  --------  ------------------------  -------  -----------------
+Prelude 0-120     Great     Principal 8+4+2+2 2/3     ch0 p19  0b001111 (15)
+                  Pedal     Principal 16+8            ch1 p19  0b010001 (17)
+                  Pedal rd  reed Posaune 16+8         ch2 p20  0b000011 (3)
+Fugue 120-636     Great     Principal 8+4            ch0 p19  0b000011 (3)
+                  Pedal     Principal 16+8          ch1 p19  0b010001 (17)
+                  Pedal rd  (reed rests)            ch2 p20  0b000000 (0)
+Close 636-end     Great     full pleno + 16'        ch0 p19  0b011111 (31)
+                  Pedal     Principal 16+8          ch1 p19  0b010001 (17)
+                  Pedal rd  reed Posaune 16+8       ch2 p20  0b000011 (3)
 ```
 
-Realized with **one rank per channel** (ch0–7), each program set once; ranks
-drawn/retired at the section ticks (57600 / 305280). Low pedal ranks
-(16′/Posaune) **gated to source note ≤ G3 (55)** so high bass flourishes in the
-toccata don't pick up a subsonic doubling. Generator:
-`scratchpad/reregister_140.py` (declarative `SECTIONS` table mirroring the
-Output Pattern above).
+Realized natively with the organ registration engine: **one channel per
+division**, and a **CC11 stop-bitfield** event at each section tick (57600 /
+305280). The renderer stacks the ranks internally on the note's stretched grid
+(so they lock to `hybrid`) — no octave-duplicated note tracks, no per-rank
+channels. The pedal reed simply mutes its stops (mask 0) through the fugue and
+draws again for the close. Generator: `scratchpad/reregister_140_cc.py`
+(declarative per-section masks). Contrast the earlier hand-authored version
+(`reregister_140.py`), which emulated the same registration by duplicating
+transposed note events across eight channels — the engine now does that job.
 
 ## 6–7. Render, check, judge
 
 - **Tuning** `hybrid`; **reverb** organ hall `vol 0.5 pad 0 5 reverb 100 20 100
-  100 0 -9` (dense pleno → `vol 0.5` for headroom).
-- **Clipping check:** `sox …_hall.wav -n stats` → **Flat factor 0.00**. At
-  `vol 0.5` the pleno rendered clean but conservative (Pk −6.6 dB, RMS −26);
-  peak-normalized to −1 dBFS (`gain -n -1`) → Pk −1.0 dB, RMS −20.4, Flat
-  factor still 0.00 — full loudness without clipping. (Loud comes from the
-  pyramid + reed, not from a hot `vol`.)
-- **Ear metric:** subject reads in the fugue (upperwork dropped there); the
-  pedal has real 16′ gravity where before it was buried; colour steps up
-  audibly at the Prelude→Fugue and Fugue→Close boundaries; the Picardy close
-  gets the Trompette + Posaune it wants.
+  100 0 -9` (dense pleno → `vol 0.5` for headroom), then peak-normalized to
+  −1 dBFS (`gain -n -1`).
+- **Clipping check:** `sox …_hall.wav -n stats` → **Flat factor 0.00**
+  (see the render log). Loudness comes from the drawn pyramid, not a hot `vol`.
+- **Ear metric:** the subject reads in the fugue (upperwork dropped to 8′+4′);
+  the pedal has real 16′ gravity where before it was buried; colour steps up
+  audibly at the Prelude→Fugue and Fugue→Close boundaries; the reed Posaune
+  enters for the two tutti pillars and rests through the fugal core.
 
 ## Lesson
 
