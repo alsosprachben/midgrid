@@ -92,3 +92,10 @@ the table.
   with worked recipes and the density/clipping caveat.
 - `references/registration-buxwv140.md` — a full worked example (Buxtehude
   Prelude & Fugue in D minor): flat coupled original → terraced re-registration.
+- `references/registration-bwv542.md` — re-registering a MIDI that already
+  carries the *maker's* registration (Bach, Fantasia & Fugue in G minor): the
+  fullest showcase — cross-family flute + trumpet stops on 19/20, soft
+  walking-bass chorales, and the *timing* of the switches (land them in the gaps).
+- `examples/` — the generator scripts for the worked examples
+  (`register_bwv542.py`, `register_buxwv140.py`, `register_buxwv161.py`): one
+  organ channel per division, CC11 stop masks per section.

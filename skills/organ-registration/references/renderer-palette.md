@@ -21,12 +21,22 @@ before this feature. Everything you hear beyond that you draw.
 
 ### Stop bitfield bits
 
-- **Flue (prog 19)** — bit 0 = 8′, 1 = 4′, 2 = 2′, 3 = 2⅔′, 4 = 16′, 5 = 5⅓′.
-- **Reed (prog 20)** — bit 0 = 8′, 1 = 16′, 2 = 4′.
+- **Flue (prog 19)** — bit 0 = 8′, 1 = 4′, 2 = 2′, 3 = 2⅔′, 4 = 16′, 5 = 5⅓′, **6 = Flute 8′**.
+- **Reed (prog 20)** — bit 0 = 8′, 1 = 16′, 2 = 4′, **3 = Trumpet 8′**.
 
 CC11 value = sum of `1<<bit` for the drawn stops (e.g. 8′+4′+2′+2⅔′ = `0b1111`
-= 15; add 16′ = `0b11111` = 31). Defined in `stop_ranks` on the classes in
-`../tuning/tonelib.py`; edit there to change footages or the pyramid gains.
+= 15; add 16′ = `0b11111` = 31; the flute alone = `0b1000000` = 64; the trumpet =
+`0b1000` = 8). Defined in `stop_ranks` on the classes in `../tuning/tonelib.py`.
+
+**Cross-family stops (Flute on 19, Trumpet on 20).** A `stop_ranks` entry can
+carry a 4th field, a *spectrum* class: that rank borrows only the timbre
+(BlownPipe for the flute, BrightBrass for the trumpet) while the inharmonicity,
+envelope and decay stay the base organ's — so you draw a flute or a chorus reed
+as a bit, and it **locks to hybrid like every other stop**. So you no longer need
+a separate BlownPipe/brass channel for those colors: it's all 19/20. A 5th field
+`dynamic=True` forces a rank onto the flue's dynamic stretch — used on the Trumpet
+(a harmonic reed on 20 would *beat* against the stretched flue, a slow phaser;
+`dynamic` makes it lock instead).
 
 ### Why the ranks lock (inharmonicity)
 
