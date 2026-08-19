@@ -98,4 +98,6 @@ the table.
   walking-bass chorales, and the *timing* of the switches (land them in the gaps).
 - `examples/` — the generator scripts for the worked examples
   (`register_bwv542.py`, `register_buxwv140.py`, `register_buxwv161.py`): one
-  organ channel per division, CC11 stop masks per section.
+  organ channel per division, CC11 stop masks per section. Plus
+  `render_organ.sh IN.mid [tuner]` — the full pipeline in one command
+  (block-render with headroom → cathedral reverb → normalise → mp3).
