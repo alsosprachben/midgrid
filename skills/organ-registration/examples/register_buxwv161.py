@@ -1,34 +1,39 @@
 #!/usr/bin/env python3
-"""My CC-driven registration of Buxtehude's Passacaglia in D minor, BuxWV 161.
+"""CC-driven registration of Buxtehude's Passacaglia in D minor, BuxWV 161.
 
-The piece is a ground bass (tr5) under continuous variations (tr2-4), in the
-classic d-F-a-d tonal scheme (sections at beats 0/180/360/540). Registration
-grows with the form -- moderate, brighten for the F-major lift, fuller for
-a minor, full pleno + pedal reed for the d-minor return and Picardy close --
-while the pedal ground stays clearly present throughout.
+A passacaglia is the ideal PARSIMONY piece (Geer / European voicing): start on a
+single rank and let the registration grow with the variations, a slow inevitable
+crescendo over the ground, cresting only at the d-minor return. So the manual
+opens on a lone 8' principal and adds 4' -> 2' -> 2 2/3' across the F- and
+a-sections; the pedal ground starts light (8') and gains its 16' gravity early;
+and the reeds crown the return in two stages -- the Posaune anticipates, then the
+full plenum + 16' + Great Trompette arrive together at the d-return (beat 540).
+(NOT a plenum from bar 1 -- that is the treble-heavy habit parsimony rejects.)
 
-  Great  ch0 p19 (flue) <- tr2,3,4 (variations)   8+4 -> +2 -> +2 2/3 -> full+16
-  Pedal  ch1 p19 (flue) <- tr5 (ground)           8+4 -> 16+8 (gravity from F)
-  P.Reed ch2 p20 (reed) <- tr5                     Posaune 16+8, final section only
+  Great   ch0 p19 flue  <- tr2,3,4   8' -> 8+4 -> +2 -> +2 2/3 -> full+16 (return)
+  Pedal   ch1 p19 flue  <- tr5        8' -> 16+8 (gravity) -> +5 1/3' (return)
+  Posaune ch2 p20 reed  <- tr5        16+8, enters just before the return (stage 1)
+  Trompet ch3 p20 reed  <- tr2,3,4    Great Trompette, the d-return arrival (stage 2)
 
-CC11 flue bits: 0=8' 1=4' 2=2' 3=2 2/3' 4=16' 5=5 1/3';  reed: 0=8' 1=16' 2=4'.
+Reeds/Trumpet ride the balanced ReedOrgan voicing + the per-rank spatial layout
+now in tonelib; render with examples/render_organ.sh for the cathedral.
+CC11 flue bits: 0=8' 1=4' 2=2' 3=2 2/3' 4=16' 5=5 1/3';  reed: 0=8' 1=16' 2=4' 3=Trumpet.
 """
 import mido
 
 SRC = "/home/ben/Downloads/buxtehude_passacaglia.mid"
 DST = "/home/ben/Downloads/buxtehude_passacaglia_registered.mid"
 TPB = 1024
-SECT = [0, 180 * TPB, 360 * TPB, 540 * TPB]   # d, F, a, d-return  (ticks)
-
+B = TPB
 GREAT_TRACKS = [2, 3, 4]
 PEDAL_TRACK  = 5
 
-# per-section CC11 masks (4 sections: d / F / a / d-return)
-GREAT = [0b000011, 0b000111, 0b001111, 0b011111]   # 8+4 / +2 / +2 2/3 / +16
-PEDAL = [0b000011, 0b010001, 0b010001, 0b010001]   # 8+4 / 16+8 ...
-REED  = [0b000000, 0b000000, 0b000000, 0b000011]   # reed Posaune only in the return
-# NEW: a Great Trompette (reed bit3, dynamic-locks to hybrid) crowns the d-return climax.
-TRUMPET = [0b000000, 0b000000, 0b000000, 0b001000]  # trumpet stop, d-return only
+# per-channel (beat, CC11 mask) build -- a cumulative crescendo, not fixed sections.
+GREAT   = [(0, 0b000001), (90, 0b000011), (210, 0b000111),   # 8' -> 8+4 -> 8+4+2
+           (450, 0b001111), (540, 0b011111)]                 # +2 2/3' -> full + 16' (return)
+PEDAL   = [(0, 0b000001), (90, 0b010001), (540, 0b110001)]   # 8' -> 16+8 -> +5 1/3'
+POSAUNE = [(0, 0), (450, 0b000011)]                          # 16+8 reed, anticipates the return
+TRUMPET = [(0, 0), (540, 0b001000)]                          # Great Trompette at the arrival
 
 def read_notes(mid, ti):
     t = 0; on = {}; out = []
@@ -42,10 +47,10 @@ def read_notes(mid, ti):
                 s, v = q.pop(0); out.append((s, t, msg.note, v))
     return out
 
-def make_channel_track(ch, prog, notes, masks):
+def make_channel_track(ch, prog, notes, mask_events):
     ev = [(0, 0, mido.Message('program_change', channel=ch, program=prog, time=0))]
-    for tick, mask in zip(SECT, masks):
-        ev.append((tick, 1, mido.Message('control_change', channel=ch, control=11, value=mask)))
+    for beat, mask in mask_events:
+        ev.append((beat * B, 1, mido.Message('control_change', channel=ch, control=11, value=mask)))
     for s, e, n, v in notes:
         ev.append((s, 2, mido.Message('note_on',  channel=ch, note=n, velocity=v, time=0)))
         ev.append((e, 3, mido.Message('note_off', channel=ch, note=n, velocity=0, time=0)))
@@ -71,8 +76,8 @@ def main():
     out.tracks.append(cond)
     out.tracks.append(make_channel_track(0, 19, great, GREAT))
     out.tracks.append(make_channel_track(1, 19, pedal, PEDAL))
-    out.tracks.append(make_channel_track(2, 20, pedal, REED))
-    out.tracks.append(make_channel_track(3, 20, great, TRUMPET))   # Great Trompette (d-return climax)
+    out.tracks.append(make_channel_track(2, 20, pedal, POSAUNE))
+    out.tracks.append(make_channel_track(3, 20, great, TRUMPET))   # Great Trompette (d-return)
     out.save(DST)
     print("wrote", DST, "| tracks", len(out.tracks), "| len %.1fs" % out.length,
           "| great", len(great), "pedal", len(pedal))
