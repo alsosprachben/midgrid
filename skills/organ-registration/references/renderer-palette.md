@@ -101,8 +101,11 @@ stops, not by riding velocity.
 
 - **Tuning:** `hybrid` for Baroque (meantone-quality thirds; principals lock).
   See `$tuning-render` and the [[hybrid-tuner-for-baroque]] memory.
-- **Reverb:** organs get the **hall** —
-  `sox DRY OUT vol <V> pad 0 5 reverb 100 20 100 100 0 -9` (see [[reverb-by-voice]]).
+- **Reverb:** organs get a **cathedral** — wet and enveloping, big room and
+  pre-delay, but not the longest tail:
+  `sox DRY OUT vol <V> pad 0 6 reverb 88 15 100 100 28 -3.5 gain -n -1`
+  (reverberance 88, HF-damp 15, room 100, stereo 100, pre-delay 28 ms, wet −3.5 dB;
+  see [[reverb-by-voice]]). Drop the wet-gain (−5…−9) for a drier chapel.
 - **Density is the ceiling.** A full pleno is many simultaneous ranks — it *will*
   clip if `vol` is hot. After reverb **always** run `sox FILE -n stats` and
   require **Flat factor 0.00**; if not, lower `vol` (dense pleno often ~0.5) or
