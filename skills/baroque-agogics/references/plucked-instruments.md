@@ -52,13 +52,27 @@ where it should).
 repertoire and specific note-values — *not* a global groove. It is wrong in most
 German and Italian music. When in doubt, leave it at 0.5.
 
-## Overholding (not yet implemented)
+## Overholding — *style brisé*
 
-*Style brisé* / *style luthé*: holding notes past their written value so a broken
-chord accumulates into a sounding harmony — the lute-derived texture at the heart
-of the French unmeasured prelude. The current transform only ever *shortens*
-(the articulation gap). A `--overhold` that extends selected notes to the next
-harmony change would complete the plucked toolkit.
+`--overhold BEATS`
+
+*Style brisé* / *style luthé*: the fingers **hold keys past the written value** so
+a broken chord accumulates into a sounding harmony — the lute-derived texture at
+the heart of the French unmeasured prelude. Each note is held up to `BEATS`
+longer, but never past the next strike of **its own pitch** (a string can only
+sound once), so the texture clears itself as the harmony moves.
+
+**This is not a sustain pedal.** A harpsichord has none: its dampers ride on the
+jacks, one per key, and no mechanism lifts them all. (The renderer implements no
+CC64 either.) Overholding is therefore purely a matter of note *duration* — which
+is exactly what the fingers do — and needs no MIDI feature beyond longer notes.
+The one genuine MIDI constraint is overlapping the *same* pitch; the engine
+ref-counts re-attacks, and the transform stops a held note short of its own next
+onset regardless.
+
+Use 2–4 beats for a rich brisé texture; smaller values just thicken the legato.
+It overrides the articulation gap where they conflict (a held note is not also a
+separated one).
 
 ## Registers, and coupling
 

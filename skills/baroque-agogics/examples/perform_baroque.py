@@ -113,6 +113,7 @@ def main():
     ap.add_argument("--spread-accent", action='store_true') # roll wider on strong beats
     ap.add_argument("--inegales", type=float, default=0.5)  # first note's share of the pair
     ap.add_argument("--inegales-div", type=int, default=2)  # subdivisions per beat made unequal
+    ap.add_argument("--overhold", type=float, default=0.0)  # beats: hold notes past their value
     a = ap.parse_args()
 
     m = mido.MidiFile(a.inp); TPB = m.ticks_per_beat
@@ -121,6 +122,22 @@ def main():
     # a wider roll reads as a stronger chord (Couperin's arpegement). Collected
     # GLOBALLY (across tracks/voices) so a chord split between staves rolls as one
     # gesture; only the onsets move, the note-offs stay (the hand lifts together).
+    # --- overholding (style brisé / style luthé): the fingers hold keys past the
+    # written value so a broken chord accumulates into a sounding harmony. This is
+    # NOT a sustain pedal -- a harpsichord has none (its dampers ride on the jacks,
+    # one per key), so the effect is purely note-duration. The only real constraint
+    # is that a held note must end before its own pitch is struck again.
+    next_same = {}
+    if a.overhold > 0.0:
+        onsets = {}
+        for tr in m.tracks:
+            t = 0
+            for x in tr:
+                t += x.time
+                if x.type == 'note_on' and x.velocity > 0:
+                    onsets.setdefault((x.channel, x.note), []).append(t)
+        for k, v in onsets.items(): next_same[k] = sorted(v)
+
     spread_of = {}
     if a.spread > 0.0:
         groups = {}
@@ -177,6 +194,16 @@ def main():
                     gap = min(a.gap_frac * dur, a.gap_cap)
                     gap = max(gap, min(a.gap_min, dur * 0.5))
                     p_off = max(p_on + dur - gap, p_on + 0.005)
+                    if a.overhold > 0.0:
+                        # hold on past the written value -- but stop short of this
+                        # pitch's next strike (a string can only sound once).
+                        held = tm(b + a.overhold)
+                        seq = next_same.get((x.channel, x.note), ())
+                        import bisect as _bs
+                        i = _bs.bisect_right(seq, int(round(on_b * TPB)))
+                        if i < len(seq):
+                            held = min(held, tm(seq[i] / TPB) - 0.03)
+                        p_off = max(p_off, min(held, p_off + a.overhold * 60.0 / a.bpm))
                     events.append((sec2tick(p_on), 1, mido.Message('note_on', channel=x.channel, note=x.note, velocity=vel)))
                     events.append((sec2tick(p_off), 0, mido.Message('note_off', channel=x.channel, note=x.note, velocity=0)))
             elif x.type == 'set_tempo':
