@@ -96,8 +96,17 @@ the table.
   carries the *maker's* registration (Bach, Fantasia & Fugue in G minor): the
   fullest showcase — cross-family flute + trumpet stops on 19/20, soft
   walking-bass chorales, and the *timing* of the switches (land them in the gaps).
+- `references/registration-bwv543.md` — worked example (Bach, A minor P&F):
+  getting a **notated** source (IMSLP LilyPond → MIDI), realizing its ornaments
+  with our C.P.E. Bach engine, and the **pedal-solo registration** (brighten the
+  exposed pedal, retract before the manuals return).
 - `examples/` — the generator scripts for the worked examples
-  (`register_bwv542.py`, `register_buxwv140.py`, `register_buxwv161.py`): one
-  organ channel per division, CC11 stop masks per section. Plus
-  `render_organ.sh IN.mid [tuner]` — the full pipeline in one command
-  (block-render with headroom → cathedral reverb → normalise → mp3).
+  (`register_bwv542.py`, `register_bwv543.py`, `register_buxwv140.py`,
+  `register_buxwv161.py`): one organ channel per division, stop masks per
+  section. Plus `render_organ.sh IN.mid [tuner]` — the full pipeline in one
+  command (block-render with headroom → cathedral reverb → normalise → mp3).
+
+**Related skill:** `baroque-agogics` shapes the *time* (tempo, articulation,
+agogic breath, cadential rubato) — the expression a fixed-volume instrument makes
+instead of dynamics. Apply it **after** registration; it warps the CC events along
+with the notes. Order: notation → ornaments → registration → agogics → render.

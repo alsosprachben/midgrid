@@ -45,7 +45,9 @@ def track_from(ch, prog, notes, mask_events, transpose=0, cc7=None):
     if cc7 is not None:
         ev.append((0, 0, mido.Message('control_change', channel=ch, control=7, value=cc7)))
     for tick, mask in mask_events:
-        ev.append((tick, 1, mido.Message('control_change', channel=ch, control=11, value=mask)))
+        # 14-bit stop word: CC11 = bits 0-6, CC43 = bits 7-13 (the Mixtur is bit 7)
+        ev.append((tick, 1, mido.Message('control_change', channel=ch, control=11, value=mask & 0x7F)))
+        ev.append((tick, 1, mido.Message('control_change', channel=ch, control=43, value=(mask >> 7) & 0x7F)))
     for s, e, n, v in notes:
         nn = n + transpose
         if not (0 <= nn <= 127): continue
@@ -79,7 +81,8 @@ def main():
     C1a, C1b = int(57.3*TPB), int(94.5*TPB)
     C2a, C2b = int(166.0*TPB), int(210.4*TPB)
     # per-section CC11 masks: (tick, mask), sorted.
-    GREAT = [(0, 0b001111), (CLIMAX, 0b011111)]      # 8+4+2+2 2/3 ; +16' for the close
+    MIX = 1 << 7                                     # Mixtur III (flue bit 7)
+    GREAT = [(0, 0b001111), (CLIMAX, 0b011111 | MIX)]  # 8+4+2+2 2/3 ; +16'+Mixtur for the close
     POS   = [(0, 0b000011)]                          # soft chorale: 8+4 only
     PEDF  = [(0, 0b010001),                          # 16+8 (flue foundation)
              (C1a, 0b1000000), (C1b, 0b010001),      # chorale 1: bare 8' FLUTE (soft, flue-like)

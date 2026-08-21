@@ -28,9 +28,11 @@ B = TPB
 GREAT_TRACKS = [2, 3, 4]
 PEDAL_TRACK  = 5
 
-# per-channel (beat, CC11 mask) build -- a cumulative crescendo, not fixed sections.
+MIX = 1 << 7    # Mixtur III (flue bit 7) -- crowns the d-return climax only
+
+# per-channel (beat, stop-mask) build -- a cumulative crescendo, not fixed sections.
 GREAT   = [(0, 0b000001), (90, 0b000011), (210, 0b000111),   # 8' -> 8+4 -> 8+4+2
-           (450, 0b001111), (540, 0b011111)]                 # +2 2/3' -> full + 16' (return)
+           (450, 0b001111), (540, 0b011111 | MIX)]           # +2 2/3' -> full+16'+Mixtur (return)
 PEDAL   = [(0, 0b000001), (90, 0b010001), (540, 0b110001)]   # 8' -> 16+8 -> +5 1/3'
 POSAUNE = [(0, 0), (450, 0b000011)]                          # 16+8 reed, anticipates the return
 TRUMPET = [(0, 0), (540, 0b001000)]                          # Great Trompette at the arrival
@@ -50,7 +52,9 @@ def read_notes(mid, ti):
 def make_channel_track(ch, prog, notes, mask_events):
     ev = [(0, 0, mido.Message('program_change', channel=ch, program=prog, time=0))]
     for beat, mask in mask_events:
-        ev.append((beat * B, 1, mido.Message('control_change', channel=ch, control=11, value=mask)))
+        # 14-bit stop word: CC11 = bits 0-6, CC43 = bits 7-13 (the Mixtur is bit 7)
+        ev.append((beat * B, 1, mido.Message('control_change', channel=ch, control=11, value=mask & 0x7F)))
+        ev.append((beat * B, 1, mido.Message('control_change', channel=ch, control=43, value=(mask >> 7) & 0x7F)))
     for s, e, n, v in notes:
         ev.append((s, 2, mido.Message('note_on',  channel=ch, note=n, velocity=v, time=0)))
         ev.append((e, 3, mido.Message('note_off', channel=ch, note=n, velocity=0, time=0)))

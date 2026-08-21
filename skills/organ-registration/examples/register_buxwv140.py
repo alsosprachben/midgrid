@@ -34,9 +34,11 @@ CLOSE   = 636 * B    # peroration: everything
 GREAT_VOICES = [1, 2, 3]   # S, A, T
 PEDAL_VOICE  = 4           # bass -> pedal
 
-# per-channel (tick, CC11 mask) events -- a *build*, not a plenum from bar 1.
+MIX = 1 << 7    # Mixtur III (flue bit 7) -- the crown of a full pleno, close only
+
+# per-channel (tick, stop-mask) events -- a *build*, not a plenum from bar 1.
 GREAT = [(0, 0b000011), (P_TUTTI, 0b000111), (FUGUE, 0),          # 8+4 -> 8+4+2 ; tacet in fugue
-         (F_BUILD, 0b000011), (CLOSE, 0b011111)]                  # flue rejoins 8+4 ; +16' close
+         (F_BUILD, 0b000011), (CLOSE, 0b011111 | MIX)]            # flue rejoins 8+4 ; +16'+Mixtur close
 GREAT_REED = [(0, 0), (FUGUE, 0b000001), (CLOSE, 0b001001)]       # solo 8' reed fugue ; +Trumpet close
 PEDAL = [(0, 0b000001), (P_TUTTI, 0b010001), (FUGUE, 0b000001),   # 8' -> 16+8 ; light 8' under the reed
          (F_BUILD, 0b010001), (CLOSE, 0b110001)]                  # 16+8 ; +5 1/3' close
@@ -58,7 +60,9 @@ def make_channel_track(ch, prog, notes, mask_events):
     # events: (tick, order, mido.Message) -- order keeps prog_change < CC < notes at a tick
     ev = [(0, 0, mido.Message('program_change', channel=ch, program=prog, time=0))]
     for tick, mask in mask_events:
-        ev.append((tick, 1, mido.Message('control_change', channel=ch, control=11, value=mask)))
+        # 14-bit stop word: CC11 = bits 0-6, CC43 = bits 7-13 (the Mixtur is bit 7)
+        ev.append((tick, 1, mido.Message('control_change', channel=ch, control=11, value=mask & 0x7F)))
+        ev.append((tick, 1, mido.Message('control_change', channel=ch, control=43, value=(mask >> 7) & 0x7F)))
     for s, e, n, v in notes:
         ev.append((s, 2, mido.Message('note_on',  channel=ch, note=n, velocity=v, time=0)))
         ev.append((e, 3, mido.Message('note_off', channel=ch, note=n, velocity=0, time=0)))
