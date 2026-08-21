@@ -35,6 +35,21 @@ behaviour. Defined in `stop_ranks` in `../tuning/tonelib.py`.
 (1⅓′+1′+⅔′). It is the crown of a full Organo Pleno: draw it for the peroration/
 climax (with the full plenum), not for ordinary counterpoint.
 
+### The harpsichord is registerable too (prog 6/7)
+
+A harpsichord has no dynamics either — you engage whole **choirs** of strings —
+so it uses this same CC11 stop machinery:
+
+- bit 0 = **8′ lower manual** (plucked further from the nut: round)
+- bit 1 = **8′ upper manual** (plucked near the nut: nasal, bright)
+- bit 2 = **4′ choir**
+- bit 3 = **lute/buff stop** (dry, dull, short)
+
+**Coupling = drawing both 8′ choirs** (`0b0011`) — mechanically what a coupler
+does; `0b0111` (both 8′s + 4′) is the full *grand jeu*. Terrace the registers by
+section exactly as for organ. Since registers are a harpsichord's only "dynamics,"
+pair this with the `baroque-agogics` skill (arpégement, inégales) for the rest.
+
 ### Rank break-back (why the top never turns shrill)
 
 Upper ranks don't run the full compass. Past a **pipe ceiling** (flue ~2.1 kHz,
