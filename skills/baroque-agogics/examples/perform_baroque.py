@@ -39,13 +39,8 @@ def meter_profile(num, den):
         [1.0] + [0.4] * (nb - 1))
     return bar, [(i * beat, w[i]) for i in range(nb)]
 
-def build_timemap(total_beats, bpm, rit_beats, rit_amount, agogic, bar_len, prof, res=0.02):
-    """beat -> performed seconds (cumulative, monotonic). Base tempo x a per-bar
-    agogic breath (strong beats slower/longer, mean-preserving so no drift) x a
-    smoothstep cadential broadening over the last rit_beats."""
-    spb0 = 60.0 / bpm
-    rit_start = total_beats - rit_beats
-    # sample the (wrapping) weight profile; mean-subtract so the bar keeps its length
+def meter_weight(bar_len, prof):
+    """phase-in-bar (quarters) -> metric weight, interpolated and wrapping."""
     import bisect
     ph = [p for p, _ in prof] + [bar_len]
     wv = [w for _, w in prof] + [prof[0][1]]
@@ -55,13 +50,32 @@ def build_timemap(total_beats, bpm, rit_beats, rit_amount, agogic, bar_len, prof
         i = max(0, min(i, len(ph) - 2))
         f = (phase - ph[i]) / (ph[i + 1] - ph[i]) if ph[i + 1] > ph[i] else 0.0
         return wv[i] + f * (wv[i + 1] - wv[i])
+    return weight
+
+def build_timemap(total_beats, bpm, rit_beats, rit_amount, agogic, bar_len, prof,
+                  ineg=0.5, ineg_div=2, res=0.02):
+    """beat -> performed seconds (cumulative, monotonic). Base tempo x a per-bar
+    agogic breath (strong beats slower/longer, mean-preserving so no drift) x a
+    smoothstep cadential broadening over the last rit_beats."""
+    spb0 = 60.0 / bpm
+    rit_start = total_beats - rit_beats
+    weight = meter_weight(bar_len, prof)
     mean_w = sum(weight(p) for p in [k * res for k in range(int(bar_len / res))]) / (int(bar_len / res) or 1)
     def rit(b):
         if rit_beats <= 0 or b <= rit_start: return 1.0
         x = min((b - rit_start) / rit_beats, 1.0)
         return 1.0 + (rit_amount - 1.0) * (x * x * (3 - 2 * x))
+    def inegal(b):
+        # notes inegales (French, plucked/keyboard): the subdivisions of a beat are
+        # played long-short. As a TIME-MAP warp (rather than per-note surgery) the
+        # beat boundaries are fixed points, so longer values are untouched and every
+        # voice stays consistent automatically. ineg = the first note's share of the
+        # pair (0.5 equal, 0.60 lourer/gentle, 0.667 = a sharp 2:1 pointer).
+        if ineg == 0.5: return 1.0
+        phase = (b * ineg_div) % 2.0            # position within the long-short pair
+        return 2.0 * ineg if phase < 1.0 else 2.0 * (1.0 - ineg)   # mean-preserving
     def factor(b):
-        return rit(b) * (1.0 + agogic * (weight(b) - mean_w))
+        return rit(b) * (1.0 + agogic * (weight(b) - mean_w)) * inegal(b)
     bs, times, t = [], [], 0.0
     b = 0.0; prev_spb = spb0 * factor(0.0)
     while b <= total_beats + res:
@@ -92,9 +106,35 @@ def main():
     ap.add_argument("--rit-beats", type=float, default=8.0)
     ap.add_argument("--rit-amount", type=float, default=1.8)
     ap.add_argument("--agogic", type=float, default=0.09)   # metric breath depth (0 = off)
+    # --- plucked-instrument levers (harpsichord/lute): the pluck is fixed, so
+    # accent is made by SPREAD and shape by inequality.
+    ap.add_argument("--spread", type=float, default=0.0)    # ms between notes of a rolled chord
+    ap.add_argument("--spread-dir", choices=('up','down'), default='up')
+    ap.add_argument("--spread-accent", action='store_true') # roll wider on strong beats
+    ap.add_argument("--inegales", type=float, default=0.5)  # first note's share of the pair
+    ap.add_argument("--inegales-div", type=int, default=2)  # subdivisions per beat made unequal
     a = ap.parse_args()
 
     m = mido.MidiFile(a.inp); TPB = m.ticks_per_beat
+    # --- arpegement (plucked): roll the notes of a chord instead of striking them
+    # together. On a harpsichord the pluck is fixed, so SPREAD is the accent --
+    # a wider roll reads as a stronger chord (Couperin's arpegement). Collected
+    # GLOBALLY (across tracks/voices) so a chord split between staves rolls as one
+    # gesture; only the onsets move, the note-offs stay (the hand lifts together).
+    spread_of = {}
+    if a.spread > 0.0:
+        groups = {}
+        for tr in m.tracks:
+            t = 0
+            for x in tr:
+                t += x.time
+                if x.type == 'note_on' and x.velocity > 0:
+                    groups.setdefault((x.channel, t), set()).add(x.note)
+        for (chan, tick), notes in groups.items():
+            if len(notes) < 2: continue
+            order = sorted(notes, reverse=(a.spread_dir == 'down'))
+            for i, n in enumerate(order):
+                spread_of[(chan, tick, n)] = i          # index in the roll
     # meter (for the agogic bar grid); tick 0 = downbeat (no anacrusis in 543)
     num, den = 4, 4
     for tr in m.tracks:
@@ -108,7 +148,9 @@ def main():
         for x in tr:
             t += x.time
         total = max(total, t / TPB)
-    tm = build_timemap(total, a.bpm, a.rit_beats, a.rit_amount, a.agogic, bar_len, prof)
+    tm = build_timemap(total, a.bpm, a.rit_beats, a.rit_amount, a.agogic, bar_len, prof,
+                       a.inegales, a.inegales_div)
+    weight_at = meter_weight(bar_len, prof)
     OUT_TEMPO = 500000                       # fixed output tempo; warped ticks carry the timing
     sec2tick = lambda s: int(round(s / (OUT_TEMPO / 1e6) * TPB))
 
@@ -126,6 +168,11 @@ def main():
                 if q:
                     on_b, vel = q.pop(0)
                     p_on = tm(on_b); p_off_full = tm(b)
+                    idx = spread_of.get((x.channel, int(round(on_b * TPB)), x.note))
+                    if idx:                       # 0 = first of the roll, no delay
+                        w = weight_at(on_b) if a.spread_accent else 1.0
+                        p_on += idx * a.spread * w / 1000.0
+                        if p_on > p_off_full - 0.02: p_on = max(p_off_full - 0.02, tm(on_b))
                     dur = p_off_full - p_on
                     gap = min(a.gap_frac * dur, a.gap_cap)
                     gap = max(gap, min(a.gap_min, dur * 0.5))
@@ -148,8 +195,11 @@ def main():
         nt.append(mido.MetaMessage('end_of_track', time=0))
         out.tracks.append(nt)
     out.save(a.outp)
-    print("wrote %s | %.0f beats @ %.0f bpm | %d/%d agogic %.2f | rit last %.0f x%.2f | len %.1fs"
-          % (a.outp, total, a.bpm, num, den, a.agogic, a.rit_beats, a.rit_amount, out.length))
+    extra = ""
+    if a.spread > 0: extra += " | spread %.0fms %s%s" % (a.spread, a.spread_dir, "+accent" if a.spread_accent else "")
+    if a.inegales != 0.5: extra += " | inegales %.3f /%d" % (a.inegales, a.inegales_div)
+    print("wrote %s | %.0f beats @ %.0f bpm | %d/%d agogic %.2f | rit last %.0f x%.2f%s | len %.1fs"
+          % (a.outp, total, a.bpm, num, den, a.agogic, a.rit_beats, a.rit_amount, extra, out.length))
 
 if __name__ == "__main__":
     main()

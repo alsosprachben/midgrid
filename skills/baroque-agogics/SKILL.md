@@ -34,7 +34,9 @@ Two levers, by instrument type:
 - **Sustained (organ)** — the lever is the **release**: a note's *sounding
   fraction* of its written value. Shorten it to add air; hold it full for weight.
 - **Plucked (harpsichord)** — the lever is the **space between attacks** and
-  **chord spread** (arpeggiation = emphasis), since the pluck itself is fixed.
+  **chord spread** (arpégement = emphasis), since the pluck itself is fixed.
+  See `references/plucked-instruments.md`; the harpsichord's *registers* (and
+  coupling) are drawn stops, handled by `organ-registration`.
 
 ## Workflow
 
@@ -97,4 +99,6 @@ Then apply the transform. If the user wants only the plan, output only the table
   concrete timing transform, every parameter and what it does to the sound.
 - `examples/perform_baroque.py` — the transform (tempo, articulation, agogic
   breath, cadential rit), warping all events through one monotonic time-map.
+- `references/plucked-instruments.md` — the harpsichord side: arpégement
+  (spread as accent), notes inégales, and registers/coupling as drawn stops.
 - `references/performance-bwv543.md` — worked example: Bach's A minor P&F.
