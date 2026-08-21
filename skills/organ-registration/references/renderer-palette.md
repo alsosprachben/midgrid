@@ -21,12 +21,29 @@ before this feature. Everything you hear beyond that you draw.
 
 ### Stop bitfield bits
 
-- **Flue (prog 19)** — bit 0 = 8′, 1 = 4′, 2 = 2′, 3 = 2⅔′, 4 = 16′, 5 = 5⅓′, **6 = Flute 8′**.
+- **Flue (prog 19)** — bit 0 = 8′, 1 = 4′, 2 = 2′, 3 = 2⅔′, 4 = 16′, 5 = 5⅓′,
+  **6 = Flute 8′**, **7 = Mixtur III**.
 - **Reed (prog 20)** — bit 0 = 8′, 1 = 16′, 2 = 4′, **3 = Trumpet 8′**.
 
-CC11 value = sum of `1<<bit` for the drawn stops (e.g. 8′+4′+2′+2⅔′ = `0b1111`
-= 15; add 16′ = `0b11111` = 31; the flute alone = `0b1000000` = 64; the trumpet =
-`0b1000` = 8). Defined in `stop_ranks` on the classes in `../tuning/tonelib.py`.
+The stop word is **14-bit**: **CC11 = bits 0–6**, **CC43 = bits 7–13**. So most
+registrations are still one CC11 value = sum of `1<<bit` (8′+4′+2′+2⅔′ = `0b1111`
+= 15; add 16′ = `0b11111` = 31; flute alone = 64; trumpet = 8) — but the **Mixtur
+(bit 7) is drawn with `CC43=1`**. `CC43=0` (the default) is exactly the old 7-bit
+behaviour. Defined in `stop_ranks` in `../tuning/tonelib.py`.
+
+**Mixtur III** is a *compound* stop — one drawstop of several very high ranks
+(1⅓′+1′+⅔′). It is the crown of a full Organo Pleno: draw it for the peroration/
+climax (with the full plenum), not for ordinary counterpoint.
+
+### Rank break-back (why the top never turns shrill)
+
+Upper ranks don't run the full compass. Past a **pipe ceiling** (flue ~2.1 kHz,
+reed ~1.6 kHz — reed tongues top out lower) a rank has no pipes and **breaks back
+an octave**, folding onto the note's stretched grid so it stays hybrid-locked.
+Only upperwork (4′ and above) breaks; the 8′/16′ foundation and a solo reed line
+always keep their pipes. A Mixtur's ranks sit so high they fold constantly —
+that *is* its "composition," and why an ascending run **re-colors** at the top
+instead of climbing into shrillness. Automatic; nothing to set per piece.
 
 **Cross-family stops (Flute on 19, Trumpet on 20).** A `stop_ranks` entry can
 carry a 4th field, a *spectrum* class: that rank borrows only the timbre
