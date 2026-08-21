@@ -66,6 +66,54 @@ slower. Rubato *as* the diminuendo. 1.7–1.9× over 6–8 beats reads as a real
 without sounding like a tape slowing down. Apply per movement (run the tool on
 each movement separately, then concatenate) so internal movement-ends broaden too.
 
+### Phrase-aware shaping — `--phrase`, `--density-damp`, `--tension`
+
+A player does not breathe identically in every bar. Three signals read from the
+score (`analyze_score`) make the base agogic respond to the music:
+
+- **`--phrase`** (0.09–0.16) — broaden approaching a phrase end, re-gather after.
+  Boundaries are found **per voice** (a rest, or a note long for that voice) and
+  then pooled, because in real counterpoint the *aggregate* onset stream never
+  stops — when one voice rests the others cover it, which is what fugal writing is
+  FOR. Looking for gaps in the whole texture finds nothing. **Voices phrase;
+  textures rarely do.** Candidates are scored continuously and the strongest are
+  kept at a musical *rate* (~1 per 4 bars) rather than by a threshold, which makes
+  the detector behave consistently across a resting fugue and a seamless
+  4-part texture alike. Use MORE in improvisatory music (a toccata, prelude,
+  fantasia — Frescobaldi's flexible time) and LESS in a driving fugue.
+- **`--density-damp`** (0.7–0.85) — damp the metric breath where the texture runs
+  fast. Passagework should flow, not be stressed beat by beat.
+- **`--tension`** (0.02–0.03) — lean on a sounding dissonance (m2/M2/tritone/7th).
+  A dissonance is a "good note" wherever it falls. (Vertical dissonance only; true
+  suspension detection, with resolution tracking, is not implemented.)
+
+These are heuristics, not analysis: they find *plausible* boundaries, not
+analytically correct ones. All default to 0, i.e. the uniform behaviour.
+
+### Editorial performance — `--cadential-trills`, `--figuration-hold`
+
+A Baroque player did more than the page shows. Both of these are **opt-in** and
+report what they did, because they change the notes.
+
+- **`--cadential-trills`** — a trill on the penultimate note at detected cadences,
+  realized by midgrid's C.P.E. Bach engine (trill from above, appui on long notes,
+  on the beat). Conservative: top voice only, only a note long enough to hold a
+  trill, only a stepwise close (the 4-3 / 2-1 formula). Note that in a merged
+  registration MIDI "the previous note in the track" is *not* "the previous note in
+  the voice" — the penultimate is found by melodic proximity instead.
+- **`--figuration-hold BEATS`** — broken-chord figuration carries an implied inner
+  voice (the lowest note of each beat-group) that the ear hears as held. Sources
+  often write it out in some bars and abbreviate it in others; E. Power Biggs
+  famously continued BWV 543's every-other-bar alternation through its triplet runs.
+
+  **The rule: continue a pattern only where the source establishes one, and only
+  as long as the texture that carries it lasts.** Concretely it requires an
+  alternation of >= 3 held bars of one parity, every other bar, and it extends only
+  within that section (the piece is segmented into contiguous runs of one
+  subdivision — a triplet run and a 16th run are different music). Irregular held
+  inner voices elsewhere are left alone: inventing more of a pattern than the
+  composer established is composing, not performing.
+
 ## Recipe
 
 1. Register the piece first (see `organ-registration`), keeping the
@@ -78,12 +126,16 @@ each movement separately, then concatenate) so internal movement-ends broaden to
 
 ## Known limits (worth extending)
 
-- The agogic breath is **uniform across the piece** — every bar breathes equally.
-  Real playing breathes more at phrase points and less in fast passagework.
-  *Phrase-awareness is the natural next feature.*
-- **Structural stress** (extra length on suspensions, dissonances, phrase peaks)
-  is not modelled — only metric position.
-- Only **sectional/final** rit is available (per movement); internal cadences are
-  not detected.
-- **Plucked instruments** — inter-attack spacing and chord spread (arpégement)
-  are not implemented; the model currently targets sustained (organ) release.
+- **Phrase detection is a heuristic**, not analysis. It ranks note-ends by how much
+  a voice breathes and keeps the best at an imposed rate (~1 per 4 bars); the rate
+  is assumed rather than discovered, and a piece that phrases irregularly will be
+  shaped evenly regardless. Inspect what it found (the tool prints the count).
+- **Tension is vertical dissonance only** — no resolution tracking, so a true
+  suspension is not distinguished from any passing dissonance, and a phrase PEAK
+  (the melodic high point) is not stressed at all.
+- Only **sectional/final** rit is available (per movement); internal cadences
+  broaden only through the phrase bumps, not a real rit.
+- **Editorial features assume a well-formed source**: `--figuration-hold` needs the
+  pattern established early and regularly, and `--cadential-trills` needs the
+  cadence to offer a trillable stepwise penultimate. Both no-op quietly otherwise.
+- **Anacrusis is assumed absent** (tick 0 = downbeat) throughout.

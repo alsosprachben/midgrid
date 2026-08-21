@@ -83,7 +83,13 @@ GREAT_TRACKS = [1, 2]   # right + left manual staves
 PEDAL_TRACK  = 3        # pedal staff
 
 # --- PRELUDE: bright toccata plenum + two pedal-solo brightenings (retracted) ---
-P_GREAT = [(0, 0b000011), (48, 0b000111)]                 # 8+4 -> 8+4+2 (toccata)
+# The manual plays ALONE for the first 9 bars (the pedal rests: R1 x8 in the
+# source), so that opening flourish belongs on a light POSITIVE, not the full
+# Great -- the Great takes over when the pedal enters at beat 36 and the texture
+# fills out. Registering the solo opening on a plenum is far too heavy.
+P_SOLO_END = 36
+P_POS   = [(0, 0b000001), (P_SOLO_END, 0)]                # light 8' Positive, then tacet
+P_GREAT = [(0, 0), (P_SOLO_END, 0b000011), (48, 0b000111)]  # silent, then 8+4 -> 8+4+2
 P_PEDF  = [(0, 0b010001),                                 # 16+8 foundation
            (99, 0b010111), (110, 0b010001),               # solo 1: +4'+2', retract
            (181, 0b010111), (186, 0b010001)]              # solo 2: +4'+2', retract
@@ -134,7 +140,7 @@ def make_channel_track(ch, prog, notes, mask_events, TPB):
     tr.append(mido.MetaMessage('end_of_track', time=0))
     return tr
 
-def build(src, dst, GREAT, PEDF, PEDR, TRUMPET, name, orns=None):
+def build(src, dst, GREAT, PEDF, PEDR, TRUMPET, name, orns=None, POSITIVE=None):
     m = mido.MidiFile(src); TPB = m.ticks_per_beat
     great = []
     for ti in GREAT_TRACKS: great += read_notes(m, ti)
@@ -151,7 +157,14 @@ def build(src, dst, GREAT, PEDF, PEDR, TRUMPET, name, orns=None):
     cond.append(mido.MetaMessage('track_name', name=name, time=0))
     cond.append(mido.MetaMessage('end_of_track', time=0))
     out.tracks.append(cond)
-    out.tracks.append(make_channel_track(0, 19, great, GREAT, TPB))
+    if POSITIVE is not None:
+        # split the manual line: the solo opening to the Positive, the rest to the Great
+        pos = [n for n in great if n[0] < P_SOLO_END * TPB]
+        gre = [n for n in great if n[0] >= P_SOLO_END * TPB]
+        out.tracks.append(make_channel_track(0, 19, gre, GREAT, TPB))
+        out.tracks.append(make_channel_track(4, 19, pos, POSITIVE, TPB))
+    else:
+        out.tracks.append(make_channel_track(0, 19, great, GREAT, TPB))
     out.tracks.append(make_channel_track(1, 19, pedal, PEDF, TPB))
     out.tracks.append(make_channel_track(2, 20, pedal, PEDR, TPB))
     out.tracks.append(make_channel_track(3, 20, great, TRUMPET, TPB))
@@ -159,6 +172,7 @@ def build(src, dst, GREAT, PEDF, PEDR, TRUMPET, name, orns=None):
     print("wrote", dst, "| TPB", TPB, "| len %.1fs" % out.length, "| great", len(great), "pedal", len(pedal))
 
 if __name__ == "__main__":
-    build(PREL_SRC, PREL_DST, P_GREAT, P_PEDF, P_PEDR, [(0, 0)], "BWV543 Prelude (organ)")
+    build(PREL_SRC, PREL_DST, P_GREAT, P_PEDF, P_PEDR, [(0, 0)], "BWV543 Prelude (organ)",
+          POSITIVE=P_POS)
     fug_orns = fugue_ornaments(mido.MidiFile(FUGUE_SRC).ticks_per_beat)
     build(FUGUE_SRC, FUGUE_DST, F_GREAT, F_PEDF, F_PEDR, F_TRUMPET, "BWV543 Fugue (organ)", orns=fug_orns)
