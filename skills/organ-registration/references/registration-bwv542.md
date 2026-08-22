@@ -71,6 +71,18 @@ normalized to −1 dBFS; **Flat factor 0.00**. Ear metric: the chorales enter *a
 exit soft with no swell on the boundary notes; the Trompette blazes without a
 phaser; the plenum lands cleanly as the Great re-enters.
 
+## Do not shape its timing
+
+Robinson's file carries **32 tempo events** — his rubato, his sectional tempi, his
+written-out closing ritardando. That is an interpretation, and it is the reason
+the conductor track is copied verbatim. Do **not** run `baroque-agogics` over this
+piece: the transform would replace his phrasing with generated shaping, losing a
+performance to gain nothing. Register it, render it, leave the timing alone.
+
+(BWV 543 is the opposite case — compiled from an engraving, so it carries no
+interpretation and wants the full agogics treatment. Check a source's tempo map
+before shaping it: one tempo event means notation, many means a performance.)
+
 ## Lesson
 
 Re-registering someone's registration is: keep *what they decided* (the manual

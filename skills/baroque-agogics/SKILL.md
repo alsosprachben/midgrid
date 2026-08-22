@@ -38,6 +38,33 @@ Two levers, by instrument type:
   See `references/plucked-instruments.md`; the harpsichord's *registers* (and
   coupling) are drawn stops, handled by `organ-registration`.
 
+## First: does the source already carry a performance?
+
+**Apply this skill to NOTATION. If a source already carries someone's
+interpretation, register and render it but leave its timing alone.**
+
+A MIDI transcribed by a performer/arranger often has a real tempo map — rubato,
+sectional tempi, a written-out closing ritardando — which *is* an interpretation.
+Running the transform over it replaces that phrasing with generated shaping:
+silently destroying someone's work and gaining nothing, since the expression is
+already there.
+
+Check before shaping:
+
+    tempo events: 1 (or none)   -> notation. Shape it; that is what this skill is for.
+    tempo events: many, varying -> a performance. Register and render; do NOT shape.
+
+Worked contrast in this repo: **BWV 543** was compiled from an engraving (no
+interpretation at all — so it needs tempo, touch, agogics, phrase shaping, even
+editorial ornaments), while **BWV 542** came from Martin Robinson's MIDI with 32
+tempo events of his own phrasing — so it gets our registration and physics, and
+his rubato is left untouched. Same repertoire, opposite treatment, because the
+sources are different kinds of object.
+
+If you want *some* of the layer on a performance source, the articulation
+(`--gap-*`) is the safe part — touch is not usually encoded in a tempo map — but
+tempo, agogic and rit all belong to the interpreter who is already there.
+
 ## Workflow
 
 1. **Read the affect and the rhetoric.** What is the piece's *Affekt*? Where are
