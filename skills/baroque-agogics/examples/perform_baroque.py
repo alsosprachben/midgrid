@@ -149,7 +149,8 @@ def analyze_score(mid, TPB, bar_len=4.0):
     return phrase_ends, density_at, tension_at
 
 
-def add_cadential_trills(mid, TPB, phrase_ends, verbose=True):
+def add_cadential_trills(mid, TPB, phrase_ends, bar_len=4.0, min_bars=8.0,
+                         arrival_ratio=1.8, verbose=True):
     """EDITORIAL ornamentation: put a trill on the penultimate note at cadences.
 
     A Baroque player ornamented far beyond what the page shows, and the cadential
@@ -161,6 +162,17 @@ def add_cadential_trills(mid, TPB, phrase_ends, verbose=True):
     Conservative by construction: only the TOP voice, only a note long enough to
     hold a trill, and only where it resolves by STEP into the cadence note -- the
     classic 4-3 / 2-1 formula. The score's own ornaments are untouched.
+
+    A PHRASE END IS NOT A CADENCE. Phrase boundaries are breaths, and they fall
+    every few bars; a cadence is a harmonic arrival at a structural boundary. Two
+    further tests keep these apart, because without them a passacaglia collects a
+    trill every two or three bars, mid-variation:
+
+      * RHYTHMIC ARRIVAL -- the cadence note must be at least `arrival_ratio`
+        times the local median note of its own voice. A real close lands on
+        something long; a phrase that merely breathes does not.
+      * STRUCTURAL SPACING -- accepted trills must be `min_bars` apart, strongest
+        first. Cadences are separated by sections, not by bars.
     """
     import os, bisect
     here = os.path.dirname(os.path.abspath(__file__))
@@ -190,6 +202,7 @@ def add_cadential_trills(mid, TPB, phrase_ends, verbose=True):
     scale = {pc for pc, _ in sorted(enumerate(hist), key=lambda kv: -kv[1])[:7]}
 
     added = 0
+    cands = []
     for pe in phrase_ends:
         tick = pe * TPB
         # the cadence note: highest-pitched note ending at this boundary
@@ -222,11 +235,28 @@ def add_cadential_trills(mid, TPB, phrase_ends, verbose=True):
         # writing simply does not offer a trill and a player would not force one.
         if dur_beats < 0.22 or not (1 <= step <= 2):
             continue
+        # RHYTHMIC ARRIVAL: is the goal note long for this voice, hereabouts?
+        near = [(n[1] - n[0]) / float(TPB) for n in vn
+                if abs(n[0] - cad[0]) <= 16 * TPB and n[1] > n[0]]
+        if not near: continue
+        local = sorted(near)[len(near) // 2] or 0.25
+        arrival = (cad[1] - cad[0]) / float(TPB)
+        if arrival < arrival_ratio * local:
+            continue                                    # a breath, not a close
         fig = realize(p[2], Fraction(dur_beats).limit_denominator(32), 't', scale)
         if len(fig) < 3: continue
-        p.append(fig)                                   # mark for splicing
-        added += 1
+        cands.append((arrival / local, pe, p, fig))
 
+    # STRUCTURAL SPACING: strongest first, and never closer than min_bars apart.
+    cands.sort(key=lambda c: -c[0])
+    kept = []
+    for strength, pe, p, fig in cands:
+        if all(abs(pe - q) >= min_bars * bar_len for q in kept):
+            kept.append(pe); p.append(fig); added += 1
+    if verbose and cands:
+        print("  cadences: %d candidates -> %d trills (>= %.0f bars apart, arrival >= %.1fx local)"
+              % (len(cands), added, min_bars, arrival_ratio))
+        print("    at bars: %s" % sorted(int(q / bar_len) + 1 for q in kept))
     if not added: return 0
     # splice: rebuild each track, replacing marked notes with their figures and
     # leaving every other event (CC, program change, meta) exactly where it was.
@@ -374,6 +404,8 @@ def main():
     ap.add_argument("--tension", type=float, default=0.0)       # lean on dissonances
     ap.add_argument("--cadential-trills", action="store_true")  # editorial ornaments at cadences
     ap.add_argument("--figuration-hold", type=float, default=0.0)  # hold a figure's inner voice
+    ap.add_argument("--trill-min-bars", type=float, default=8.0)   # spacing between cadential trills
+    ap.add_argument("--trill-arrival", type=float, default=1.8)    # goal note vs local median
     a = ap.parse_args()
 
     m = mido.MidiFile(a.inp); TPB = m.ticks_per_beat
@@ -517,7 +549,7 @@ def main():
     if a.cadential_trills and pend:
         # ornament FIRST, then warp -- so the trills stretch with the tempo and
         # broaden with the cadential rit, exactly as a player's would.
-        if add_cadential_trills(m, TPB, pend):
+        if add_cadential_trills(m, TPB, pend, bar_len, a.trill_min_bars, a.trill_arrival):
             pend, dens_at, tens_at = analyze_score(m, TPB, bar_len)
     tm = build_timemap(total, a.bpm, a.rit_beats, a.rit_amount, a.agogic, bar_len, prof,
                        a.inegales, a.inegales_div, phrase_ends=pend, density_at=dens_at,

@@ -101,6 +101,20 @@ report what they did, because they change the notes.
   trill, only a stepwise close (the 4-3 / 2-1 formula). Note that in a merged
   registration MIDI "the previous note in the track" is *not* "the previous note in
   the voice" — the penultimate is found by melodic proximity instead.
+
+  **A phrase end is NOT a cadence.** Phrase boundaries are breaths and fall every
+  few bars; a cadence is a harmonic arrival at a structural boundary. Using the
+  phrase ends directly put a trill every 2–3 bars through BWV 582's variations —
+  mid-variation, where no player would ornament. Two further tests separate them:
+  - **`--trill-arrival`** (default 1.8) — the cadence note must be at least this
+    many times the local median note of its own voice. A real close lands on
+    something long; a phrase that merely breathes does not.
+  - **`--trill-min-bars`** (default 8) — accepted trills must be this far apart,
+    strongest first. Cadences are separated by sections, not by bars.
+
+  On BWV 582 this took 24 trills down to 9, landing at bars 23/35/49/64/76/102/
+  130/156/169 — the last being exactly the passacaglia's close. The tool prints
+  both the candidate count and the chosen bars, so the placement is inspectable.
 - **`--figuration-hold BEATS`** — broken-chord figuration carries an implied inner
   voice (the lowest note of each beat-group) that the ear hears as held. Sources
   often write it out in some bars and abbreviate it in others; E. Power Biggs
