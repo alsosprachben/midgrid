@@ -29,6 +29,7 @@ import mido, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from reglib import (read_tracks, read_notes, make_channel_track, conductor,
                     read_ornament_log, realize_ornaments, apply_ornaments,
+                    read_fermatas,
                     F8, F4, F2, F223, F16, F513, MIXTUR, R8, R16, TRUMPET,
                     PLENUM, PEDAL_FOUND)
 
@@ -94,7 +95,9 @@ def main():
         print("  !! no ornament log at %s -- rendering WITHOUT ornaments" % ORN_LOG)
 
     out = mido.MidiFile(type=1, ticks_per_beat=TPB)
-    out.tracks.append(conductor("BWV582 Passacaglia (organ)", src=src))
+    ferm = read_fermatas(ORN_LOG, TPB)
+    print("  fermatas: %d, at bars %s" % (len(ferm), [round(t/(3.0*TPB)+1, 1) for t, _ in ferm]))
+    out.tracks.append(conductor("BWV582 Passacaglia (organ)", src=src, fermatas=ferm))
     out.tracks.append(make_channel_track(0, 19, manual, GREAT,     TPB, unit='beat'))
     out.tracks.append(make_channel_track(1, 19, pedal,  PEDAL,     TPB, unit='beat'))
     out.tracks.append(make_channel_track(2, 20, pedal,  POSAUNE,   TPB, unit='beat'))

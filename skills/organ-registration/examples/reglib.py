@@ -106,10 +106,14 @@ def make_channel_track(ch, prog, notes, mask_events, TPB=None, unit='tick',
     return tr
 
 
-def conductor(name, tempo=None, src=None, time_signature=True):
+def conductor(name, tempo=None, src=None, time_signature=True, fermatas=()):
     """The meta track. Carries the source's tempo and -- importantly -- its
     TIME SIGNATURE: baroque-agogics derives the metric grid from it, and a
-    missing one silently makes a 6/8 fugue breathe in 4/4."""
+    missing one silently makes a 6/8 fugue breathe in 4/4.
+
+    `fermatas` is [(tick, dur_ticks)] from read_fermatas; each becomes a marker
+    the performer holds on. They live here rather than in a sidecar so they
+    travel with the file through the movement split."""
     tr = mido.MidiTrack()
     if tempo is None and src is not None:
         tempo = get_tempo(src)
@@ -119,6 +123,9 @@ def conductor(name, tempo=None, src=None, time_signature=True):
         if ts is not None:
             tr.append(ts.copy(time=0))
     tr.append(mido.MetaMessage('track_name', name=name, time=0))
+    last = 0
+    for tick, msg in fermata_markers(sorted(fermatas)):
+        tr.append(msg.copy(time=tick - last)); last = tick
     tr.append(mido.MetaMessage('end_of_track', time=0))
     return tr
 
@@ -348,6 +355,43 @@ def apply_ornaments(notes, figures, TPB, tol=None, verbose=True):
         print("  ornaments: %d applied, %d not in this division" % (applied, miss))
     return notes, applied
 
+
+
+# --- fermatas -----------------------------------------------------------------
+# A fermata is the most basic timing instruction notation has, and MIDI cannot
+# carry it either -- so, like the ornaments, it survives only in the listener log
+# and we were ignoring all of them. In BWV 565 that is not a detail: the opening
+# gesture is built on fermatas, and the last three articulate the whole close.
+#
+# We pass them to the performer as MIDI MARKERS in the conductor track, so they
+# ride along inside the file itself -- through the movement split and anything
+# else -- instead of in a sidecar that can go missing.
+
+def read_fermatas(path, TPB):
+    """[(tick, dur_ticks)] for every fermata, deduplicated across staves.
+
+    A fermata over a chord is logged once per staff and once per note, all at the
+    same moment; the hold belongs to the longest of them, and it applies to the
+    whole texture, so collapse them by onset.
+    """
+    best = {}
+    for f_ in ornament_logs(path):
+        prev = None
+        for line in open(f_):
+            g = line.rstrip('\n').split('\t')
+            if len(g) < 3: continue
+            if g[1] == 'note':
+                prev = (_moment(g[0]), _moment(g[4]) if len(g) > 4 else 0.0)
+            elif g[1] == 'script' and g[2].strip() == 'fermata' and prev:
+                t = int(round(prev[0] * 4 * TPB)); d = int(round(prev[1] * 4 * TPB))
+                best[t] = max(best.get(t, 0), d)
+    return sorted(best.items())
+
+
+def fermata_markers(fermatas):
+    """Fermatas as (tick, MetaMessage) pairs, ready for a conductor track."""
+    return [(t, mido.MetaMessage('marker', text='fermata:%d' % d, time=0))
+            for t, d in fermatas]
 
 # --- stop masks ---------------------------------------------------------------
 # Flue (prog 19): 0=8' 1=4' 2=2' 3=2-2/3' 4=16' 5=5-1/3' 6=Flute 7=Mixtur

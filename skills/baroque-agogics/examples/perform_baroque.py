@@ -295,10 +295,28 @@ def add_cadential_trills(mid, TPB, phrase_ends, bar_len=4.0, min_bars=8.0,
     return added
 
 
+def read_fermata_markers(mid, TPB):
+    """[(beat, dur_beats)] from 'fermata:<ticks>' markers written by reglib."""
+    out = {}
+    for tr in mid.tracks:
+        t = 0
+        for x in tr:
+            t += x.time
+            if x.is_meta and x.type == 'marker' and str(x.text).startswith('fermata'):
+                d = 0.0
+                if ':' in x.text:
+                    try: d = float(x.text.split(':', 1)[1]) / TPB
+                    except ValueError: d = 0.0
+                b = t / float(TPB)
+                out[b] = max(out.get(b, 0.0), d)
+    return sorted(out.items())
+
+
 def build_timemap(total_beats, bpm, rit_beats, rit_amount, agogic, bar_len, prof,
                   ineg=0.5, ineg_div=2, res=0.02,
                   phrase_ends=(), density_at=None, tension_at=None,
-                  phrase=0.0, density_damp=0.0, tension=0.0):
+                  phrase=0.0, density_damp=0.0, tension=0.0,
+                  fermatas=(), fermata_mult=1.9, fermata_min=1.2):
     """beat -> performed seconds (cumulative, monotonic). Base tempo x a per-bar
     agogic breath (strong beats slower/longer, mean-preserving so no drift) x a
     smoothstep cadential broadening over the last rit_beats."""
@@ -357,9 +375,30 @@ def build_timemap(total_beats, bpm, rit_beats, rit_amount, agogic, bar_len, prof
         if tension <= 0.0 or tension_at is None: return 0.0
         return tension * tension_at(b)
 
+    # --- fermatas -------------------------------------------------------------
+    # A fermata holds the whole texture, not one note, so it belongs in the time
+    # map rather than in per-note surgery: stretching the beats the held note
+    # spans carries every other voice with it automatically.
+    #
+    # A pure multiplier is not enough. BWV 565's opening fermatas sit on EIGHTH
+    # notes, and 1.9x an eighth is inaudible as a pause; a fermata on a short note
+    # is a stop, not a proportional lengthening. So the held span is stretched to
+    # whichever is longer -- its written value times `mult`, or `fermata_min`
+    # beats outright.
+    ferm = []
+    for fb, fd in sorted(fermatas):
+        span = max(fd, 0.05)
+        held = max(span * fermata_mult, fermata_min)
+        ferm.append((fb, fb + span, held / span))
+    def fermata_scale(b):
+        for b0, b1, k in ferm:
+            if b0 <= b < b1: return k
+        return 1.0
+
     def factor(b):
         return (rit(b) * (1.0 + agogic * depth_scale(b) * (weight(b) - mean_w))
-                * inegal(b) * (1.0 + phrase_bump(b) + tension_bump(b)))
+                * inegal(b) * (1.0 + phrase_bump(b) + tension_bump(b))
+                * fermata_scale(b))
     bs, times, t = [], [], 0.0
     b = 0.0; prev_spb = spb0 * factor(0.0)
     while b <= total_beats + res:
@@ -406,6 +445,9 @@ def main():
     ap.add_argument("--figuration-hold", type=float, default=0.0)  # hold a figure's inner voice
     ap.add_argument("--trill-min-bars", type=float, default=8.0)   # spacing between cadential trills
     ap.add_argument("--trill-arrival", type=float, default=1.8)    # goal note vs local median
+    ap.add_argument("--fermata-mult", type=float, default=1.9)     # held note x this...
+    ap.add_argument("--fermata-min", type=float, default=1.2)      # ...or this many beats, whichever is longer
+    ap.add_argument("--no-fermatas", action="store_true")          # ignore the score's fermata markers
     a = ap.parse_args()
 
     m = mido.MidiFile(a.inp); TPB = m.ticks_per_beat
@@ -564,10 +606,19 @@ def main():
         print("  !! --tension %.2f is high: every dissonant beat is stretched %d%%. "
               "0.02-0.03 is a lean; this will sound like heavy rubato."
               % (a.tension, round(a.tension * 100)))
+    # Fermatas ride in the file as conductor-track markers (reglib.conductor puts
+    # them there from the engraving's own signs), so they survive the movement
+    # split and need no sidecar.
+    ferms = [] if a.no_fermatas else read_fermata_markers(m, TPB)
+    if ferms:
+        print("  fermatas: %d held (x%.1f, floor %.2f beats) at bars %s"
+              % (len(ferms), a.fermata_mult, a.fermata_min,
+                 [round(b / bar_len + 1, 1) for b, _ in ferms][:12]))
     tm = build_timemap(total, a.bpm, a.rit_beats, a.rit_amount, a.agogic, bar_len, prof,
                        a.inegales, a.inegales_div, phrase_ends=pend, density_at=dens_at,
                        tension_at=tens_at, phrase=a.phrase, density_damp=a.density_damp,
-                       tension=a.tension)
+                       tension=a.tension, fermatas=ferms,
+                       fermata_mult=a.fermata_mult, fermata_min=a.fermata_min)
     weight_at = meter_weight(bar_len, prof)
     OUT_TEMPO = 500000                       # fixed output tempo; warped ticks carry the timing
     sec2tick = lambda s: int(round(s / (OUT_TEMPO / 1e6) * TPB))
