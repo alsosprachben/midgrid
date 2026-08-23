@@ -17,49 +17,14 @@ which maps to a plucked string here).
 The conductor/tempo track (rubato, 32 tempo events) is copied verbatim.
 CC11 flue bits: 0=8' 1=4' 2=2' 3=2 2/3' 4=16' 5=5 1/3' 6=Flute;  reed: 0=8' 1=16' 2=4' 3=Trumpet.
 """
-import mido
+import mido, os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from reglib import read_channel, make_channel_track as track_from
 
 SRC = "/home/ben/Downloads/midi/bwv542.mid"
 DST = "/home/ben/Downloads/bwv542_registered.mid"
 TPB = 480
 CLIMAX = 720 * TPB   # the final G-minor peroration draws everything
-
-def read_channel(mid, chan):
-    notes = []; on = {};
-    for tr in mid.tracks:
-        t = 0
-        for x in tr:
-            t += x.time
-            if x.type == 'note_on' and x.velocity > 0 and x.channel == chan:
-                on.setdefault(x.note, []).append((t, x.velocity))
-            elif (x.type == 'note_off' or (x.type == 'note_on' and x.velocity == 0)) and x.channel == chan:
-                q = on.get(x.note)
-                if q: s, v = q.pop(0); notes.append((s, t, x.note, v))
-    return notes
-
-def track_from(ch, prog, notes, mask_events, transpose=0, cc7=None):
-    ev = [(0, 0, mido.Message('program_change', channel=ch, program=prog, time=0))]
-    # CC7 sets the level of NON-registerable voices (flute/brass), where
-    # channel_volume = (CC7*CC11)^2; never send CC11 to them (CC11 is the stop
-    # bitfield only for flue/reed, and CC11=0 would zero their volume -> silent).
-    if cc7 is not None:
-        ev.append((0, 0, mido.Message('control_change', channel=ch, control=7, value=cc7)))
-    for tick, mask in mask_events:
-        # 14-bit stop word: CC11 = bits 0-6, CC43 = bits 7-13 (the Mixtur is bit 7)
-        ev.append((tick, 1, mido.Message('control_change', channel=ch, control=11, value=mask & 0x7F)))
-        ev.append((tick, 1, mido.Message('control_change', channel=ch, control=43, value=(mask >> 7) & 0x7F)))
-    for s, e, n, v in notes:
-        nn = n + transpose
-        if not (0 <= nn <= 127): continue
-        ev.append((s, 2, mido.Message('note_on',  channel=ch, note=nn, velocity=v, time=0)))
-        ev.append((e, 3, mido.Message('note_off', channel=ch, note=nn, velocity=0, time=0)))
-    ev.sort(key=lambda x: (x[0], x[1]))
-    tr = mido.MidiTrack(); last = 0
-    for tick, _, msg in ev:
-        msg.time = tick - last; last = tick
-        tr.append(msg)
-    tr.append(mido.MetaMessage('end_of_track', time=0))
-    return tr
 
 def main():
     src = mido.MidiFile(SRC)

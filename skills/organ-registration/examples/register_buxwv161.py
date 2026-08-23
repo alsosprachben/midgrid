@@ -19,7 +19,9 @@ Reeds/Trumpet ride the balanced ReedOrgan voicing + the per-rank spatial layout
 now in tonelib; render with examples/render_organ.sh for the cathedral.
 CC11 flue bits: 0=8' 1=4' 2=2' 3=2 2/3' 4=16' 5=5 1/3';  reed: 0=8' 1=16' 2=4' 3=Trumpet.
 """
-import mido
+import mido, os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from reglib import read_notes, make_channel_track
 
 SRC = "/home/ben/Downloads/buxtehude_passacaglia.mid"
 DST = "/home/ben/Downloads/buxtehude_passacaglia_registered.mid"
@@ -37,35 +39,6 @@ PEDAL   = [(0, 0b000001), (90, 0b010001), (540, 0b110001)]   # 8' -> 16+8 -> +5 
 POSAUNE = [(0, 0), (450, 0b000011)]                          # 16+8 reed, anticipates the return
 TRUMPET = [(0, 0), (540, 0b001000)]                          # Great Trompette at the arrival
 
-def read_notes(mid, ti):
-    t = 0; on = {}; out = []
-    for msg in mid.tracks[ti]:
-        t += msg.time
-        if msg.type == 'note_on' and msg.velocity > 1:
-            on.setdefault(msg.note, []).append((t, msg.velocity))
-        elif msg.type == 'note_off' or (msg.type == 'note_on' and msg.velocity <= 1):
-            q = on.get(msg.note)
-            if q:
-                s, v = q.pop(0); out.append((s, t, msg.note, v))
-    return out
-
-def make_channel_track(ch, prog, notes, mask_events):
-    ev = [(0, 0, mido.Message('program_change', channel=ch, program=prog, time=0))]
-    for beat, mask in mask_events:
-        # 14-bit stop word: CC11 = bits 0-6, CC43 = bits 7-13 (the Mixtur is bit 7)
-        ev.append((beat * B, 1, mido.Message('control_change', channel=ch, control=11, value=mask & 0x7F)))
-        ev.append((beat * B, 1, mido.Message('control_change', channel=ch, control=43, value=(mask >> 7) & 0x7F)))
-    for s, e, n, v in notes:
-        ev.append((s, 2, mido.Message('note_on',  channel=ch, note=n, velocity=v, time=0)))
-        ev.append((e, 3, mido.Message('note_off', channel=ch, note=n, velocity=0, time=0)))
-    ev.sort(key=lambda x: (x[0], x[1]))
-    tr = mido.MidiTrack(); last = 0
-    for tick, _, msg in ev:
-        msg.time = tick - last; last = tick
-        tr.append(msg)
-    tr.append(mido.MetaMessage('end_of_track', time=0))
-    return tr
-
 def main():
     src = mido.MidiFile(SRC)
     great = []
@@ -78,10 +51,10 @@ def main():
     cond.append(mido.MetaMessage('track_name', name='BuxWV161 registered', time=0))
     cond.append(mido.MetaMessage('end_of_track', time=0))
     out.tracks.append(cond)
-    out.tracks.append(make_channel_track(0, 19, great, GREAT))
-    out.tracks.append(make_channel_track(1, 19, pedal, PEDAL))
-    out.tracks.append(make_channel_track(2, 20, pedal, POSAUNE))
-    out.tracks.append(make_channel_track(3, 20, great, TRUMPET))   # Great Trompette (d-return)
+    out.tracks.append(make_channel_track(0, 19, great, GREAT, TPB=B, unit='beat'))
+    out.tracks.append(make_channel_track(1, 19, pedal, PEDAL, TPB=B, unit='beat'))
+    out.tracks.append(make_channel_track(2, 20, pedal, POSAUNE, TPB=B, unit='beat'))
+    out.tracks.append(make_channel_track(3, 20, great, TRUMPET, TPB=B, unit='beat'))   # Great Trompette (d-return)
     out.save(DST)
     print("wrote", DST, "| tracks", len(out.tracks), "| len %.1fs" % out.length,
           "| great", len(great), "pedal", len(pedal))

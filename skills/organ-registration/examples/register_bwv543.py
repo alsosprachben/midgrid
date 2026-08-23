@@ -29,6 +29,8 @@ MIDIs + the event-listener .notes log). See references/registration-bwv543.md
 for the acquisition pipeline (IMSLP .ly -> lilypond -> ornaments -> register).
 """
 import mido, os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from reglib import read_notes, make_channel_track, get_tempo
 from fractions import Fraction
 sys.path.insert(0, "/home/ben/repos/midgrid")
 from kern2midi_ornaments import realize, MAJOR_STEPS   # shared C.P.E. Bach engine
@@ -105,41 +107,6 @@ F_PEDF    = [(0, 0b010001), (420, 0b010111)]              # 16+8 -> +4'+2' (endi
 F_PEDR    = [(0, 0), (400, 0b000011)]                     # Posaune from the final section
 F_TRUMPET = [(0, 0), (434, 0b001000)]                     # Great Trompette, final cadence
 
-def read_notes(mid, ti):
-    t = 0; on = {}; out = []
-    for msg in mid.tracks[ti]:
-        t += msg.time
-        if msg.type == 'note_on' and msg.velocity > 1:
-            on.setdefault(msg.note, []).append((t, msg.velocity))
-        elif msg.type == 'note_off' or (msg.type == 'note_on' and msg.velocity <= 1):
-            q = on.get(msg.note)
-            if q:
-                s, v = q.pop(0); out.append((s, t, msg.note, v))
-    return out
-
-def get_tempo(mid):
-    for tr in mid.tracks:
-        for x in tr:
-            if x.type == 'set_tempo': return x.tempo
-    return 500000
-
-def make_channel_track(ch, prog, notes, mask_events, TPB):
-    ev = [(0, 0, mido.Message('program_change', channel=ch, program=prog, time=0))]
-    for beat, mask in mask_events:
-        # 14-bit stop word: CC11 = bits 0-6, CC43 = bits 7-13 (the Mixtur is bit 7)
-        ev.append((int(beat * TPB), 1, mido.Message('control_change', channel=ch, control=11, value=mask & 0x7F)))
-        ev.append((int(beat * TPB), 1, mido.Message('control_change', channel=ch, control=43, value=(mask >> 7) & 0x7F)))
-    for s, e, n, v in notes:
-        ev.append((s, 2, mido.Message('note_on',  channel=ch, note=n, velocity=max(v, 40), time=0)))
-        ev.append((e, 3, mido.Message('note_off', channel=ch, note=n, velocity=0, time=0)))
-    ev.sort(key=lambda x: (x[0], x[1]))
-    tr = mido.MidiTrack(); last = 0
-    for tick, _, msg in ev:
-        msg.time = tick - last; last = tick
-        tr.append(msg)
-    tr.append(mido.MetaMessage('end_of_track', time=0))
-    return tr
-
 def build(src, dst, GREAT, PEDF, PEDR, TRUMPET, name, orns=None, POSITIVE=None):
     m = mido.MidiFile(src); TPB = m.ticks_per_beat
     great = []
@@ -161,13 +128,13 @@ def build(src, dst, GREAT, PEDF, PEDR, TRUMPET, name, orns=None, POSITIVE=None):
         # split the manual line: the solo opening to the Positive, the rest to the Great
         pos = [n for n in great if n[0] < P_SOLO_END * TPB]
         gre = [n for n in great if n[0] >= P_SOLO_END * TPB]
-        out.tracks.append(make_channel_track(0, 19, gre, GREAT, TPB))
-        out.tracks.append(make_channel_track(4, 19, pos, POSITIVE, TPB))
+        out.tracks.append(make_channel_track(0, 19, gre, GREAT, TPB, unit='beat', min_velocity=40))
+        out.tracks.append(make_channel_track(4, 19, pos, POSITIVE, TPB, unit='beat', min_velocity=40))
     else:
-        out.tracks.append(make_channel_track(0, 19, great, GREAT, TPB))
-    out.tracks.append(make_channel_track(1, 19, pedal, PEDF, TPB))
-    out.tracks.append(make_channel_track(2, 20, pedal, PEDR, TPB))
-    out.tracks.append(make_channel_track(3, 20, great, TRUMPET, TPB))
+        out.tracks.append(make_channel_track(0, 19, great, GREAT, TPB, unit='beat', min_velocity=40))
+    out.tracks.append(make_channel_track(1, 19, pedal, PEDF, TPB, unit='beat', min_velocity=40))
+    out.tracks.append(make_channel_track(2, 20, pedal, PEDR, TPB, unit='beat', min_velocity=40))
+    out.tracks.append(make_channel_track(3, 20, great, TRUMPET, TPB, unit='beat', min_velocity=40))
     out.save(dst)
     print("wrote", dst, "| TPB", TPB, "| len %.1fs" % out.length, "| great", len(great), "pedal", len(pedal))
 
