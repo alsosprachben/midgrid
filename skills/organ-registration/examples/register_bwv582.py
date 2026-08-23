@@ -45,7 +45,10 @@ V_GROW2  = 192    # bar  65
 V_FULL   = 288    # bar  97 -- plenum before the manualiter group
 MANUALIT = 311    # bar 105 -- pedal tacet: lighten and let the counterpoint speak
 PED_BACK = 384    # bar 129 -- the pedal returns
-FUGUE    = 507    # bar 170 -- "Thema fugatum"
+FUGUE    = 505    # "Thema fugatum" -- the subject's g2 enters HERE, as a
+                  # two-beat anacrusis into bar 170. The source's %% Takt 170
+                  # comment sits AFTER it; taking the barline (507) instead cut
+                  # the subject's opening G off into the previous movement.
 F_BUILD  = 600    # bar 201
 F_WEIGHT = 700    # bar 234 -- 16' and the Posaune
 CODA     = 820    # bar 274 -- the Neapolitan close

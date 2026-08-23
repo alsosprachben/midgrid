@@ -149,6 +149,22 @@ def split_at(path, beat, outA, outB, verbose=True):
     serve two movements -- each wants its own.
     """
     m = mido.MidiFile(path); TPB = m.ticks_per_beat; cut = int(beat * TPB)
+    # A cut through a sounding note truncates it in A and loses it from B. Report
+    # it: choosing a seam is a musical decision and it should not fail silently.
+    crossing = 0
+    for tr in m.tracks:
+        t = 0; on = {}
+        for x in tr:
+            t += x.time
+            if x.type == 'note_on' and x.velocity > 0:
+                on.setdefault((x.channel, x.note), []).append(t)
+            elif x.type == 'note_off' or (x.type == 'note_on' and x.velocity == 0):
+                q = on.get((x.channel, x.note))
+                if q and q.pop(0) < cut < t:
+                    crossing += 1
+    if crossing and verbose:
+        print("  !! split at beat %.1f truncates %d sounding note(s) -- move the seam"
+              % (beat, crossing))
     A = mido.MidiFile(type=1, ticks_per_beat=TPB)
     B = mido.MidiFile(type=1, ticks_per_beat=TPB)
     for tr in m.tracks:
@@ -157,7 +173,13 @@ def split_at(path, beat, outA, outB, verbose=True):
         prog = {}; cc = {}; ts = None; tempo = None; open_notes = {}; pend = []
         for x in tr:
             t += x.time
-            if t < cut:      # state must reflect the CUT, not the end of the piece
+            # An event exactly AT the cut: a note-OFF belongs to part A (it closes a
+            # note that started there); anything else belongs to part B. Without this
+            # the note-offs of chords ending on the seam land in B as orphans and
+            # immediately kill whatever legitimately begins at the cut -- which
+            # silenced the opening note of BWV 582's fugue subject.
+            is_off = x.type == 'note_off' or (x.type == 'note_on' and x.velocity == 0)
+            if t < cut or (t == cut and is_off):
                 if x.type == 'program_change': prog[x.channel] = x.program
                 elif x.type == 'control_change': cc.setdefault(x.channel, {})[x.control] = x.value
                 elif x.type == 'time_signature': ts = x

@@ -40,7 +40,12 @@ PEDAL_TRACK   = 3
 
 # --- section beats -----------------------------------------------------------
 T_CHORDS = 64      # bar 17 -- the toccata's weighty chords
-FUGUE    = 116     # bar 30 -- subject enters; drop back to a lean chorus
+FUGUE    = 116     # bar 30 -- subject enters; drop back to a lean chorus.
+                   # split_at warns that this seam shortens one note (a G3 pickup
+                   # in the cadence, 0.75 -> 0.25 beats). Accepted deliberately:
+                   # the nearest clean cuts are 114.5 and 118.0, and either would
+                   # push part of the toccata's cadence into the fugue's faster
+                   # tempo -- a worse musical error than one clipped passing note.
 F_BUILD1 = 228     # bar 57 -- second large manualiter span
 F_BUILD2 = 352     # bar 89 -- density rises toward the close of the fugue
 PSOLO_IN = 435     # bars 109-111, manuals silent: brighten the pedal (Biggs)
