@@ -131,9 +131,9 @@ as an engraver for convenience."
 %% duration-less event is not worth aborting over: report it as zero-length and
 %% keep going. Everything else is stock 2.24.3.
 #(define (mg-dur-len d)
-   (if (ly:duration? d) (mg-dur-len d) (ly:make-moment 0 1)))
+   (if (ly:duration? d) (ly:duration-length d) (ly:make-moment 0 1)))
 #(define (mg-dur->string d)
-   (if (ly:duration? d) (mg-dur->string d) "0"))
+   (if (ly:duration? d) (ly:duration->string d) "0"))
 %%% ---------------------------------------------------------------------------
 
 %%% main functions
