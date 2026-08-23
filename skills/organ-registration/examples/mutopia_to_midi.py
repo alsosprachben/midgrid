@@ -148,7 +148,7 @@ def convert_one(ly, outdir, timeout=300):
     return status, dst, rep
 
 
-def pick_ly(cands):
+def pick_ly(cands, all_of_them=False):
     """Choose the master file of a multi-file work: it must contain a \\score
     (movement includes like Adagio.ly do not), and its name usually matches the
     directory (SonataIV-lys/SonataIV.ly). Falls back to the shortest path."""
@@ -164,6 +164,8 @@ def pick_ly(cands):
                        base == parent or base.startswith(parent) or parent.startswith(base),
                        -len(f), f))
     scored.sort(reverse=True)
+    if all_of_them:
+        return [f for *_, f in scored]
     return scored[0][3] if scored else None
 
 
@@ -180,16 +182,20 @@ def main():
                        glob.glob(os.path.join(corpus, d, "*", "*", "*.ly")))
         # prefer a4 over letter-paper variants, and the shortest name (the main file)
         found = [f for f in found if '-let' not in os.path.basename(f)]
-        pick = pick_ly(found)
-        if pick: lys.append((d, pick))
+        ranked = pick_ly(found, all_of_them=True)
+        if ranked: lys.append((d, ranked))
     print("converting %d works" % len(lys), flush=True)
     import json
     results = {}
-    for d, ly in lys:
-        try:
-            status, dst, rep = convert_one(ly, outdir)
-        except Exception as e:
-            status, dst, rep = "failed", None, {"error": repr(e)[:200]}
+    for d, cands in lys:
+        status, dst, rep = "failed", None, {"error": "no candidate compiled"}
+        for ly in cands:
+            try:
+                status, dst, rep = convert_one(ly, outdir)
+            except Exception as e:
+                status, dst, rep = "failed", None, {"error": repr(e)[:200]}
+            if status != "failed":
+                break   # some works ship two engravings; take the first that compiles
         results[d] = {"status": status, "midi": dst, **rep}
         v = rep.get('voices', [])
         print("%-9s %-9s %s" % (d, status,
