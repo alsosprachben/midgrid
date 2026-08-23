@@ -11,7 +11,10 @@ the terraces fall.
 
 The registration DESIGN stays per-piece and hand-made. Only the plumbing is shared.
 """
+import os
 import mido
+
+HERE = os.path.dirname(os.path.abspath(__file__))
 
 
 # --- reading a source ---------------------------------------------------------
@@ -213,6 +216,115 @@ def split_at(path, beat, outA, outB, verbose=True):
     if verbose:
         print("split %s at beat %.1f -> %s (%.1fs) + %s (%.1fs)"
               % (path, beat, outA, A.length, outB, B.length))
+
+
+
+# --- ornaments ----------------------------------------------------------------
+# LilyPond's MIDI backend does NOT expand ornament signs: a \prall, \mordent or
+# \trill in the score simply plays as a plain note. So every wavy sign in the
+# notation is silently lost unless we put it back. We recover the signs from an
+# event-listener log (emitted by mutopia_to_midi.py alongside each MIDI), and
+# realize them with midgrid's own C.P.E. Bach engine -- Bach's wavy line is a
+# trill FROM ABOVE, on the beat, appui on long notes -- rather than with
+# LilyPond's articulate.ly, whose mordent-from-below reading is not Bach's.
+#
+# This bit us on BWV 565: its opening gesture is `a8 \fermata \prall`, and the
+# render had no mordent at all on the most recognisable phrase in organ music.
+
+from fractions import Fraction
+
+# Every sign LilyPond can name, mapped to the engine's code. All wavy signs are
+# one thing to Bach (a trill from above); only the turn is distinct.
+ORNAMENT_SIGNS = {
+    'prall': 'w', 'mordent': 'w', 'prallmordent': 'w', 'prallprall': 'w',
+    'upprall': 'w', 'downprall': 'w', 'lineprall': 'w', 'trill': 'w',
+    'pralldown': 'w', 'upmordent': 'w', 'downmordent': 'w',
+    'turn': 'S', 'reverseturn': 'S',
+}
+
+MAJOR_STEPS = (0, 2, 4, 5, 7, 9, 11)
+
+def scale_pcs(tonic_pc, mode='major'):
+    """Pitch-class set of a key, for the ornament engine's neighbour lookup."""
+    steps = MAJOR_STEPS if mode == 'major' else (0, 2, 3, 5, 7, 8, 10)
+    return {(tonic_pc + s) % 12 for s in steps}
+
+_MOMENT = __import__('re').compile(r'(-?\d+(?:\.\d+)?)([+-]\d+(?:\.\d+)?)?$')
+
+def _moment(tok):
+    """Event-listener moments are whole notes, but a GRACE note is written as
+    main+grace, e.g. "109.00000000-0.06250000" (a grace 1/16 whole-note before
+    beat 109). Sum the two parts; a plain moment has no second part."""
+    m = _MOMENT.match(tok.strip())
+    if not m: raise ValueError("unparseable moment %r" % tok)
+    return float(m.group(1)) + (float(m.group(2)) if m.group(2) else 0.0)
+
+def read_ornament_log(path, TPB, signs=None):
+    """Parse an event-listener .notes log into [(tick, pitch, dur_ticks, sign)].
+
+    A `script` line refers to the note logged just before it, so we pair each
+    sign with the preceding `note`. Log times are in whole notes; ticks are
+    4*TPB per whole note. Returns entries in time order.
+    """
+    signs = signs or ORNAMENT_SIGNS
+    out, prev = [], None
+    for line in open(path):
+        f = line.rstrip('\n').split('\t')
+        if len(f) < 3: continue
+        if f[1] == 'note':
+            prev = (_moment(f[0]), int(f[2]),
+                    _moment(f[4]) if len(f) > 4 else 0.0)
+        elif f[1] == 'script' and f[2] in signs and prev:
+            t_wn, pitch, dur_wn = prev
+            out.append((int(round(t_wn * 4 * TPB)), pitch,
+                        int(round(dur_wn * 4 * TPB)), signs[f[2]]))
+    out.sort()
+    return out
+
+def realize_ornaments(orns, TPB, scale):
+    """[(tick, pitch, dur, sign)] -> [(tick, pitch, [(pitch, dur_ticks), ...])].
+
+    Uses midgrid's kern2midi_ornaments.realize (the C.P.E. Bach engine) so organ
+    ornaments match the ones the harpsichord/clavier tooling produces.
+    """
+    import os, sys
+    root = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+    if root not in sys.path: sys.path.insert(0, root)
+    from kern2midi_ornaments import realize
+    out = []
+    for tick, pitch, dur, sign in orns:
+        if dur <= 0: continue
+        fig = realize(pitch, Fraction(dur, TPB).limit_denominator(64), sign, scale)
+        out.append((tick, pitch, [(p, int(round(float(d) * TPB))) for p, d in fig]))
+    return out
+
+def apply_ornaments(notes, figures, TPB, tol=None, verbose=True):
+    """Replace each ornamented note (matched by onset+pitch) with its figure.
+
+    `notes` is the [(start, end, pitch, vel)] list of ONE division. An ornament
+    whose note is not in this division simply does not match -- that is how a
+    manual ornament stays off the pedal -- so unmatched entries are counted, not
+    an error. Returns (notes, n_applied).
+    """
+    tol = TPB // 4 if tol is None else tol
+    applied = miss = 0
+    for tick, pitch, fig in figures:
+        best = None
+        for i, (s, e, n, v) in enumerate(notes):
+            if n == pitch and abs(s - tick) <= tol and (
+                    best is None or abs(s - tick) < abs(notes[best][0] - tick)):
+                best = i
+        if best is None:
+            miss += 1; continue
+        s, e, n, v = notes.pop(best)
+        t = s
+        for p, d in fig:
+            notes.append((t, min(t + d, e) if d else e, p, v)); t += d
+        applied += 1
+    notes.sort()
+    if verbose:
+        print("  ornaments: %d applied, %d not in this division" % (applied, miss))
+    return notes, applied
 
 
 # --- stop masks ---------------------------------------------------------------

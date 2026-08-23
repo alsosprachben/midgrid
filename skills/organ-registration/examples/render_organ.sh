@@ -8,7 +8,14 @@
 # re-rendering), <out>.wav (wet), and <out>.mp3 if lame is present.
 #
 # Usage:
-#   render_organ.sh INPUT.mid [tuner] [outbase]
+#   render_organ.sh INPUT.mid[,INPUT2.mid,...] [tuner] [outbase]
+#     INPUT    one MIDI, or several comma-separated. Several are rendered dry,
+#              butted together in order with GAP seconds between them, and then
+#              given ONE reverb and ONE normalise -- so a multi-movement work
+#              (toccata+fugue, prelude+fugue) comes out as a single continuous
+#              file whose movements share a dynamic level. Normalising each
+#              movement separately, the obvious alternative, silently rescales
+#              them against each other and flattens the work's arc.
 #     tuner    adaptive tuning temperament (default: hybrid, for Baroque)
 #     outbase  output basename (default: INPUT without .mid)
 #
@@ -27,6 +34,7 @@
 #                     the mp3 is kept and both WAVs are deleted. One organ work is
 #                     ~250 MB of WAV per stage, so a corpus run leaves tens of
 #                     gigabytes behind if this is left on.
+#   GAP               seconds of silence between movements (default 1.2)
 #   OUT_DIR           if set, a BARE outbase (no slash) is written there rather
 #                     than beside the input -- so a batch caller passes just the
 #                     work's name and everything lands in one place, e.g.
@@ -56,8 +64,29 @@ BLK="$TUNING_DIR/blockrender.py"
 DRY="${OUT}.dry.wav"
 WET="${OUT}.wav"
 
-echo ">> render:    $IN  (tuner=$TUNER, headroom=${TUNING_MASTER_DB} dB)"
-python3 "$BLK" "$IN" "$DRY" "$TUNER"
+GAP="${GAP:-1.2}"
+
+IFS=',' read -r -a PARTS <<< "$IN"
+if [ "${#PARTS[@]}" -eq 1 ]; then
+  echo ">> render:    $IN  (tuner=$TUNER, headroom=${TUNING_MASTER_DB} dB)"
+  python3 "$BLK" "$IN" "$DRY" "$TUNER"
+else
+  echo ">> render:    ${#PARTS[@]} movements (tuner=$TUNER, headroom=${TUNING_MASTER_DB} dB, gap=${GAP}s)"
+  TMPD="$(mktemp -d)"; trap 'rm -rf "$TMPD"' EXIT
+  SIL="$TMPD/gap.wav"
+  ARGS=()
+  for i in "${!PARTS[@]}"; do
+    M="${PARTS[$i]}"
+    [ -f "$M" ] || { echo "movement not found: $M" >&2; exit 1; }
+    echo ">>   movement $((i+1)): $M"
+    python3 "$BLK" "$M" "$TMPD/mv$i.wav" "$TUNER"
+    [ "$i" -gt 0 ] && ARGS+=("$SIL")
+    ARGS+=("$TMPD/mv$i.wav")
+  done
+  # the gap must match the movements' format, so build it from the first one
+  sox "$TMPD/mv0.wav" "$SIL" trim 0 "$GAP" vol 0
+  sox "${ARGS[@]}" "$DRY"
+fi
 
 echo ">> cathedral: sox ... vol 0.6 pad 0 6 $REVERB gain -n -1"
 sox "$DRY" "$WET" vol 0.6 pad 0 6 $REVERB gain -n -1

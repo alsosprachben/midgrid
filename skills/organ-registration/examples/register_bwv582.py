@@ -28,12 +28,20 @@ this is the parsimony case in its purest shape.
 import mido, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from reglib import (read_tracks, read_notes, make_channel_track, conductor,
+                    read_ornament_log, realize_ornaments, apply_ornaments,
                     F8, F4, F2, F223, F16, F513, MIXTUR, R8, R16, TRUMPET,
                     PLENUM, PEDAL_FOUND)
 
 SRC = os.environ.get("BWV582_SRC",
                      os.path.expanduser("~/Downloads/mutopia-bach-midi/bwv582.mid"))
 DST = os.path.expanduser("~/Downloads/bwv582_organ.mid")
+# LilyPond's MIDI backend expands no ornament sign, so the 19 in this engraving
+# (16 \prall, 3 \mordent -- including the long trill over the fugue's close)
+# reach us only through the event-listener log.
+ORN_LOG = os.environ.get("BWV582_NOTES", os.path.expanduser(
+    "~/Downloads/mutopia-bach-midi/bwv582.work/ev_bwv582-unnamed-staff.notes"))
+
+C_MINOR = {0, 2, 3, 5, 7, 8, 11}      # harmonic: B natural is the leading tone
 
 MANUAL_TRACKS = [1, 3]     # right: and left: -- NOT 2/4, which are consort doublings
 PEDAL_TRACK   = 5
@@ -76,6 +84,15 @@ def main():
     src = mido.MidiFile(SRC); TPB = src.ticks_per_beat
     manual = read_tracks(src, MANUAL_TRACKS)
     pedal  = read_notes(src, PEDAL_TRACK)
+
+    # Ornaments before registration. They are manual signs, so they match against
+    # `manual` and miss the pedal -- which is what we want.
+    if os.path.exists(ORN_LOG):
+        figs = realize_ornaments(read_ornament_log(ORN_LOG, TPB), TPB, C_MINOR)
+        manual, _ = apply_ornaments(manual, figs, TPB)
+    else:
+        print("  !! no ornament log at %s -- rendering WITHOUT ornaments" % ORN_LOG)
+
     out = mido.MidiFile(type=1, ticks_per_beat=TPB)
     out.tracks.append(conductor("BWV582 Passacaglia (organ)", src=src))
     out.tracks.append(make_channel_track(0, 19, manual, GREAT,     TPB, unit='beat'))

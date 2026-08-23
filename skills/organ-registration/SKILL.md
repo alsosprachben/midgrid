@@ -29,15 +29,26 @@ random and listen to what happens.
 4. **Draw the chorus** (`references/stop-families-and-footage.md`): build up
    by pitch — 8′ foundation, add 4′, then 2′ and a quint/mixture for a full
    *Organo Pleno*; keep upper ranks softer than the 8′ so blend stays pyramidal.
-5. **Realize it** (`references/renderer-palette.md`): put one organ channel per
+5. **Put the ornaments back — before registering.** LilyPond's MIDI backend
+   expands **no** ornament sign: `\prall`, `\mordent`, `\trill` and `\turn` all
+   play as plain notes, so an engraving's ornaments vanish silently on the way
+   to audio. Recover them from the event-listener log (`mutopia_to_midi.py`
+   emits one per work and now *verifies* it — a score with signs and a log
+   without them is flagged `ORNAMENTS LOST`) and realize them with
+   `reglib.read_ornament_log` / `realize_ornaments` / `apply_ornaments`, which
+   wrap midgrid's C.P.E. Bach engine. Apply them to the *division's* note list
+   before the stop masks go on. This is not a nicety: BWV 565 rendered without
+   the mordent on its opening `a`, and BWV 582's fugue without its cadential
+   trill, and nothing in the pipeline complained.
+6. **Realize it** (`references/renderer-palette.md`): put one organ channel per
    division (flue prog 19, reed prog 20) and **draw the stops with a CC11
    bitfield** per section (the engine stacks the ranks itself and they lock to
    `hybrid`); add **CC7** for a live swell and **CC4** for a crescendo pedal.
    velocity sets static level.
-6. **Render and check** (`$tuning-render` conventions): `hybrid` tuning for
+7. **Render and check** (`$tuning-render` conventions): `hybrid` tuning for
    Baroque, organ **hall** reverb, and **verify `sox FILE -n stats` → Flat
    factor 0.00** (dense plena clip — drop `vol` or thin the upperwork).
-7. **Judge by ear against the metric.** Does the subject read? Does the pedal
+8. **Judge by ear against the metric.** Does the subject read? Does the pedal
    have gravity? Does each section's colour change where intended?
 
 ## Rule Priority

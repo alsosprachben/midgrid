@@ -28,12 +28,23 @@ texture analysis of the source:
 import mido, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from reglib import (read_tracks, read_notes, make_channel_track, conductor,
+                    read_ornament_log, realize_ornaments, apply_ornaments,
                     F8, F4, F2, F223, F16, F513, MIXTUR, R8, R16, TRUMPET,
                     PLENUM, PEDAL_FOUND)
 
 SRC = os.environ.get("BWV565_SRC",
                      os.path.expanduser("~/Downloads/mutopia-bach-midi/ToccataFugue.mid"))
 DST = os.path.expanduser("~/Downloads/bwv565_organ.mid")
+# The event-listener log carries the ornament signs, which LilyPond's MIDI drops.
+# 565 has 7: the \prall on the opening `a` (the single most recognisable ornament
+# in organ music) and its recurrences, plus a cadential \trill in the fugue.
+ORN_LOG = os.environ.get("BWV565_NOTES", os.path.expanduser(
+    "~/Downloads/mutopia-bach-midi/ToccataFugue.work/ev_ToccataFugue-unnamed-staff.notes"))
+
+# D minor, HARMONIC -- the leading tone is C#, which the opening flourish itself
+# spells (a g f e d cis d). The upper neighbour that matters here is A's, which is
+# Bb in either form; using the harmonic set keeps ornaments on C#/D correct too.
+D_MINOR = {2, 4, 5, 7, 9, 10, 1}
 
 MANUAL_TRACKS = [1, 2]     # RH, LH
 PEDAL_TRACK   = 3
@@ -78,6 +89,15 @@ def main():
     src = mido.MidiFile(SRC); TPB = src.ticks_per_beat
     manual = read_tracks(src, MANUAL_TRACKS)
     pedal  = read_notes(src, PEDAL_TRACK)
+
+    # Ornaments BEFORE registration (the order the skill prescribes: notation ->
+    # ornaments -> registration -> agogics). All 7 signs are in the manuals, so
+    # they match against `manual` and simply miss the pedal.
+    if os.path.exists(ORN_LOG):
+        figs = realize_ornaments(read_ornament_log(ORN_LOG, TPB), TPB, D_MINOR)
+        manual, _ = apply_ornaments(manual, figs, TPB)
+    else:
+        print("  !! no ornament log at %s -- rendering WITHOUT ornaments" % ORN_LOG)
 
     out = mido.MidiFile(type=1, ticks_per_beat=TPB)
     out.tracks.append(conductor("BWV565 Toccata and Fugue (organ)", src=src))

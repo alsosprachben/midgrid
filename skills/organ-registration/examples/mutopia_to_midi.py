@@ -20,6 +20,15 @@ Usage:  mutopia_to_midi.py CORPUS_DIR OUT_DIR [--only BWV565,BWV582] [--jobs 1]
 import os, re, sys, glob, shutil, subprocess, statistics as st
 import mido
 
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+# Ornament signs LilyPond can name. The MIDI backend expands NONE of them, so we
+# only ever recover them from the event-listener log -- hence the verification.
+ORN_NAMES = {'prall', 'mordent', 'prallmordent', 'prallprall', 'upprall',
+             'downprall', 'lineprall', 'trill', 'pralldown', 'upmordent',
+             'downmordent', 'turn', 'reverseturn'}
+ORN_RE = re.compile(r'\\(?:' + '|'.join(sorted(ORN_NAMES)) + r')\b')
+
 DUP_SHIFTS = (12, -12, 24, -24)
 STAFFISH = re.compile(r'right|left|pedal|upper|lower|manual|organ|soprano|alt|tenor|bass', re.I)
 
@@ -74,7 +83,7 @@ def describe(mid):
     return out
 
 
-def convert_one(ly, outdir, timeout=300):
+def convert_one(ly, outdir, timeout=300, ev_timeout=1500):
     """-> (status, midi_path|None, report dict)"""
     base = os.path.splitext(os.path.basename(ly))[0]
     work = os.path.join(outdir, base + ".work")
@@ -125,15 +134,34 @@ def convert_one(ly, outdir, timeout=300):
     best_mid.save(dst)
     # ornaments: an event-listener pass, for the C.P.E. Bach realizer downstream
     ev = os.path.join(work, "ev_" + base + ".ly")
+    # Our GUARDED copy of event-listener.ly, not the stock one: LilyPond 2.24.3's
+    # listeners divide by a textual tempo mark's absent metronome-count and take
+    # the length of duration-less events, either of which aborts the compile and
+    # loses the entire log. BWV 565 (\tempo "Adagio", "Prestissimo") hit both, so
+    # its ornaments -- including the famous opening mordent -- silently vanished.
+    shutil.copy(os.path.join(HERE, "event-listener-safe.ly"), work)
     with open(src) as fh: body = fh.read()
     with open(ev, 'w') as fh:
-        fh.write(body.replace('\\version', '\\include "event-listener.ly"\n\\version', 1))
+        fh.write(body.replace('\\version', '\\include "event-listener-safe.ly"\n\\version', 1))
+    for f in glob.glob(os.path.join(work, "*.notes")):
+        os.remove(f)          # event-listener APPENDS; a stale log would double up
     try:
         subprocess.run(["lilypond", "-dno-print-pages", "-dno-point-and-click",
-                        "-o", "ev_" + base, ev], cwd=work, capture_output=True, timeout=timeout)
+                        "-o", "ev_" + base, ev], cwd=work, capture_output=True,
+                       timeout=ev_timeout)
     except subprocess.TimeoutExpired:
         pass
     rep['notes_logs'] = sorted(glob.glob(os.path.join(work, "*.notes")))
+
+    # VERIFY the ornament pass instead of assuming it. Count the signs the score
+    # actually carries and the signs the log captured; a score with ornaments and
+    # a log without them means the render will silently lose them, which is
+    # exactly how BWV 565 lost the most famous mordent in organ music.
+    rep['orn_in_source'] = len(ORN_RE.findall(body))
+    rep['orn_in_log'] = sum(
+        sum(1 for l in open(f) if l.split('\t')[1:2] == ['script']
+            and l.split('\t')[2:3] and l.split('\t')[2].strip() in ORN_NAMES)
+        for f in rep['notes_logs'])
     # classify
     v = rep['voices']
     status = "clean"
@@ -143,6 +171,8 @@ def convert_one(ly, outdir, timeout=300):
     if not v: why.append("no notes")
     elif len(v) < 2: why.append("single voice")
     if dropped: why.append("dropped %d doubling(s)" % len(dropped))
+    if rep['orn_in_source'] and not rep['orn_in_log']:
+        why.append("ORNAMENTS LOST: %d in score, 0 logged" % rep['orn_in_source'])
     if why: status = "attention"
     rep['why'] = why
     return status, dst, rep
@@ -202,8 +232,17 @@ def main():
               rep.get('error') or "%d voices, %s, tempo_ev=%d%s" % (
                   len(v), rep.get('time_sig'), rep.get('tempo_events', 0),
                   (" | " + "; ".join(rep['why'])) if rep.get('why') else "")), flush=True)
-    with open(os.path.join(outdir, "triage.json"), "w") as fh:
-        json.dump(results, fh, indent=1)
+    # MERGE, never replace: a --only rerun touches one work and must not wipe the
+    # other 110 records (it silently did, which is how BWV 565's failure hid).
+    tri = os.path.join(outdir, "triage.json")
+    merged = {}
+    if os.path.exists(tri):
+        try:
+            with open(tri) as fh: merged = json.load(fh)
+        except Exception: merged = {}
+    merged.update(results)
+    with open(tri, "w") as fh:
+        json.dump(merged, fh, indent=1)
     n = {"clean": 0, "attention": 0, "failed": 0}
     for r in results.values(): n[r['status']] += 1
     print("\nDONE  clean=%d attention=%d failed=%d" % (n['clean'], n['attention'], n['failed']))
