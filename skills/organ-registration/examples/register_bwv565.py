@@ -39,7 +39,7 @@ DST = os.path.expanduser("~/Downloads/bwv565_organ.mid")
 # 565 has 7: the \prall on the opening `a` (the single most recognisable ornament
 # in organ music) and its recurrences, plus a cadential \trill in the fugue.
 ORN_LOG = os.environ.get("BWV565_NOTES", os.path.expanduser(
-    "~/Downloads/mutopia-bach-midi/ToccataFugue.work/ev_ToccataFugue-unnamed-staff.notes"))
+    "~/Downloads/mutopia-bach-midi/ToccataFugue.work"))
 
 # D minor, HARMONIC -- the leading tone is C#, which the opening flourish itself
 # spells (a g f e d cis d). The upper neighbour that matters here is A's, which is

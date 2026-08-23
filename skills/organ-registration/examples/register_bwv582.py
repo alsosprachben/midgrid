@@ -39,7 +39,7 @@ DST = os.path.expanduser("~/Downloads/bwv582_organ.mid")
 # (16 \prall, 3 \mordent -- including the long trill over the fugue's close)
 # reach us only through the event-listener log.
 ORN_LOG = os.environ.get("BWV582_NOTES", os.path.expanduser(
-    "~/Downloads/mutopia-bach-midi/bwv582.work/ev_bwv582-unnamed-staff.notes"))
+    "~/Downloads/mutopia-bach-midi/bwv582.work"))
 
 C_MINOR = {0, 2, 3, 5, 7, 8, 11}      # harmonic: B natural is the leading tone
 

@@ -41,16 +41,30 @@
 @file{@var{original_filename}-@var{staff_instrument_name}.notes} if the
 staff has an instrument name.  If the staff has no instrument
 name, it uses \"unnamed-staff\" for that part of the filename."
+   ;; MIDGRID PATCH: fall back to the Staff context's ID before giving up and
+   ;; calling it "unnamed-staff". Organ engravings routinely name their staves
+   ;; positionally -- \context Staff = "RH" / "LH" / "Pedal" -- while setting
+   ;; instrumentName once on the enclosing PianoStaff, so the stock rule lumps
+   ;; both hands into a single log. Everything then interleaves: two staves'
+   ;; independent stem settings alternate note by note, which made BWV 565's
+   ;; voice separation look like layout noise when it is nothing of the kind.
+   ;; Per-staff logs also let an ornament be attributed to the division that
+   ;; actually plays it.
    (let* ((inst-name (ly:context-property context 'instrumentName))
+          (staff (ly:context-find context 'Staff))
+          (staff-id (and staff (ly:context-id staff)))
           (original-file-name (ly:parser-output-name))
          )
      (string-concatenate (list
                           ;; filename without .ly part
                           original-file-name
                           "-"
-                          (if (string? inst-name)
-                              inst-name
-                            "unnamed-staff")
+                          (cond ((string? inst-name) inst-name)
+                                ((and (string? staff-id)
+                                      (not (string-null? staff-id))
+                                      (not (string=? staff-id "\\new")))
+                                 staff-id)
+                                (else "unnamed-staff"))
                           ".notes"))))
 
 #(define (format-moment moment)
@@ -243,6 +257,25 @@ as an engraver for convenience."
 %%%% are notified about all notes and rests. We don't create any grobs or
 %%%% change any settings.
 
+%%% MIDGRID ADDITION ----------------------------------------------------------
+%% Stem direction is notation the MIDI file cannot carry. In engravings that put
+%% two voices on one staff without \voiceOne/\voiceTwo -- BWV 565's Mutopia
+%% typeset uses 168 hand-written \stemUp/\stemDown directives and no voice
+%% contexts at all -- the stems ARE the voice separation, and they are the only
+%% record of it. Losing them means losing which notes belong to which hand or
+%% line, which is exactly the texture information a registration decision rests
+%% on. So log each stem's direction alongside the notes.
+%%
+%% We report the property DATA rather than the resolved value: an explicit
+%% \stemUp/\stemDown is present at acknowledge time, whereas an automatic stem's
+%% direction is computed later and would force premature evaluation. So "1" and
+%% "-1" mean the typesetter chose, and "auto" means the notation is silent --
+%% a distinction worth keeping, since only a deliberate flip carries intent.
+#(define (format-stem engraver grob source-engraver)
+   (let ((d (ly:grob-property-data grob 'direction)))
+     (print-line engraver "stem" (if (number? d) d "auto"))))
+%%% ---------------------------------------------------------------------------
+
 #(define event-listener-engraver
   (make-engraver
     (listeners
@@ -258,7 +291,9 @@ as an engraver for convenience."
      (decrescendo-event . format-decresc)
      (text-span-event . format-textspan)
      (glissando-event . format-glissando)
-     (tie-event . format-tie))))
+     (tie-event . format-tie))
+    (acknowledgers
+     (stem-interface . format-stem))))
 
 \layout {
   \context {

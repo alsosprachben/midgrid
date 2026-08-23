@@ -259,25 +259,47 @@ def _moment(tok):
     if not m: raise ValueError("unparseable moment %r" % tok)
     return float(m.group(1)) + (float(m.group(2)) if m.group(2) else 0.0)
 
+def ornament_logs(path):
+    """Accept a .notes file, a directory, or a glob and return the log files.
+
+    The listener writes one log PER STAFF, and how many there are depends on the
+    engraving -- so a script that hard-codes one filename breaks silently the
+    moment a work names its staves differently, and renders without ornaments
+    while looking fine. Always point at the work directory.
+    """
+    import glob as _glob
+    if os.path.isdir(path):
+        return sorted(_glob.glob(os.path.join(path, "*.notes")))
+    hits = sorted(_glob.glob(path))
+    return hits if hits else ([path] if os.path.exists(path) else [])
+
+
 def read_ornament_log(path, TPB, signs=None):
-    """Parse an event-listener .notes log into [(tick, pitch, dur_ticks, sign)].
+    """Parse event-listener .notes log(s) into [(tick, pitch, dur_ticks, sign)].
+
+    `path` may be a file, a directory of logs, or a glob (see ornament_logs).
 
     A `script` line refers to the note logged just before it, so we pair each
     sign with the preceding `note`. Log times are in whole notes; ticks are
     4*TPB per whole note. Returns entries in time order.
     """
     signs = signs or ORNAMENT_SIGNS
-    out, prev = [], None
-    for line in open(path):
-        f = line.rstrip('\n').split('\t')
-        if len(f) < 3: continue
-        if f[1] == 'note':
-            prev = (_moment(f[0]), int(f[2]),
-                    _moment(f[4]) if len(f) > 4 else 0.0)
-        elif f[1] == 'script' and f[2] in signs and prev:
-            t_wn, pitch, dur_wn = prev
-            out.append((int(round(t_wn * 4 * TPB)), pitch,
-                        int(round(dur_wn * 4 * TPB)), signs[f[2]]))
+    out = []
+    files = ornament_logs(path)
+    if not files:
+        raise IOError("no event-listener log found at %r" % path)
+    for f_ in files:
+        prev = None            # a sign refers to the note before it, in ITS staff
+        for line in open(f_):
+            f = line.rstrip('\n').split('\t')
+            if len(f) < 3: continue
+            if f[1] == 'note':
+                prev = (_moment(f[0]), int(f[2]),
+                        _moment(f[4]) if len(f) > 4 else 0.0)
+            elif f[1] == 'script' and f[2] in signs and prev:
+                t_wn, pitch, dur_wn = prev
+                out.append((int(round(t_wn * 4 * TPB)), pitch,
+                            int(round(dur_wn * 4 * TPB)), signs[f[2]]))
     out.sort()
     return out
 
