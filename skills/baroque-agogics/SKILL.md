@@ -82,8 +82,22 @@ tempo, agogic and rit all belong to the interpreter who is already there.
 5. **Plan the punctuation** — broadening into cadences (sectional as well as
    final); forward motion out of them.
 6. **Realize as timing** (`references/performance-bridge.md`): apply
-   `examples/perform_baroque.py`; leave velocity flat.
-7. **Judge by ear.** Does it speak? Does the meter breathe without seasickness?
+   `examples/perform_baroque.py`; leave velocity flat. Two of its knobs are easy
+   to read backwards, and both mistakes sound like heavy rubato:
+   - `--rit-amount` is a **multiplier on beat length**, not an amount to slow by.
+     `1.6`–`2.0` is a cadential broadening; anything **below 1.0 accelerates**
+     into the close.
+   - `--tension` lengthens **every beat carrying a sounding dissonance**. In
+     chromatic writing that is most beats, so it belongs at `0.02`–`0.03`. At
+     `0.4` the music lurches continuously.
+   The script now warns on both, but the warning is a backstop, not a licence to
+   guess.
+7. **Record the settings that were approved by ear, and re-use them.** A tempo
+   and shaping plan that has passed a listening test is a result; re-deriving it
+   from scratch discards that result and usually lands somewhere worse. For the
+   organ corpus they live in the `WORKS` table of
+   `organ-registration/examples/render_work.py`, one entry per work.
+8. **Judge by ear.** Does it speak? Does the meter breathe without seasickness?
    Do the cadences land? Never let the shaping be *noticeable as an effect*.
 
 ## Rule Priority

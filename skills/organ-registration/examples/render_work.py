@@ -32,11 +32,23 @@ OUT_DIR = os.path.expanduser(os.environ.get("ORGAN_OUT",
                                             "~/Downloads/bach-organ-renders"))
 WORK_DIR = os.path.expanduser("~/Downloads/organ-work")
 
-# Touch and shaping shared by everything: baroque separation, a mean-preserving
-# agogic breath, cadential trills reserved for structural closes (a phrase end is
-# not a cadence -- see baroque-agogics/SKILL.md).
-COMMON = ["--gap-frac", "0.14", "--gap-cap", "0.09", "--gap-min", "0.012",
-          "--cadential-trills", "--trill-min-bars", "8.0", "--trill-arrival", "1.8"]
+# Shared by everything: editorial trills at structural closes only (a phrase end
+# is not a cadence -- see baroque-agogics/SKILL.md). Everything else, the TOUCH
+# included, is left at perform_baroque's defaults, which is what these renders
+# were auditioned with. Do not add overrides here casually: --gap-frac/-cap/-min
+# are the separation that reads as dynamics on a fixed-volume instrument, and
+# tightening them quietly makes the whole corpus more legato.
+COMMON = ["--cadential-trills"]
+
+# NOTE ON THE NUMBERS BELOW. They are the values Ben auditioned and approved, not
+# fresh guesses. Two of the parameters are easy to get backwards:
+#   --rit-amount is a MULTIPLIER on beat length (1.0 + (amount-1)*smoothstep), so
+#     1.6 broadens the close by 60% and anything BELOW 1.0 is an accelerando into
+#     the cadence -- which is never what is wanted.
+#   --tension lengthens every beat carrying a sounding dissonance. In chromatic
+#     writing that is most beats, so it belongs at a few percent (0.02-0.03).
+#     At 0.4 the music lurches continuously and reads as heavy rubato.
+# Both were wrong in the first version of this table and both were audible.
 
 WORKS = {
     # --- BWV 565, Toccata and Fugue in D minor -------------------------------
@@ -45,16 +57,17 @@ WORKS = {
         mid="~/Downloads/bwv565_organ.mid",
         tuner="hybridharm",
         movements=[
-            # The toccata is improvisatory: slower, freer, strongly shaped.
-            dict(name="toccata", upto=116, bpm=76,
-                 flags=["--agogic", "0.06", "--phrase", "0.09",
-                        "--density-damp", "0.5", "--tension", "0.5",
-                        "--rit-beats", "8", "--rit-amount", "0.34"]),
+            # The toccata is improvisatory: slow, freely shaped, its passagework
+            # heavily damped so the flourishes flow instead of being measured out.
+            dict(name="toccata", upto=116, bpm=62,
+                 flags=["--agogic", "0.10", "--phrase", "0.17",
+                        "--density-damp", "0.85", "--tension", "0.03",
+                        "--rit-beats", "5", "--rit-amount", "1.8"]),
             # The fugue drives: quicker, lighter shaping, a big final broadening.
-            dict(name="fugue", bpm=96,
-                 flags=["--agogic", "0.04", "--phrase", "0.05",
-                        "--density-damp", "0.35", "--tension", "0.4",
-                        "--rit-beats", "12", "--rit-amount", "0.42"]),
+            dict(name="fugue", bpm=84,
+                 flags=["--agogic", "0.09", "--phrase", "0.09",
+                        "--density-damp", "0.7", "--tension", "0.02",
+                        "--rit-beats", "10", "--rit-amount", "2.0"]),
         ]),
     # --- BWV 582, Passacaglia and Fugue in C minor ---------------------------
     "bwv582": dict(
@@ -64,17 +77,17 @@ WORKS = {
         movements=[
             # A passacaglia is a ground: steady, its shaping in the variations,
             # not in the bar. Keep the agogic light or the ostinato limps.
-            dict(name="passacaglia", upto=505, bpm=72,
-                 flags=["--agogic", "0.035", "--phrase", "0.06",
-                        "--density-damp", "0.45", "--tension", "0.4",
-                        "--rit-beats", "8", "--rit-amount", "0.30"]),
+            dict(name="passacaglia", upto=505, bpm=66,
+                 flags=["--agogic", "0.09", "--phrase", "0.10",
+                        "--density-damp", "0.75", "--tension", "0.025",
+                        "--rit-beats", "6", "--rit-amount", "1.6"]),
             # The seam is 505, NOT bar 170's barline: the Thema fugatum's g2 is a
             # two-beat anacrusis INTO that bar, and cutting at the barline left
             # the subject's first note behind in the passacaglia.
-            dict(name="fugue", bpm=80,
-                 flags=["--agogic", "0.04", "--phrase", "0.05",
-                        "--density-damp", "0.35", "--tension", "0.45",
-                        "--rit-beats", "14", "--rit-amount", "0.44"]),
+            dict(name="fugue", bpm=72,
+                 flags=["--agogic", "0.09", "--phrase", "0.09",
+                        "--density-damp", "0.7", "--tension", "0.02",
+                        "--rit-beats", "12", "--rit-amount", "2.0"]),
         ]),
 }
 

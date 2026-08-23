@@ -551,6 +551,19 @@ def main():
         # broaden with the cadential rit, exactly as a player's would.
         if add_cadential_trills(m, TPB, pend, bar_len, a.trill_min_bars, a.trill_arrival):
             pend, dens_at, tens_at = analyze_score(m, TPB, bar_len)
+    # --rit-amount is a MULTIPLIER on beat length, so a value below 1.0 makes the
+    # music ACCELERATE into its close. That is essentially never intended, and it
+    # is easy to write while thinking of the parameter as "how much to slow by".
+    if a.rit_beats > 0 and a.rit_amount < 1.0:
+        print("  !! --rit-amount %.2f is BELOW 1.0: the last %g beats will speed "
+              "up, not broaden. 1.6-2.0 is a cadential ritardando."
+              % (a.rit_amount, a.rit_beats))
+    # --tension lengthens every beat carrying a sounding dissonance; in chromatic
+    # writing that is most of them, so more than a few percent reads as lurching.
+    if a.tension > 0.1:
+        print("  !! --tension %.2f is high: every dissonant beat is stretched %d%%. "
+              "0.02-0.03 is a lean; this will sound like heavy rubato."
+              % (a.tension, round(a.tension * 100)))
     tm = build_timemap(total, a.bpm, a.rit_beats, a.rit_amount, a.agogic, bar_len, prof,
                        a.inegales, a.inegales_div, phrase_ends=pend, density_at=dens_at,
                        tension_at=tens_at, phrase=a.phrase, density_damp=a.density_damp,
