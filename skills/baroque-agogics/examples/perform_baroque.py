@@ -459,6 +459,7 @@ def main():
     ap.add_argument("--fermata-mult", type=float, default=1.9)     # held note x this...
     ap.add_argument("--fermata-min", type=float, default=1.2)      # ...or this many beats, whichever is longer
     ap.add_argument("--no-fermatas", action="store_true")          # ignore the score's fermata markers
+    ap.add_argument("--arpeggio-spread", type=float, default=0.0)  # ms per note for MARKED chords
     a = ap.parse_args()
 
     m = mido.MidiFile(a.inp); TPB = m.ticks_per_beat
@@ -642,7 +643,35 @@ def main():
             if len(notes) < 2: continue
             order = sorted(notes, reverse=(a.spread_dir == 'down'))
             for i, n in enumerate(order):
-                spread_of[(chan, tick, n)] = i          # index in the roll
+                spread_of[(chan, tick, n)] = (i, a.spread)   # index in the roll, ms per step
+    # MARKED arpeggios (the \arpeggio sign, plus any the registration marked
+    # editorially) roll ACROSS the manuals as one gesture -- BWV 565 sets
+    # connectArpeggios, so a chord split between divisions is one roll, not two.
+    if a.arpeggio_spread > 0.0:
+        arp_ticks = set()
+        for tr in m.tracks:
+            t = 0
+            for x in tr:
+                t += x.time
+                if x.is_meta and x.type == 'marker' and str(x.text).strip() == 'arpeggio':
+                    arp_ticks.add(t)
+        if arp_ticks:
+            grp = {}
+            for tr in m.tracks:
+                t = 0
+                for x in tr:
+                    t += x.time
+                    if x.type == 'note_on' and x.velocity > 0 and t in arp_ticks:
+                        grp.setdefault(t, []).append((x.channel, x.note))
+            n_roll = 0
+            for tick, ns in grp.items():
+                order = sorted(set(ns), key=lambda cn: cn[1],
+                               reverse=(a.spread_dir == 'down'))
+                if len(order) < 2: continue
+                n_roll += 1
+                for i, (ch, n) in enumerate(order):
+                    spread_of[(ch, tick, n)] = (i, a.arpeggio_spread)
+            print("  arpeggios: %d chord(s) rolled at %g ms/note" % (n_roll, a.arpeggio_spread))
     # meter (for the agogic bar grid); tick 0 = downbeat (no anacrusis in 543)
     # total length in beats
     total = 0.0
@@ -701,10 +730,11 @@ def main():
                 if q:
                     on_b, vel = q.pop(0)
                     p_on = tm(on_b); p_off_full = tm(b)
-                    idx = spread_of.get((x.channel, int(round(on_b * TPB)), x.note))
-                    if idx:                       # 0 = first of the roll, no delay
+                    sp = spread_of.get((x.channel, int(round(on_b * TPB)), x.note))
+                    if sp and sp[0]:              # 0 = first of the roll, no delay
+                        idx, ms = sp
                         w = weight_at(on_b) if a.spread_accent else 1.0
-                        p_on += idx * a.spread * w / 1000.0
+                        p_on += idx * ms * w / 1000.0
                         if p_on > p_off_full - 0.02: p_on = max(p_off_full - 0.02, tm(on_b))
                     dur = p_off_full - p_on
                     gap = min(a.gap_frac * dur, a.gap_cap)

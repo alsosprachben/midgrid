@@ -59,7 +59,7 @@ WORKS = {
         movements=[
             # The toccata is improvisatory: slow, freely shaped, its passagework
             # heavily damped so the flourishes flow instead of being measured out.
-            dict(name="toccata", upto=116, bpm=62,
+            dict(name="toccata", upto=118, bpm=62,
                  flags=["--agogic", "0.10", "--phrase", "0.17",
                         "--density-damp", "0.85", "--tension", "0.03",
                         "--rit-beats", "5", "--rit-amount", "1.8",
@@ -68,7 +68,11 @@ WORKS = {
                         # the engraving writes it as a 32nd plus a rest, so
                         # without this the passage is a flat run of semiquavers
                         # with nothing under it.
-                        "--arpeggio-hold", "0.5"]),
+                        "--arpeggio-hold", "0.5",
+                        # roll the marked chords: the bar-3 diminished chord the
+                        # engraving marks, and the big sustained ones a player
+                        # would spread rather than strike flat.
+                        "--arpeggio-spread", "38"]),
             # The fugue drives: quicker, lighter shaping, a big final broadening.
             dict(name="fugue", bpm=84,
                  flags=["--agogic", "0.09", "--phrase", "0.09",

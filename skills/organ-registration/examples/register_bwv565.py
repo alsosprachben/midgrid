@@ -51,6 +51,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from reglib import (read_notes, make_channel_track, conductor,
                     read_ornament_log, realize_ornaments, apply_ornaments,
                     read_fermatas, find_echoes, split_echoes,
+                    read_arpeggios, big_chords,
                     F8, F4, F2, F223, F16, F513, FLUTE, MIXTUR, R8, R16, TRUMPET,
                     PLENUM, PEDAL_FOUND)
 
@@ -68,18 +69,25 @@ RH_TRACK, LH_TRACK, PEDAL_TRACK = 1, 2, 3
 D_MINOR = {2, 4, 5, 7, 9, 10, 1}
 
 # --- section beats (4/4, so bar = beat/4 + 1) --------------------------------
+DECLAIM   = 12     # bars 1-3: the opening declamation is ONE gesture on ONE
+                   # manual. It is an unharmonised flourish doubled at the octave
+                   # and answered twice a register lower; routing it by hand put
+                   # the lowest answer on the other division, so the three
+                   # statements no longer matched each other.
 ARP_IN    = 52     # bar 14: the broken-chord figure with its repeated inner note
 ARP_OUT   = 80     # bar 21: ...ends
 T_CHORDS  = 104    # bar 27: the toccata's weighty chords ACTUALLY begin here --
                    # measured, not assumed. The old value (bar 17) sat in the
                    # middle of the running figure: bars 14-26 carry no sustained
                    # chord at all, and the first two land in bars 27-28.
-FUGUE     = 116    # bar 30: subject enters; drop back to a lean chorus.
-                   # split_at warns that this seam shortens one note (a G3 pickup
-                   # in the cadence, 0.75 -> 0.25 beats). Accepted deliberately:
-                   # the nearest clean cuts are 114.5 and 118.0, and either would
-                   # push part of the toccata's cadence into the fugue's faster
-                   # tempo -- a worse musical error than one clipped passing note.
+FUGUE     = 118    # the seam, found from where the SUBJECT enters rather than
+                   # from a bar number. It enters at 118.25 -- `a g a f a e a d`,
+                   # the alternation against the repeated A -- after a 16th rest.
+                   # The old value of 116 cut the toccata's own final cadence in
+                   # half: the resolving D minor chord begins exactly at 116 and
+                   # runs to 118, so it was thrown onto the fugue's side and the
+                   # toccata simply stopped, unresolved, followed by the silence
+                   # of the movement gap. Nothing at all crosses beat 118.
 ECHO2_IN  = 244    # bar 62: the fugue's echo passage begins (half-bar repeats)
 ECHO2_OUT = 324    # bar 82: it ends; the manuals couple again
 F_BUILD   = 352    # bar 89: density rises toward the close of the fugue
@@ -117,6 +125,28 @@ POSAUNE = [(0,         0),
            (CODA,      R8|R16)]
 
 TROMPETTE = [(0, 0), (CODA, TRUMPET)]           # Great Trompette, peroration only
+
+
+def unify_octave_doublings(rh, lh):
+    """Move LH notes that merely DOUBLE an RH note at the octave into the RH set.
+
+    An octave doubling is one gesture, not two voices -- and BWV 565 opens with
+    exactly that: three declamatory A's, each doubled an octave below. The hands
+    happen to straddle the staff boundary, so routing by hand put the second
+    gesture's A4 on the Oberwerk and its own octave A3 on the Rueckpositiv. The
+    two manuals stand in different places, so the gesture arrived split and
+    smeared while its neighbours were whole. Same onset, same duration, an exact
+    octave apart: that is a doubling, and it belongs on one manual.
+    """
+    idx = {}
+    for s, e, p, v in rh: idx.setdefault((s, e), set()).add(p)
+    moved, rest = [], []
+    for n in lh:
+        s, e, p, v = n
+        near = idx.get((s, e), ())
+        if any(abs(p - q) in (12, 24) for q in near): moved.append(n)
+        else: rest.append(n)
+    return rh + moved, rest
 
 
 def figure_split(rh, lh, TPB, lo_bar, hi_bar, W=0.5):
@@ -193,11 +223,27 @@ def main():
     print("  fermatas: %d, at bars %s" % (len(ferm), [round(t/(4.0*TPB)+1, 1) for t, _ in ferm]))
 
     out = mido.MidiFile(type=1, ticks_per_beat=TPB)
+    # ARPEGGIOS: the two the engraving marks (the bar-3 diminished chord, rolled
+    # across both staves -- the source sets connectArpeggios), plus the toccata's
+    # and coda's big sustained chords, which a player spreads as a matter of
+    # course and which sound mechanical struck dead flat.
+    arp = set(read_arpeggios(ORN_LOG, TPB))
+    arp |= set(big_chords(rh + lh, TPB, min_notes=4, min_beats=0.75))
+    print("  arpeggios: %d chords rolled (%d notated)"
+          % (len(arp), len(read_arpeggios(ORN_LOG, TPB))))
+
     out.tracks.append(conductor("BWV565 Toccata and Fugue (organ, 2 man.)",
-                                src=src, fermatas=ferm))
+                                src=src, fermatas=ferm, arpeggios=sorted(arp)))
     # ECHOES: the answer half-bars move to the other manual, the way a player
     # moves a hand. Detected from the notes (see find_echoes), not hand-listed.
     BAR = 4 * TPB
+    # 0. an octave doubling is ONE gesture: keep it on one manual
+    rh, lh = unify_octave_doublings(rh, lh)
+    #    ...and the whole opening declamation belongs on the Oberwerk
+    op = [n for n in lh if n[0] < DECLAIM * 4 * TPB]
+    lh = [n for n in lh if n[0] >= DECLAIM * 4 * TPB]
+    rh = sorted(rh + op)
+
     # 1. the toccata's broken-chord figure: two strands, trading manuals bar by bar
     fow, frp, used = figure_split(rh, lh, TPB, 13, 22)
     print("  figure: %d notes split into strands (%d/%d), swapping each bar"

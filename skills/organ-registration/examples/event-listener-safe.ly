@@ -198,6 +198,9 @@ as an engraver for convenience."
                          (mg-dur-len (ly:event-property event 'tempo-unit))))))))
 
 
+#(define (format-arpeggio engraver event)
+   (print-line engraver "arpeggio"))
+
 #(define (format-breathe engraver event)
    (print-line engraver
                "breathe"))
@@ -291,7 +294,11 @@ as an engraver for convenience."
      (decrescendo-event . format-decresc)
      (text-span-event . format-textspan)
      (glissando-event . format-glissando)
-     (tie-event . format-tie))
+     (tie-event . format-tie)
+     ;; MIDGRID: the \arpeggio sign. MIDI cannot carry it, so like the ornaments
+     ;; and the fermatas it survives only here -- and BWV 565's big chords are
+     ;; marked to be spread.
+     (arpeggio-event . format-arpeggio))
     (acknowledgers
      (stem-interface . format-stem))))
 

@@ -120,7 +120,8 @@ def make_channel_track(ch, prog, notes, mask_events, TPB=None, unit='tick',
     return tr
 
 
-def conductor(name, tempo=None, src=None, time_signature=True, fermatas=()):
+def conductor(name, tempo=None, src=None, time_signature=True, fermatas=(),
+              arpeggios=()):
     """The meta track. Carries the source's tempo and -- importantly -- its
     TIME SIGNATURE: baroque-agogics derives the metric grid from it, and a
     missing one silently makes a 6/8 fugue breathe in 4/4.
@@ -137,8 +138,10 @@ def conductor(name, tempo=None, src=None, time_signature=True, fermatas=()):
         if ts is not None:
             tr.append(ts.copy(time=0))
     tr.append(mido.MetaMessage('track_name', name=name, time=0))
+    marks = fermata_markers(sorted(fermatas)) + arpeggio_markers(sorted(arpeggios))
+    marks.sort(key=lambda tm: tm[0])
     last = 0
-    for tick, msg in fermata_markers(sorted(fermatas)):
+    for tick, msg in marks:
         tr.append(msg.copy(time=tick - last)); last = tick
     tr.append(mido.MetaMessage('end_of_track', time=0))
     return tr
@@ -376,6 +379,41 @@ def apply_ornaments(notes, figures, TPB, tol=None, verbose=True):
 
 
 
+
+
+# --- arpeggiated chords -------------------------------------------------------
+# The \arpeggio sign is one more thing MIDI cannot carry. BWV 565 marks its big
+# diminished chord in bar 3 and sets connectArpeggios, meaning the roll spans the
+# staves as ONE gesture -- so the spread has to be collected across manuals, not
+# per channel, or a chord split between divisions rolls twice.
+
+def read_arpeggios(path, TPB):
+    """[tick] for every notated \arpeggio, deduplicated across staves."""
+    out = set()
+    for f_ in ornament_logs(path):
+        for line in open(f_):
+            g = line.rstrip('\n').split('\t')
+            if len(g) >= 2 and g[1].strip() == 'arpeggio':
+                out.add(int(round(_moment(g[0]) * 4 * TPB)))
+    return sorted(out)
+
+
+def big_chords(notes, TPB, min_notes=4, min_beats=0.75, lo_tick=0, hi_tick=10**9):
+    """Onsets of full sustained chords -- the ones a player spreads.
+
+    Editorial, unlike read_arpeggios: the engraving marks only bar 3, but the
+    weighty chords of a toccata are rolled as a matter of course, and a five-note
+    chord struck dead flat on an organ sounds like a machine.
+    """
+    at = {}
+    for s, e, p, v in notes:
+        if lo_tick <= s < hi_tick and (e - s) >= min_beats * TPB:
+            at.setdefault(s, []).append(p)
+    return sorted(t for t, ps in at.items() if len(set(ps)) >= min_notes)
+
+
+def arpeggio_markers(ticks):
+    return [(t, mido.MetaMessage('marker', text='arpeggio', time=0)) for t in ticks]
 
 # --- echoes -------------------------------------------------------------------
 
