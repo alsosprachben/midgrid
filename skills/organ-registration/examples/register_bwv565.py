@@ -68,9 +68,12 @@ RH_TRACK, LH_TRACK, PEDAL_TRACK = 1, 2, 3
 D_MINOR = {2, 4, 5, 7, 9, 10, 1}
 
 # --- section beats (4/4, so bar = beat/4 + 1) --------------------------------
-ECHO_IN   = 56     # bar 15: the RH repeats bar 14 an octave lower -- the echo
-ECHO_OUT  = 60     # bar 16: back to the main manual
-T_CHORDS  = 64     # bar 17: the toccata's weighty chords
+ARP_IN    = 52     # bar 14: the broken-chord figure with its repeated inner note
+ARP_OUT   = 80     # bar 21: ...ends
+T_CHORDS  = 104    # bar 27: the toccata's weighty chords ACTUALLY begin here --
+                   # measured, not assumed. The old value (bar 17) sat in the
+                   # middle of the running figure: bars 14-26 carry no sustained
+                   # chord at all, and the first two land in bars 27-28.
 FUGUE     = 116    # bar 30: subject enters; drop back to a lean chorus.
                    # split_at warns that this seam shortens one note (a G3 pickup
                    # in the cadence, 0.75 -> 0.25 beats). Accepted deliberately:
@@ -86,16 +89,14 @@ CODA      = 508    # bar 128: recitative into the peroration
 
 LEAN = F8 | F4                                  # the fugue subject must read
 OBERWERK = [(0,         F8|F4|F2),              # bold declamation, not yet complete
-            (ECHO_IN,   F8),                    # the echo: a bare 8'
-            (ECHO_OUT,  F8|F4|F2),
             (T_CHORDS,  F8|F4|F2|F223|F16),     # the chords: add gravity
             (FUGUE,     LEAN),
             (F_BUILD,   PLENUM),
             (CODA,      PLENUM|F16|MIXTUR)]     # the crown
 
 RUCKPOSITIV = [(0,         F8|F4|F2),           # coupled with the Oberwerk
-               (ECHO_IN,   F8),                 # ...and echoes with it
-               (ECHO_OUT,  F8|F4|F2),
+               (ARP_IN,    F8),                 # the ECHO manual through the figure
+               (ARP_OUT,   F8|F4|F2),           # coupled again
                (T_CHORDS,  F8|F4|F2|F223|F16),
                (FUGUE,     LEAN),
                (ECHO2_IN,  F8),                 # the ECHO manual: one rank, clearly softer
@@ -118,6 +119,53 @@ POSAUNE = [(0,         0),
 TROMPETTE = [(0, 0), (CODA, TRUMPET)]           # Great Trompette, peroration only
 
 
+def figure_split(rh, lh, TPB, lo_bar, hi_bar, W=0.5):
+    """The broken-chord figure, split into its two strands and its two bars.
+
+    Each half-beat group of the figure is four notes -- bass, X, moving, X --
+    whose 2nd and 4th are the SAME pitch. That repeated note is a voice: through
+    bars 14-16 it is a constant A (the repeated A of the preceding passage), and
+    from bar 16 it simply descends, F F / E E / D D. So the figure is not four
+    equal semiquavers but a moving line over a bass with a repeated tone inside
+    it, and it is also an echo -- the whole figure restates itself bar to bar.
+
+    Both readings are true, so we play both: the repeated tone is separated onto
+    its own manual, and which manual carries it SWAPS between the statement bar
+    and its echo. The strands trade places, which is what makes the restatement
+    read as an echo rather than a repetition.
+
+    -> (ow_extra, rp_extra, consumed) with `consumed` the notes now routed here.
+    """
+    alln = sorted(rh + lh)
+    BAR = 4 * TPB
+    groups = []
+    b = lo_bar * BAR
+    while b < hi_bar * BAR:
+        g = sorted(n for n in alln if b <= n[0] < b + W * TPB)
+        if len(g) == 4 and g[1][2] == g[3][2] and g[0][2] < g[1][2]:
+            groups.append((b, g))
+        b += int(W * TPB)
+    if not groups:
+        return [], [], set()
+    # contiguous blocks of figure; inside a block, bars alternate statement/echo
+    blocks, cur = [], [groups[0]]
+    for prev, nxt in zip(groups, groups[1:]):
+        if nxt[0] - prev[0] <= W * TPB * 2.5: cur.append(nxt)
+        else: blocks.append(cur); cur = [nxt]
+    blocks.append(cur)
+    ow, rp, seen = [], [], set()
+    for blk in blocks:
+        first_bar = blk[0][0] // BAR
+        for b0, g in blk:
+            echo = ((b0 // BAR) - first_bar) % 2 == 1
+            inner = [g[1], g[3]]                 # the repeated tone
+            outer = [g[0], g[2]]                 # bass and moving note
+            (ow if echo else rp).extend(inner)
+            (rp if echo else ow).extend(outer)
+            seen.update(g)
+    return ow, rp, seen
+
+
 def main():
     src = mido.MidiFile(SRC); TPB = src.ticks_per_beat
     rh    = read_notes(src, RH_TRACK)
@@ -127,7 +175,16 @@ def main():
     # Ornaments BEFORE registration (notation -> ornaments -> registration ->
     # agogics). Each hand is matched separately, so a sign lands on the division
     # that actually plays it.
-    figs = realize_ornaments(read_ornament_log(ORN_LOG, TPB), TPB, D_MINOR)
+    orns = read_ornament_log(ORN_LOG, TPB)
+    # THE OPENING GESTURE IS A MORDENT. This engraving prints \prall, which our
+    # engine reads (correctly for that sign) as a trill from above: Bb-A-Bb-A,
+    # ending on the lower note of the pair. Ben hears the mordent -- A-G-A,
+    # ending on the upper -- which is the reading the piece is known by and the
+    # sign its primary source carries; BWV 565 has no autograph to arbitrate.
+    # Only the opening gesture (the three fermata-ed A's of bars 1-2) is changed;
+    # the fugue's \trill at bar 12 stays a trill.
+    orns = [(t, p, d, 'v' if t < 6 * TPB else s_) for t, p, d, s_ in orns]
+    figs = realize_ornaments(orns, TPB, D_MINOR)
     rh, n_rh = apply_ornaments(rh, figs, TPB, verbose=False)
     lh, n_lh = apply_ornaments(lh, figs, TPB, verbose=False)
     print("  ornaments: %d on the RH, %d on the LH (of %d)" % (n_rh, n_lh, len(figs)))
@@ -141,10 +198,16 @@ def main():
     # ECHOES: the answer half-bars move to the other manual, the way a player
     # moves a hand. Detected from the notes (see find_echoes), not hand-listed.
     BAR = 4 * TPB
-    ow, rp = [], []
+    # 1. the toccata's broken-chord figure: two strands, trading manuals bar by bar
+    fow, frp, used = figure_split(rh, lh, TPB, 13, 22)
+    print("  figure: %d notes split into strands (%d/%d), swapping each bar"
+          % (len(used), len(fow), len(frp)))
+    ow, rp = list(fow), list(frp)
+    # 2. the fugue's half-bar echoes: statement on the main manual, answer on the other
     for hand, dflt in ((rh, 'ow'), (lh, 'rp')):
-        pairs = find_echoes(hand, BAR, 29, 127)
-        stmt, ans, other = split_echoes(hand, pairs)
+        rest = [n for n in hand if n not in used]
+        pairs = find_echoes(rest, BAR, 29, 127)
+        stmt, ans, other = split_echoes(rest, pairs)
         ow += stmt; rp += ans                       # statement -> main, answer -> echo
         (ow if dflt == 'ow' else rp).extend(other)  # everything else stays on its hand's manual
         print("  echoes: %d pairs (%d notes to the echo manual)"

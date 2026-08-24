@@ -256,10 +256,15 @@ from fractions import Fraction
 
 # Every sign LilyPond can name, mapped to the engine's code. All wavy signs are
 # one thing to Bach (a trill from above); only the turn is distinct.
+# 'w' = trillo, from the note ABOVE.  'v' = Mordant, a bite to the note BELOW.
+# 'S' = turn.  These are DIFFERENT signs in Bach's Explication and LilyPond prints
+# them differently, so they must not be collapsed: mapping \mordent to 'w' (as
+# this table first did) played 115 mordents across 25 works as upper trills.
 ORNAMENT_SIGNS = {
-    'prall': 'w', 'mordent': 'w', 'prallmordent': 'w', 'prallprall': 'w',
-    'upprall': 'w', 'downprall': 'w', 'lineprall': 'w', 'trill': 'w',
-    'pralldown': 'w', 'upmordent': 'w', 'downmordent': 'w',
+    'prall': 'w', 'prallprall': 'w', 'upprall': 'w', 'downprall': 'w',
+    'lineprall': 'w', 'trill': 'w', 'pralldown': 'w',
+    'prallmordent': 'w',                     # begins as a prall; the trill reading holds
+    'mordent': 'v', 'upmordent': 'v', 'downmordent': 'v',
     'turn': 'S', 'reverseturn': 'S',
 }
 

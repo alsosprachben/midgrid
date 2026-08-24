@@ -118,6 +118,16 @@ def realize(midi, dur, orn, scale):
     if orn in 'Ss$':                                 # turn: upper-principal-lower-principal
         q = min(g, dur / 4)
         return [(hi, q), (midi, q), (lo, q), (midi, dur - 3 * q)]
+    if orn == 'v':                                   # MORDANT (the wavy line WITH the
+        # vertical stroke). Bach's Explication lists it separately from the trillo
+        # and it is the opposite gesture: a single bite DOWN to the lower
+        # neighbour and back, on the beat, the principal holding the remainder.
+        # Kern sources encode every wavy sign ambiguously, which is why the rule
+        # below flattens them all to a trill; LilyPond does NOT -- it prints
+        # \prall and \mordent as different signs -- so carrying that rule into the
+        # LilyPond pipeline turned 115 mordents across 25 works into upper trills.
+        q = min(g, dur / 3)
+        return [(midi, q), (lo, q), (midi, dur - 2 * q)]
     if orn in 'tTmMwW':                              # every wavy sign -> trill from above
         return _trill(midi, hi, dur, g, appuy=(dur >= 1))
     return [(midi, dur)]
