@@ -19,17 +19,31 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 # --- reading a source ---------------------------------------------------------
 
-def read_notes(mid, ti):
-    """Notes of track `ti` as [(start_tick, end_tick, note, velocity)]."""
+def read_notes(mid, ti, by_channel=True):
+    """Notes of track `ti` as [(start_tick, end_tick, note, velocity)].
+
+    Pairs note-on to note-off by (CHANNEL, pitch), not by pitch alone. When an
+    engraving puts two voices on one staff -- `<< { ... } \\ { ... } >>`, which
+    BWV 565's toccata uses throughout its broken-chord figures -- and the voices
+    momentarily share a pitch, pairing by pitch alone matches the sustained
+    voice's note-on to the passing voice's note-off. The durations swap: the held
+    note comes out short and a passing note comes out long, so a figure written
+    as a moving line over a sustained one is flattened into equal semiquavers.
+    Compile with midi-voice-channels.ly so the voices are on separate channels
+    and this pairing can tell them apart.
+    """
     t = 0; on = {}; out = []
     for msg in mid.tracks[ti]:
         t += msg.time
+        if msg.type not in ('note_on', 'note_off'): continue
+        key = (msg.channel, msg.note) if by_channel else msg.note
         if msg.type == 'note_on' and msg.velocity > 1:
-            on.setdefault(msg.note, []).append((t, msg.velocity))
-        elif msg.type == 'note_off' or (msg.type == 'note_on' and msg.velocity <= 1):
-            q = on.get(msg.note)
+            on.setdefault(key, []).append((t, msg.velocity))
+        else:
+            q = on.get(key)
             if q:
                 s, v = q.pop(0); out.append((s, t, msg.note, v))
+    out.sort()
     return out
 
 
@@ -356,6 +370,47 @@ def apply_ornaments(notes, figures, TPB, tol=None, verbose=True):
     return notes, applied
 
 
+
+
+# --- echoes -------------------------------------------------------------------
+
+def find_echoes(notes, BAR, lo_bar=0, hi_bar=10**6, unit=0.5, min_notes=5):
+    """Immediate LITERAL restatements: [(stmt0, stmt1, ans0, ans1)] in ticks.
+
+    An echo is a figure played again, unchanged, straight away -- so we compare
+    each `unit`-bar window with the next and require identical rhythm AND
+    identical pitches. That is what the notation gives us; stems do not mark
+    echoes, and neither does anything else in an engraving without registration
+    marks. In BWV 565's fugue this finds the half-bar repeats in the right hand
+    (bars 62-70) and then in the left (bars 73.5-81) -- the passage where the
+    piece is plainly asking for two manuals.
+    """
+    step = unit * BAR
+    def window(b0):
+        return tuple(sorted((s - b0, p) for s, e, p, v in notes if b0 <= s < b0 + step))
+    out = []
+    b = lo_bar * BAR
+    while b < hi_bar * BAR:
+        x, y = window(b), window(b + step)
+        if len(x) >= min_notes and x == y:
+            out.append((int(b), int(b + step), int(b + step), int(b + 2 * step)))
+            b += 2 * step
+        else:
+            b += step
+    return out
+
+
+def split_echoes(notes, pairs):
+    """-> (statement_notes, answer_notes, other_notes) for one hand."""
+    stmt, ans, other = [], [], []
+    for n in notes:
+        s = n[0]
+        for s0, s1, a0, a1 in pairs:
+            if s0 <= s < s1: stmt.append(n); break
+            if a0 <= s < a1: ans.append(n); break
+        else:
+            other.append(n)
+    return stmt, ans, other
 
 # --- fermatas -----------------------------------------------------------------
 # A fermata is the most basic timing instruction notation has, and MIDI cannot

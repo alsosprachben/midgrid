@@ -26,12 +26,16 @@ actually ask for it:
     exactly -12 semitones, over an LH figure that repeats note for note. That is
     a written echo, and the one place in the piece where the notation itself asks
     for a manual change. Both hands drop to a bare 8' for bar 15 and return.
-  * The 28-bar MANUALITER span, bars 58-85, where the pedal is silent and the
-    hands genuinely alternate (RH alone bars 60-69, LH alone bars 74-77). The
-    manuals UNCOUPLE here: the Rueckpositiv takes its own flute colour so the two
-    lines are told apart by timbre as well as register. This is where two manuals
-    earn their keep -- Geer's point that independent divisions are what make
-    counterpoint legible.
+  * The FUGUE'S ECHOES, found the same way and not by stems, which mark vertical
+    position rather than manual. Inside the 28-bar manualiter span (bars 58-85,
+    pedal silent) the music restates itself literally every HALF BAR: the right
+    hand from bar 62 to 70, then the left from 73.5 to 81. Sixteen such pairs, all
+    exact repeats of rhythm and pitch. That is an echo passage, and an organist
+    plays the statement on the main manual and the answer on the softer one --
+    which is a change of MANUAL, not of stops, so we route the answer half-bars
+    to the Rueckpositiv rather than re-registering mid-phrase. The routing is by
+    role, not by hand: during the left hand's echoes its statements take the
+    Oberwerk too, because the statement always belongs on the main manual.
   * Everywhere else the manuals carry the SAME registration, which is what
     coupling is. Two manuals is not the same as two colours all evening; the
     toccata's chords and the peroration want one weight, not a dialogue.
@@ -46,7 +50,7 @@ import mido, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from reglib import (read_notes, make_channel_track, conductor,
                     read_ornament_log, realize_ornaments, apply_ornaments,
-                    read_fermatas,
+                    read_fermatas, find_echoes, split_echoes,
                     F8, F4, F2, F223, F16, F513, FLUTE, MIXTUR, R8, R16, TRUMPET,
                     PLENUM, PEDAL_FOUND)
 
@@ -73,8 +77,8 @@ FUGUE     = 116    # bar 30: subject enters; drop back to a lean chorus.
                    # the nearest clean cuts are 114.5 and 118.0, and either would
                    # push part of the toccata's cadence into the fugue's faster
                    # tempo -- a worse musical error than one clipped passing note.
-DIALOG_IN = 228    # bar 58: pedal silent for 28 bars, hands alternate -> UNCOUPLE
-DIALOG_OUT= 340    # bar 86: pedal returns -> couple again
+ECHO2_IN  = 244    # bar 62: the fugue's echo passage begins (half-bar repeats)
+ECHO2_OUT = 324    # bar 82: it ends; the manuals couple again
 F_BUILD   = 352    # bar 89: density rises toward the close of the fugue
 PSOLO_IN  = 435    # bars 109-111, manuals silent: brighten the pedal (Biggs)
 PSOLO_OUT = 441    # ...and retract BEFORE the manuals return at 442
@@ -94,8 +98,8 @@ RUCKPOSITIV = [(0,         F8|F4|F2),           # coupled with the Oberwerk
                (ECHO_OUT,  F8|F4|F2),
                (T_CHORDS,  F8|F4|F2|F223|F16),
                (FUGUE,     LEAN),
-               (DIALOG_IN, F8|FLUTE),           # UNCOUPLED: its own flute colour
-               (DIALOG_OUT,LEAN),               # coupled again when the pedal returns
+               (ECHO2_IN,  F8),                 # the ECHO manual: one rank, clearly softer
+               (ECHO2_OUT, LEAN),               # coupled again after the echoes
                (F_BUILD,   PLENUM),
                (CODA,      PLENUM|F16|MIXTUR)]
 
@@ -134,14 +138,27 @@ def main():
     out = mido.MidiFile(type=1, ticks_per_beat=TPB)
     out.tracks.append(conductor("BWV565 Toccata and Fugue (organ, 2 man.)",
                                 src=src, fermatas=ferm))
-    out.tracks.append(make_channel_track(0, 19, rh,    OBERWERK,    TPB, unit='beat'))
-    out.tracks.append(make_channel_track(1, 19, lh,    RUCKPOSITIV, TPB, unit='beat'))
+    # ECHOES: the answer half-bars move to the other manual, the way a player
+    # moves a hand. Detected from the notes (see find_echoes), not hand-listed.
+    BAR = 4 * TPB
+    ow, rp = [], []
+    for hand, dflt in ((rh, 'ow'), (lh, 'rp')):
+        pairs = find_echoes(hand, BAR, 29, 127)
+        stmt, ans, other = split_echoes(hand, pairs)
+        ow += stmt; rp += ans                       # statement -> main, answer -> echo
+        (ow if dflt == 'ow' else rp).extend(other)  # everything else stays on its hand's manual
+        print("  echoes: %d pairs (%d notes to the echo manual)"
+              % (len(pairs), len(ans)))
+    ow.sort(); rp.sort()
+
+    out.tracks.append(make_channel_track(0, 19, ow, OBERWERK,    TPB, unit='beat'))
+    out.tracks.append(make_channel_track(1, 19, rp, RUCKPOSITIV, TPB, unit='beat'))
     out.tracks.append(make_channel_track(2, 19, pedal, PEDAL,       TPB, unit='beat'))
     out.tracks.append(make_channel_track(3, 20, pedal, POSAUNE,     TPB, unit='beat'))
     out.tracks.append(make_channel_track(4, 20, rh + lh, TROMPETTE, TPB, unit='beat'))
     out.save(DST)
-    print("wrote %s | TPB %d | %.0fs | RH %d, LH %d, pedal %d"
-          % (DST, TPB, out.length, len(rh), len(lh), len(pedal)))
+    print("wrote %s | TPB %d | %.0fs | Oberwerk %d, Rueckpositiv %d, pedal %d"
+          % (DST, TPB, out.length, len(ow), len(rp), len(pedal)))
 
 
 if __name__ == "__main__":
