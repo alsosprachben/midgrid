@@ -82,10 +82,21 @@ every voice sounding into that instant comes off it, so the silence is heard
 across the texture. Distribution is lopsided — BWV 682 alone carries 461 of the
 552 staccatos, and BWV 533 all 9 breath marks.
 
-**Polyphony sharing a MIDI channel: 66 `<< \\ >>` splits across 18 works.**
-`midi-voice-channels.ly` puts each voice on its own channel and `read_notes`
-pairs by channel, but the corpus was not converted with it. Where two voices in
-one staff briefly share a pitch, their durations swap.
+**Polyphony sharing a MIDI channel — reconverted, and it changed nothing
+audible.** The whole corpus was recompiled with `midi-voice-channels.ly`, which
+gives each voice its own channel; 14 works now have a staff carrying more than
+one. All 111 kept their exact track layout and note counts, so no registration
+script was disturbed.
+
+The expected payoff did not materialise, and that is worth recording. The
+hazard — two voices in one staff sounding the same pitch at the same moment, so
+that one voice's note-off ends the other's and their durations swap — **does not
+occur anywhere in this corpus**: comparing every track read by (channel, pitch)
+against the same track read by pitch alone gives **zero** notes with a different
+duration. The risk was real in principle and I described it as though it were
+actually happening; it was not. The change is kept because it makes the property
+structural rather than a lucky accident of this repertoire, not because it
+repaired anything.
 
 ## Things that turned out not to matter
 
@@ -96,3 +107,14 @@ one staff briefly share a pitch, their durations swap.
 - **No hairpins, no `\ottava`, no glissandi, no textual tempo marks** anywhere in
   the corpus except BWV 565's `Adagio`/`Prestissimo`, which are already handled
   (they are what broke the stock listener).
+
+
+## What the rebuilt triage says about the corpus
+
+111 records, no work with ornaments lost, and 58 clean. All 53 flagged works are
+flagged for the same reason: **more than one tempo mark**. That is not a defect
+in the engraving — a prelude and fugue in one file legitimately carries a tempo
+for each — but it matters, because `perform_baroque` discards the source's tempo
+events and imposes its own from `--bpm`. A work with internal tempo changes must
+therefore be SPLIT into movements, or the second tempo is silently lost. The flag
+is the list of works that need splitting before they are rendered.

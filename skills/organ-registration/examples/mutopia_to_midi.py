@@ -108,7 +108,17 @@ def convert_one(ly, outdir, timeout=300, ev_timeout=1500):
     txt = open(src, errors='ignore').read()
     n_rep = txt.count("\\repeat volta")
     if n_rep:
-        open(src, "w").write(txt.replace("\\repeat volta", "\\repeat unfold"))
+        txt = txt.replace("\\repeat volta", "\\repeat unfold")
+
+    # ONE MIDI CHANNEL PER VOICE. LilyPond packs all voices of a staff onto one
+    # channel, and where two voices in a staff briefly share a pitch, one voice's
+    # note-off ends the other's -- the durations swap, so a held note comes out
+    # short and a passing note comes out long. 18 works here put two voices on a
+    # staff. reglib.read_notes pairs by (channel, pitch), which only helps if the
+    # channels differ, so the mapping has to be set at compile time.
+    shutil.copy(os.path.join(HERE, "midi-voice-channels.ly"), work)
+    txt = txt.replace("\\version", '\\include "midi-voice-channels.ly"\n\\version', 1)
+    open(src, "w").write(txt)
     try:
         subprocess.run(["lilypond", "-dno-print-pages", "-dno-point-and-click",
                         "-o", base, src], cwd=work, capture_output=True, timeout=timeout)
@@ -250,16 +260,22 @@ def main():
               rep.get('error') or "%d voices, %s, tempo_ev=%d%s" % (
                   len(v), rep.get('time_sig'), rep.get('tempo_events', 0),
                   (" | " + "; ".join(rep['why'])) if rep.get('why') else "")), flush=True)
-    # MERGE, never replace: a --only rerun touches one work and must not wipe the
-    # other 110 records (it silently did, which is how BWV 565's failure hid).
-    tri = os.path.join(outdir, "triage.json")
+    # Each work's record is written to its OWN file, then the index is rebuilt
+    # from them. A --only rerun must not wipe the other records (it silently did
+    # once, which is how BWV 565's lost ornaments stayed hidden) -- and a plain
+    # read-modify-write of one shared file cannot survive being run in parallel,
+    # which is the obvious way to convert a corpus of this size.
+    frag = os.path.join(outdir, "triage.d")
+    os.makedirs(frag, exist_ok=True)
+    for k, v in results.items():
+        with open(os.path.join(frag, k + ".json"), "w") as fh:
+            json.dump(v, fh, indent=1)
     merged = {}
-    if os.path.exists(tri):
+    for f in sorted(glob.glob(os.path.join(frag, "*.json"))):
         try:
-            with open(tri) as fh: merged = json.load(fh)
-        except Exception: merged = {}
-    merged.update(results)
-    with open(tri, "w") as fh:
+            with open(f) as fh: merged[os.path.basename(f)[:-5]] = json.load(fh)
+        except Exception: pass
+    with open(os.path.join(outdir, "triage.json"), "w") as fh:
         json.dump(merged, fh, indent=1)
     n = {"clean": 0, "attention": 0, "failed": 0}
     for r in results.values(): n[r['status']] += 1
