@@ -121,7 +121,7 @@ def make_channel_track(ch, prog, notes, mask_events, TPB=None, unit='tick',
 
 
 def conductor(name, tempo=None, src=None, time_signature=True, fermatas=(),
-              arpeggios=(), slurs=()):
+              arpeggios=(), slurs=(), staccatos=(), breaths=()):
     """The meta track. Carries the source's tempo and -- importantly -- its
     TIME SIGNATURE: baroque-agogics derives the metric grid from it, and a
     missing one silently makes a 6/8 fugue breathe in 4/4.
@@ -139,7 +139,8 @@ def conductor(name, tempo=None, src=None, time_signature=True, fermatas=(),
             tr.append(ts.copy(time=0))
     tr.append(mido.MetaMessage('track_name', name=name, time=0))
     marks = (fermata_markers(sorted(fermatas)) + arpeggio_markers(sorted(arpeggios))
-             + slur_markers(slurs))
+             + slur_markers(slurs) + staccato_markers(staccatos)
+             + breath_markers(breaths))
     marks.sort(key=lambda tm: tm[0])
     last = 0
     for tick, msg in marks:
@@ -423,6 +424,49 @@ def slur_markers(pairs):
     """Slurred notes as conductor-track markers, one per note."""
     return [(t, mido.MetaMessage('marker', text='legato:%d' % p, time=0))
             for t, p in sorted(pairs)]
+
+
+# --- staccato and breath marks ------------------------------------------------
+# The remaining articulation the engravings carry and MIDI does not. Both are
+# instructions about SILENCE, which on a fixed-volume instrument is the whole
+# expressive dimension -- see baroque-agogics: separation is how a keyboard
+# without dynamics gets them.
+
+def read_staccatos(path, TPB):
+    """{(tick, pitch)} for every note marked staccato (the sign is attached to
+    the note logged just before it, as ornaments are)."""
+    out = set()
+    for f_ in ornament_logs(path):
+        prev = None
+        for line in open(f_):
+            g = line.rstrip('\n').split('\t')
+            if len(g) < 2: continue
+            if g[1] == 'note':
+                prev = (int(round(_moment(g[0]) * 4 * TPB)), int(g[2]))
+            elif g[1] == 'script' and len(g) > 2 and g[2].strip() == 'staccato' and prev:
+                out.add(prev)
+    return out
+
+
+def read_breaths(path, TPB):
+    """[tick] for every \breathe. Unlike a script it stands alone at its own
+    moment rather than hanging off a note: it marks the instant of the lift."""
+    out = set()
+    for f_ in ornament_logs(path):
+        for line in open(f_):
+            g = line.rstrip('\n').split('\t')
+            if len(g) >= 2 and g[1].strip() == 'breathe':
+                out.add(int(round(_moment(g[0]) * 4 * TPB)))
+    return sorted(out)
+
+
+def staccato_markers(pairs):
+    return [(t, mido.MetaMessage('marker', text='staccato:%d' % p, time=0))
+            for t, p in sorted(pairs)]
+
+
+def breath_markers(ticks):
+    return [(t, mido.MetaMessage('marker', text='breath', time=0)) for t in sorted(ticks)]
 
 # --- stems, and the voice they identify ---------------------------------------
 

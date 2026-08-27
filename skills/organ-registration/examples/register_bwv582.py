@@ -29,7 +29,7 @@ import mido, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from reglib import (read_tracks, read_notes, make_channel_track, conductor,
                     read_ornament_log, realize_ornaments, apply_ornaments,
-                    read_fermatas, read_slurs,
+                    read_fermatas, read_slurs, read_staccatos, read_breaths,
                     F8, F4, F2, F223, F16, F513, MIXTUR, R8, R16, TRUMPET,
                     PLENUM, PEDAL_FOUND)
 
@@ -98,9 +98,11 @@ def main():
     ferm = read_fermatas(ORN_LOG, TPB)
     print("  fermatas: %d, at bars %s" % (len(ferm), [round(t/(3.0*TPB)+1, 1) for t, _ in ferm]))
     slur = read_slurs(ORN_LOG, TPB)
-    print("  slurs: %d notes marked legato" % len(slur))
+    stac = read_staccatos(ORN_LOG, TPB)
+    brth = read_breaths(ORN_LOG, TPB)
+    print("  slurs: %d legato, %d staccato, %d breath mark(s)" % (len(slur), len(stac), len(brth)))
 
-    out.tracks.append(conductor("BWV582 Passacaglia (organ)", src=src, fermatas=ferm, slurs=slur))
+    out.tracks.append(conductor("BWV582 Passacaglia (organ)", src=src, fermatas=ferm, slurs=slur, staccatos=stac, breaths=brth))
     out.tracks.append(make_channel_track(0, 19, manual, GREAT,     TPB, unit='beat'))
     out.tracks.append(make_channel_track(1, 19, pedal,  PEDAL,     TPB, unit='beat'))
     out.tracks.append(make_channel_track(2, 20, pedal,  POSAUNE,   TPB, unit='beat'))

@@ -331,6 +331,23 @@ def read_slur_markers(mid, TPB):
     return out
 
 
+def read_articulation_markers(mid, TPB):
+    """({(tick, pitch)} staccato, {tick} breath) from reglib's markers."""
+    stac, breath = set(), set()
+    for tr in mid.tracks:
+        t = 0
+        for x in tr:
+            t += x.time
+            if not (x.is_meta and x.type == 'marker'): continue
+            txt = str(x.text)
+            if txt.startswith('staccato:'):
+                try: stac.add((t, int(txt.split(':', 1)[1])))
+                except ValueError: pass
+            elif txt.strip() == 'breath':
+                breath.add(t)
+    return stac, breath
+
+
 def build_timemap(total_beats, bpm, rit_beats, rit_amount, agogic, bar_len, prof,
                   ineg=0.5, ineg_div=2, res=0.02,
                   phrase_ends=(), density_at=None, tension_at=None,
@@ -489,6 +506,8 @@ def main():
     ap.add_argument("--anacrusis", type=float, default=0.0)        # pickup length in quarter notes
     ap.add_argument("--legato-gap", type=float, default=0.006)     # s: separation under a slur
     ap.add_argument("--no-slurs", action="store_true")             # ignore the score's slurs
+    ap.add_argument("--staccato-frac", type=float, default=0.55)   # fraction of value a staccato note keeps
+    ap.add_argument("--breath-gap", type=float, default=0.14)      # s: the lift at a breath mark
     a = ap.parse_args()
 
     m = mido.MidiFile(a.inp); TPB = m.ticks_per_beat
@@ -686,6 +705,10 @@ def main():
     # Fermatas ride in the file as conductor-track markers (reglib.conductor puts
     # them there from the engraving's own signs), so they survive the movement
     # split and need no sidecar.
+    stac, breaths = read_articulation_markers(m, TPB)
+    if stac or breaths:
+        print("  articulation: %d staccato (keep %.0f%% of value), %d breath mark(s)"
+              % (len(stac), a.staccato_frac * 100, len(breaths)))
     slurred = set() if a.no_slurs else read_slur_markers(m, TPB)
     if slurred:
         print("  slurs: %d notes played legato (the rest keep the ordinary touch)"
@@ -731,11 +754,25 @@ def main():
                         p_on += idx * ms * w / 1000.0
                         if p_on > p_off_full - 0.02: p_on = max(p_off_full - 0.02, tm(on_b))
                     dur = p_off_full - p_on
-                    if (int(round(on_b * TPB)), x.note) in slurred:
+                    on_t = int(round(on_b * TPB))
+                    if (on_t, x.note) in stac:
+                        # STACCATO wins over a slur: a note carrying both is
+                        # marked to be detached within the group (portato), and
+                        # the detachment is the more specific instruction.
+                        gap = dur * (1.0 - a.staccato_frac)
+                    elif (on_t, x.note) in slurred:
                         gap = min(a.legato_gap, dur * 0.25)   # slurred: notes touch
                     else:
                         gap = min(a.gap_frac * dur, a.gap_cap)
                         gap = max(gap, min(a.gap_min, dur * 0.5))
+                    # A BREATH MARK is a lift, not a shortening of one note: every
+                    # voice sounding into that instant comes off it, so the silence
+                    # is heard across the texture rather than in one line.
+                    if breaths:
+                        off_t = int(round(b * TPB))
+                        tol = max(1, TPB // 8)
+                        if any(abs(off_t - k) <= tol for k in breaths):
+                            gap = max(gap, min(a.breath_gap, dur * 0.5))
                     p_off = max(p_on + dur - gap, p_on + 0.005)
                     fh = fig_hold.get((x.channel, round(on_b, 4), x.note))
                     if fh:                    # hold the figure's inner voice for the group

@@ -70,11 +70,17 @@ deliberately left out, because a slur ends with a lift and that note keeps its
 ordinary separation. Notes are gathered per staff log, so interleaved voices in
 one staff are treated together — exact wherever a staff carries one line.
 
-## Still NOT handled
+**Articulation marks: 552 staccato across 6 works, 9 breath marks in one.** Also
+now handled. A staccato note keeps `--staccato-frac` of its performed value
+(0.55 by default) instead of the ordinary gap; staccato overrides a slur, since
+a note carrying both is marked to be detached *within* the group and the
+detachment is the more specific instruction.
 
-**Articulation marks: 550 staccato across 6 works**, plus 10 breath marks in one.
-Same mechanism as slurs and the data is already in the log; only the reach is
-smaller.
+A breath mark is treated as a lift rather than as a shortening of one note: it
+stands alone at its own moment in the log rather than hanging off a note, and
+every voice sounding into that instant comes off it, so the silence is heard
+across the texture. Distribution is lopsided — BWV 682 alone carries 461 of the
+552 staccatos, and BWV 533 all 9 breath marks.
 
 **Polyphony sharing a MIDI channel: 66 `<< \\ >>` splits across 18 works.**
 `midi-voice-channels.ly` puts each voice on its own channel and `read_notes`
