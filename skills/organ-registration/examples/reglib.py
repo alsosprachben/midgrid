@@ -265,7 +265,7 @@ from fractions import Fraction
 # this table first did) played 115 mordents across 25 works as upper trills.
 ORNAMENT_SIGNS = {
     'prall': 'w', 'prallprall': 'w', 'upprall': 'w', 'downprall': 'w',
-    'lineprall': 'w', 'trill': 'w', 'pralldown': 'w',
+    'lineprall': 'w', 'trill': 'w', 'pralldown': 'w', 'prallup': 'w',
     'prallmordent': 'w',                     # begins as a prall; the trill reading holds
     'mordent': 'v', 'upmordent': 'v', 'downmordent': 'v',
     'turn': 'S', 'reverseturn': 'S',

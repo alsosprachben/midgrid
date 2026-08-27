@@ -316,13 +316,21 @@ def build_timemap(total_beats, bpm, rit_beats, rit_amount, agogic, bar_len, prof
                   ineg=0.5, ineg_div=2, res=0.02,
                   phrase_ends=(), density_at=None, tension_at=None,
                   phrase=0.0, density_damp=0.0, tension=0.0,
-                  fermatas=(), fermata_mult=1.9, fermata_min=1.2):
+                  fermatas=(), fermata_mult=1.9, fermata_min=1.2, anacrusis=0.0):
     """beat -> performed seconds (cumulative, monotonic). Base tempo x a per-bar
     agogic breath (strong beats slower/longer, mean-preserving so no drift) x a
     smoothstep cadential broadening over the last rit_beats."""
     spb0 = 60.0 / bpm
     rit_start = total_beats - rit_beats
-    weight = meter_weight(bar_len, prof)
+    # ANACRUSIS. The whole point of the agogic breath is to lengthen the STRONG
+    # beats, so the grid has to know where the barline is. A piece that opens with
+    # a pickup does not start on one -- 42 of this corpus's 111 works carry a
+    # \partial -- and this code assumed tick 0 was a downbeat. That put every
+    # strong beat in the wrong place for those works, silently: the music still
+    # breathed, just against the meter instead of with it.
+    phase = (bar_len - (anacrusis % bar_len)) % bar_len
+    _w = meter_weight(bar_len, prof)
+    weight = (lambda b: _w(b + phase)) if phase else _w
     mean_w = sum(weight(p) for p in [k * res for k in range(int(bar_len / res))]) / (int(bar_len / res) or 1)
     def rit(b):
         if rit_beats <= 0 or b <= rit_start: return 1.0
@@ -459,6 +467,7 @@ def main():
     ap.add_argument("--fermata-min", type=float, default=1.2)      # ...or this many beats, whichever is longer
     ap.add_argument("--no-fermatas", action="store_true")          # ignore the score's fermata markers
     ap.add_argument("--arpeggio-spread", type=float, default=0.0)  # ms per note for MARKED chords
+    ap.add_argument("--anacrusis", type=float, default=0.0)        # pickup length in quarter notes
     a = ap.parse_args()
 
     m = mido.MidiFile(a.inp); TPB = m.ticks_per_beat
@@ -665,8 +674,14 @@ def main():
                        a.inegales, a.inegales_div, phrase_ends=pend, density_at=dens_at,
                        tension_at=tens_at, phrase=a.phrase, density_damp=a.density_damp,
                        tension=a.tension, fermatas=ferms,
-                       fermata_mult=a.fermata_mult, fermata_min=a.fermata_min)
-    weight_at = meter_weight(bar_len, prof)
+                       fermata_mult=a.fermata_mult, fermata_min=a.fermata_min,
+                       anacrusis=a.anacrusis)
+    _wa = meter_weight(bar_len, prof)
+    _ph = (bar_len - (a.anacrusis % bar_len)) % bar_len
+    weight_at = (lambda b: _wa(b + _ph)) if _ph else _wa
+    if a.anacrusis:
+        print("  anacrusis: %g quarter(s) -- bar grid shifted so the downbeat lands right"
+              % a.anacrusis)
     OUT_TEMPO = 500000                       # fixed output tempo; warped ticks carry the timing
     sec2tick = lambda s: int(round(s / (OUT_TEMPO / 1e6) * TPB))
 

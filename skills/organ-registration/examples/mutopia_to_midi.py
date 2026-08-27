@@ -96,6 +96,19 @@ def convert_one(ly, outdir, timeout=300, ev_timeout=1500):
     if data[:3] == b'\xef\xbb\xbf':                       # BOM (BWV 582)
         open(src, 'wb').write(data[3:])
     subprocess.run(["convert-ly", "-e", src], capture_output=True, timeout=120)
+
+    # UNFOLD REPEATS. LilyPond's MIDI does not play a \repeat volta -- verified:
+    # `\repeat volta 2 { c d e f } g1` yields 5 notes, `\repeat unfold` yields 9.
+    # So 137 repeats across 29 works of this corpus were simply not being played,
+    # and a chorale prelude that states its melody twice was coming out once.
+    # Rewriting volta as unfold is what \unfoldRepeats does, and it survives
+    # \alternative correctly (checked: two alternatives, both played, in order).
+    # It must happen BEFORE the listener copy is made as well, or the log's
+    # moments would no longer line up with the MIDI's.
+    txt = open(src, errors='ignore').read()
+    n_rep = txt.count("\\repeat volta")
+    if n_rep:
+        open(src, "w").write(txt.replace("\\repeat volta", "\\repeat unfold"))
     try:
         subprocess.run(["lilypond", "-dno-print-pages", "-dno-point-and-click",
                         "-o", base, src], cwd=work, capture_output=True, timeout=timeout)
@@ -157,6 +170,11 @@ def convert_one(ly, outdir, timeout=300, ev_timeout=1500):
     # actually carries and the signs the log captured; a score with ornaments and
     # a log without them means the render will silently lose them, which is
     # exactly how BWV 565 lost the most famous mordent in organ music.
+    rep['unfolded_repeats'] = n_rep
+    # anacrusis: the agogic bar grid must start from the DOWNBEAT, and 42
+    # works in this corpus open with a pickup. Recorded in quarter notes.
+    ana = re.search(r'\\\\partial\\s+([0-9]+)(\\.*)', body)
+    rep['anacrusis_q'] = (4.0 / int(ana.group(1))) * (1.5 if ana.group(2) else 1.0) if ana else 0.0
     rep['orn_in_source'] = len(ORN_RE.findall(body))
     rep['orn_in_log'] = sum(
         sum(1 for l in open(f) if l.split('\t')[1:2] == ['script']
