@@ -27,7 +27,8 @@
 #                     the final normalise bring it back to -1 dBFS. No clip = no
 #                     baked-in distortion on the climaxes.
 #   REVERB            sox reverb args (default: the Ben-approved cathedral,
-#                     "reverb 88 15 100 100 28 -3.5"). Drop the wet-gain toward
+#                     "reverb 88 15 100 100 28 -1.8" -- the wet-gain is the last
+#                     number and is the wetness control). Drop it toward
 #                     -5..-9 for a drier chapel/hall.
 #   KEEP_WAV          1 (default) keeps <out>.dry.wav and <out>.wav so the reverb
 #                     can be re-tuned without re-rendering. Set 0 for BATCH work:
@@ -56,7 +57,7 @@ fi
 DEFAULT_TUNING="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)/tuning"
 TUNING_DIR="${TUNING_DIR:-$DEFAULT_TUNING}"
 export TUNING_MASTER_DB="${TUNING_MASTER_DB:--16}"
-REVERB="${REVERB:-reverb 88 15 100 100 28 -3.5}"
+REVERB="${REVERB:-reverb 88 15 100 100 28 -1.8}"
 
 BLK="$TUNING_DIR/blockrender.py"
 [ -f "$BLK" ] || { echo "blockrender.py not found at $BLK -- set TUNING_DIR" >&2; exit 1; }

@@ -55,17 +55,26 @@ was lengthening the wrong beats: the music still breathed, but against the meter
 rather than with it. `--anacrusis` now shifts the grid, and the converter records
 each work's pickup in quarter notes.
 
-## Found by the audit — NOT yet handled
+## Found by the audit — since fixed
 
-**Slurs: 2341 across 36 works.** A slur is a legato instruction, and the touch is
-applied uniformly: every note gets the same `--gap-frac` separation whether or
-not the score groups it. On a fixed-volume instrument, where separation *is*
-dynamics, ignoring slurs flattens exactly the shaping this skill exists to
-produce. The log gives start/stop flags on the preceding note, so the data is
-there. This is the largest remaining gap.
+**Slurs: 2341 across 36 works, all discarded.** A slur is a legato instruction,
+and the touch was applied uniformly: every note got the same `--gap-frac`
+separation whether or not the score grouped it. On a fixed-volume instrument,
+where separation *is* dynamics, that made a slurred score and an unslurred one
+sound identical — it flattened exactly the shaping this skill exists to produce.
+
+`read_slurs` now walks the log (LilyPond span events use `-1` for START, `1` for
+STOP, attached to the preceding note) and marks every note that connects to its
+successor: **1942 notes across 36 works**. The final note under a slur is
+deliberately left out, because a slur ends with a lift and that note keeps its
+ordinary separation. Notes are gathered per staff log, so interleaved voices in
+one staff are treated together — exact wherever a staff carries one line.
+
+## Still NOT handled
 
 **Articulation marks: 550 staccato across 6 works**, plus 10 breath marks in one.
-Same mechanism, smaller reach.
+Same mechanism as slurs and the data is already in the log; only the reach is
+smaller.
 
 **Polyphony sharing a MIDI channel: 66 `<< \\ >>` splits across 18 works.**
 `midi-voice-channels.ly` puts each voice on its own channel and `read_notes`

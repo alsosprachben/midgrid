@@ -50,7 +50,7 @@ import mido, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from reglib import (read_notes, make_channel_track, conductor,
                     read_ornament_log, realize_ornaments, apply_ornaments,
-                    read_fermatas, find_echoes, split_echoes,
+                    read_fermatas, read_slurs, find_echoes, split_echoes,
                     read_arpeggios, big_chords, read_stems, hold_stem_voice,
                     F8, F4, F2, F223, F16, F513, FLUTE, MIXTUR, R8, R16, TRUMPET,
                     PLENUM, PEDAL_FOUND)
@@ -232,8 +232,11 @@ def main():
     print("  arpeggios: %d chords rolled (%d notated)"
           % (len(arp), len(read_arpeggios(ORN_LOG, TPB))))
 
+    slur = read_slurs(ORN_LOG, TPB)
+    print("  slurs: %d notes marked legato" % len(slur))
+
     out.tracks.append(conductor("BWV565 Toccata and Fugue (organ, 2 man.)",
-                                src=src, fermatas=ferm, arpeggios=sorted(arp)))
+                                src=src, fermatas=ferm, arpeggios=sorted(arp), slurs=slur))
     # ECHOES: the answer half-bars move to the other manual, the way a player
     # moves a hand. Detected from the notes (see find_echoes), not hand-listed.
     BAR = 4 * TPB

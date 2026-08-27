@@ -312,6 +312,25 @@ def read_fermata_markers(mid, TPB):
     return sorted(out.items())
 
 
+def read_slur_markers(mid, TPB):
+    """{(tick, pitch)} from 'legato:<pitch>' markers written by reglib.
+
+    These are the notes the engraving slurs to their successor. Everything else
+    keeps the ordinary detached touch -- which is the point: a uniform touch
+    makes a slurred score and an unslurred one sound the same, and on an
+    instrument with no dynamics the slur is a large part of what shapes a line.
+    """
+    out = set()
+    for tr in mid.tracks:
+        t = 0
+        for x in tr:
+            t += x.time
+            if x.is_meta and x.type == 'marker' and str(x.text).startswith('legato:'):
+                try: out.add((t, int(x.text.split(':', 1)[1])))
+                except ValueError: pass
+    return out
+
+
 def build_timemap(total_beats, bpm, rit_beats, rit_amount, agogic, bar_len, prof,
                   ineg=0.5, ineg_div=2, res=0.02,
                   phrase_ends=(), density_at=None, tension_at=None,
@@ -468,6 +487,8 @@ def main():
     ap.add_argument("--no-fermatas", action="store_true")          # ignore the score's fermata markers
     ap.add_argument("--arpeggio-spread", type=float, default=0.0)  # ms per note for MARKED chords
     ap.add_argument("--anacrusis", type=float, default=0.0)        # pickup length in quarter notes
+    ap.add_argument("--legato-gap", type=float, default=0.006)     # s: separation under a slur
+    ap.add_argument("--no-slurs", action="store_true")             # ignore the score's slurs
     a = ap.parse_args()
 
     m = mido.MidiFile(a.inp); TPB = m.ticks_per_beat
@@ -665,6 +686,10 @@ def main():
     # Fermatas ride in the file as conductor-track markers (reglib.conductor puts
     # them there from the engraving's own signs), so they survive the movement
     # split and need no sidecar.
+    slurred = set() if a.no_slurs else read_slur_markers(m, TPB)
+    if slurred:
+        print("  slurs: %d notes played legato (the rest keep the ordinary touch)"
+              % len(slurred))
     ferms = [] if a.no_fermatas else read_fermata_markers(m, TPB)
     if ferms:
         print("  fermatas: %d held (x%.1f, floor %.2f beats) at bars %s"
@@ -706,8 +731,11 @@ def main():
                         p_on += idx * ms * w / 1000.0
                         if p_on > p_off_full - 0.02: p_on = max(p_off_full - 0.02, tm(on_b))
                     dur = p_off_full - p_on
-                    gap = min(a.gap_frac * dur, a.gap_cap)
-                    gap = max(gap, min(a.gap_min, dur * 0.5))
+                    if (int(round(on_b * TPB)), x.note) in slurred:
+                        gap = min(a.legato_gap, dur * 0.25)   # slurred: notes touch
+                    else:
+                        gap = min(a.gap_frac * dur, a.gap_cap)
+                        gap = max(gap, min(a.gap_min, dur * 0.5))
                     p_off = max(p_on + dur - gap, p_on + 0.005)
                     fh = fig_hold.get((x.channel, round(on_b, 4), x.note))
                     if fh:                    # hold the figure's inner voice for the group

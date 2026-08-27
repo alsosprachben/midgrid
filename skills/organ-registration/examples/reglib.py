@@ -121,7 +121,7 @@ def make_channel_track(ch, prog, notes, mask_events, TPB=None, unit='tick',
 
 
 def conductor(name, tempo=None, src=None, time_signature=True, fermatas=(),
-              arpeggios=()):
+              arpeggios=(), slurs=()):
     """The meta track. Carries the source's tempo and -- importantly -- its
     TIME SIGNATURE: baroque-agogics derives the metric grid from it, and a
     missing one silently makes a 6/8 fugue breathe in 4/4.
@@ -138,7 +138,8 @@ def conductor(name, tempo=None, src=None, time_signature=True, fermatas=(),
         if ts is not None:
             tr.append(ts.copy(time=0))
     tr.append(mido.MetaMessage('track_name', name=name, time=0))
-    marks = fermata_markers(sorted(fermatas)) + arpeggio_markers(sorted(arpeggios))
+    marks = (fermata_markers(sorted(fermatas)) + arpeggio_markers(sorted(arpeggios))
+             + slur_markers(slurs))
     marks.sort(key=lambda tm: tm[0])
     last = 0
     for tick, msg in marks:
@@ -381,6 +382,47 @@ def apply_ornaments(notes, figures, TPB, tol=None, verbose=True):
 
 
 
+
+
+# --- slurs --------------------------------------------------------------------
+# A slur is a legato instruction and MIDI carries none of them. The touch is
+# otherwise applied uniformly -- every note gets the same separation -- which on
+# a fixed-volume instrument is exactly wrong: there, separation IS dynamics, so a
+# score that groups its notes and one that does not would sound identical.
+# 2341 slurs across 36 works of this corpus were being discarded.
+#
+# LilyPond's span events use span-direction -1 for START and 1 for STOP, and the
+# event is attached to the note logged just before it.
+
+def read_slurs(path, TPB):
+    """{(tick, pitch)} for every note that should connect to the NEXT note.
+
+    The final note under a slur is deliberately excluded: a slur ends with a
+    lift, so that note keeps its ordinary separation. Notes are gathered per
+    staff log, so interleaved voices in one staff are treated together -- an
+    approximation, exact wherever a staff carries one line.
+    """
+    out = set()
+    for f_ in ornament_logs(path):
+        notes, spans, open_at = [], [], []
+        for line in open(f_):
+            g = line.rstrip('\n').split('\t')
+            if len(g) < 3: continue
+            if g[1] == 'note':
+                notes.append((int(round(_moment(g[0]) * 4 * TPB)), int(g[2])))
+            elif g[1] == 'slur' and notes:
+                if g[2].strip() == '-1': open_at.append(len(notes) - 1)
+                elif open_at: spans.append((open_at.pop(), len(notes) - 1))
+        for i, j in spans:
+            for k in range(i, min(j, len(notes) - 1)):    # exclude the last: the lift
+                out.add(notes[k])
+    return out
+
+
+def slur_markers(pairs):
+    """Slurred notes as conductor-track markers, one per note."""
+    return [(t, mido.MetaMessage('marker', text='legato:%d' % p, time=0))
+            for t, p in sorted(pairs)]
 
 # --- stems, and the voice they identify ---------------------------------------
 
