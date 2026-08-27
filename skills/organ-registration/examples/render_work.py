@@ -63,12 +63,10 @@ WORKS = {
                  flags=["--agogic", "0.10", "--phrase", "0.17",
                         "--density-damp", "0.85", "--tension", "0.03",
                         "--rit-beats", "5", "--rit-amount", "1.8",
-                        # The broken-chord figures (bars 16-17 and their kin) put
-                        # the harmony in the lowest note of each half-beat group;
-                        # the engraving writes it as a 32nd plus a rest, so
-                        # without this the passage is a flat run of semiquavers
-                        # with nothing under it.
-                        "--arpeggio-hold", "0.5",
+                        # (the figure's sustained voice is held at REGISTRATION
+                        # time, from the engraving's stems -- see
+                        # register_bwv565.py. It is a duration change, not a
+                        # timing one, so it does not belong in the time map.)
                         # roll the marked chords: the bar-3 diminished chord the
                         # engraving marks, and the big sustained ones a player
                         # would spread rather than strike flat.

@@ -51,7 +51,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from reglib import (read_notes, make_channel_track, conductor,
                     read_ornament_log, realize_ornaments, apply_ornaments,
                     read_fermatas, find_echoes, split_echoes,
-                    read_arpeggios, big_chords,
+                    read_arpeggios, big_chords, read_stems, hold_stem_voice,
                     F8, F4, F2, F223, F16, F513, FLUTE, MIXTUR, R8, R16, TRUMPET,
                     PLENUM, PEDAL_FOUND)
 
@@ -237,6 +237,14 @@ def main():
     # ECHOES: the answer half-bars move to the other manual, the way a player
     # moves a hand. Detected from the notes (see find_echoes), not hand-listed.
     BAR = 4 * TPB
+    # The figure's lower voice sustains -- and the ENGRAVING says which voice that
+    # is, by stem. Confined to the figure (bars 13-22): a sustain is a reading of
+    # this texture, not a licence to make the whole toccata legato.
+    stems = read_stems(ORN_LOG, TPB)
+    rh, h1 = hold_stem_voice(rh, stems, TPB, 13 * 4 * TPB, 22 * 4 * TPB, others=lh)
+    lh, h2 = hold_stem_voice(lh, stems, TPB, 13 * 4 * TPB, 22 * 4 * TPB, others=rh)
+    print("  stem-voice hold: %d notes sustained (%d stems logged)" % (h1 + h2, len(stems)))
+
     # 0. an octave doubling is ONE gesture: keep it on one manual
     rh, lh = unify_octave_doublings(rh, lh)
     #    ...and the whole opening declamation belongs on the Oberwerk

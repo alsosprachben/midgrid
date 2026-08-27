@@ -453,7 +453,6 @@ def main():
     ap.add_argument("--tension", type=float, default=0.0)       # lean on dissonances
     ap.add_argument("--cadential-trills", action="store_true")  # editorial ornaments at cadences
     ap.add_argument("--figuration-hold", type=float, default=0.0)  # hold a figure's inner voice
-    ap.add_argument("--arpeggio-hold", type=float, default=0.0)    # group length (beats): hold each group's lowest note
     ap.add_argument("--trill-min-bars", type=float, default=8.0)   # spacing between cadential trills
     ap.add_argument("--trill-arrival", type=float, default=1.8)    # goal note vs local median
     ap.add_argument("--fermata-mult", type=float, default=1.9)     # held note x this...
@@ -480,59 +479,14 @@ def main():
             if x.type == 'time_signature': num, den = x.numerator, x.denominator; break
     bar_len, prof = meter_profile(num, den)
     # (bar_len/prof are needed below for the alternation parity)
-    # --- arpeggio bass ---------------------------------------------------------
-    # A broken-chord figure carries its harmony in the LOWEST note of each group,
-    # and the ear expects that note to sound on under the notes above it -- the
-    # finger stays down. Engravings often do not write it that way: BWV 565's
-    # descending figures (bars 16-17 and their kin) put the bass note as a 32nd
-    # followed by a dotted-16th rest, split between the staves by \change Staff,
-    # so what should be a held bass under a running line comes out as an
-    # undifferentiated string of equal semiquavers with no harmony under it.
-    #
-    # This is deliberately NOT --figuration-hold. That one continues an
-    # alternation the SOURCE established (BWV 543 holds alternate bars and strikes
-    # the others, which is composed and must not be flattened). Here the source
-    # establishes nothing, so there is no pattern to continue and the hold is
-    # openly editorial: in every group of `arpeggio_hold` beats that is genuinely
-    # figuration -- three or more faster notes above a distinctly lower one -- the
-    # lowest note is held to the end of its group, stopping short if its own pitch
-    # is struck again.
-    arp_hold = {}
-    if a.arpeggio_hold > 0.0:
-        W = a.arpeggio_hold
-        allon = []
-        for ti, tr in enumerate(m.tracks):
-            t = 0; on = {}
-            for x in tr:
-                t += x.time
-                if x.type == 'note_on' and x.velocity > 0:
-                    on.setdefault((x.channel, x.note), []).append(t)
-                elif x.type == 'note_off' or (x.type == 'note_on' and x.velocity == 0):
-                    q = on.get((x.channel, x.note))
-                    if q:
-                        st = q.pop(0)
-                        allon.append((st, t, x.note, ti, x.channel))
-        allon.sort()
-        if allon:
-            end_b = max(n[1] for n in allon) / TPB
-            g = 0.0
-            while g < end_b:
-                grp = [n for n in allon if g <= n[0] / TPB < g + W]
-                # figuration: several short notes, and a clear lowest one
-                short = [n for n in grp if (n[1] - n[0]) / TPB < W * 0.55]
-                if len(short) >= 4:
-                    lo = min(short, key=lambda n: (n[2], n[0]))
-                    above = [n for n in short if n[2] > lo[2] + 2]
-                    if len(above) >= 3:
-                        stop = (g + W) * TPB
-                        for n in allon:                   # do not overlap a restrike
-                            if n[2] == lo[2] and n[0] > lo[0] and n[0] < stop: stop = n[0]
-                        if stop - lo[1] > 0.02 * TPB:
-                            arp_hold[(lo[4], lo[2], lo[0])] = int(stop)
-                g += W
-        print("  arpeggio-hold: %d group bass notes held (groups of %g beats)"
-              % (len(arp_hold), a.arpeggio_hold))
-
+    # (There was an --arpeggio-hold here: hold the LOWEST note of each beat-group
+    # under the notes above it. It was removed because the criterion could not
+    # tell a broken chord from anything else with a low note in it -- in BWV 565
+    # it held the lower auxiliary of the opening MORDENT straight through the
+    # note's return, so A-G-A sounded as an A with a G hanging under it. The
+    # sustained voice of such a figure is identified by the engraving's STEMS,
+    # and that is where it is now done: reglib.hold_stem_voice, at registration
+    # time, since a hold is a change of duration and not of timing.)
     # --- figuration inner voice ------------------------------------------------
     # Broken-chord figuration carries an implied inner voice: the lowest note of each
     # beat-group, which the ear hears as HELD under the running notes. BWV 543's
@@ -740,9 +694,6 @@ def main():
                     gap = min(a.gap_frac * dur, a.gap_cap)
                     gap = max(gap, min(a.gap_min, dur * 0.5))
                     p_off = max(p_on + dur - gap, p_on + 0.005)
-                    ah = arp_hold.get((x.channel, x.note, int(round(on_b * TPB))))
-                    if ah:                    # hold the broken chord's bass under the figure
-                        p_off = max(p_off, tm(ah / float(TPB)) - 0.03)
                     fh = fig_hold.get((x.channel, round(on_b, 4), x.note))
                     if fh:                    # hold the figure's inner voice for the group
                         p_off = max(p_off, tm(on_b + fh) - min(0.04, 0.25 * (tm(on_b + fh) - p_on)))
@@ -779,7 +730,6 @@ def main():
     if a.inegales != 0.5: extra += " | inegales %.3f /%d" % (a.inegales, a.inegales_div)
     if a.overhold > 0: extra += " | overhold %.1f" % a.overhold
     if a.figuration_hold > 0: extra += " | fig-hold %.2f (%d notes)" % (a.figuration_hold, len(fig_hold))
-    if a.arpeggio_hold > 0: extra += " | arp-hold %.2f (%d notes)" % (a.arpeggio_hold, len(arp_hold))
     if a.phrase or a.density_damp or a.tension:
         extra += " | phrase %.2f (%d ends) dens-damp %.2f tension %.2f" % (
             a.phrase, len(pend), a.density_damp, a.tension)

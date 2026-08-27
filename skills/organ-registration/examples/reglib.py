@@ -381,6 +381,65 @@ def apply_ornaments(notes, figures, TPB, tol=None, verbose=True):
 
 
 
+
+# --- stems, and the voice they identify ---------------------------------------
+
+def read_stems(path, TPB):
+    """{(tick, pitch): '1' | '-1' | 'auto'} from the listener's stem lines.
+
+    A stem grob is acknowledged straight after its note event, so a stem line
+    belongs to the note above it. '1'/'-1' mean the typesetter chose; 'auto'
+    means the notation is silent and nothing should be inferred.
+    """
+    out = {}
+    for f_ in ornament_logs(path):
+        prev = None
+        for line in open(f_):
+            g = line.rstrip('\n').split('\t')
+            if len(g) < 3: continue
+            if g[1] == 'note':
+                prev = (int(round(_moment(g[0]) * 4 * TPB)), int(g[2]))
+            elif g[1] == 'stem' and prev:
+                out[prev] = g[2].strip(); prev = None
+    return out
+
+
+def hold_stem_voice(notes, stems, TPB, lo_tick, hi_tick, max_beats=1.0, others=()):
+    """Sustain the stem-DOWN voice under the stem-up notes around it.
+
+    A broken-chord figure carries its harmony in a lower voice the engraving
+    separates BY STEM -- in BWV 565's bars 16-17 the bass D, C, Bb, A are every
+    one stem down and the running notes above them every one stem up. That voice
+    is held: the finger stays down while the line moves over it. Written values
+    do not say so (the engraving gives the bass a 32nd and a rest), which is why
+    this has to come from the stems.
+
+    Using the stems rather than "the lowest note of each group" matters. That
+    heuristic also matched an ORNAMENT -- it held the lower auxiliary of the
+    opening mordent straight through the note's return, turning A-G-A into an A
+    with a G hanging under it. Ornament notes are ours, not the engraving's, so
+    they carry no stem and cannot be caught this way.
+    """
+    # The voice's next note may be in the OTHER staff: this figure is written with
+    # \change Staff, so the sustained line crosses between them mid-bar. Chaining
+    # within one hand only, the bass ran on past the next note of its own voice.
+    down = sorted(n for n in list(notes) + list(others)
+                  if lo_tick <= n[0] < hi_tick and stems.get((n[0], n[2])) == '-1')
+    if not down: return notes, 0
+    onsets = sorted({n[0] for n in down})
+    out, held = [], 0
+    for n in notes:
+        s, e, p, v = n
+        if stems.get((s, p)) == '-1' and lo_tick <= s < hi_tick:
+            nxt = next((t for t in onsets if t > s), None)
+            stop = min(nxt if nxt is not None else s + int(max_beats * TPB),
+                       s + int(max_beats * TPB))
+            for m in notes:                       # never overlap a restrike
+                if m[2] == p and s < m[0] < stop: stop = m[0]
+            if stop > e: e = stop; held += 1
+        out.append((s, e, p, v))
+    return sorted(out), held
+
 # --- arpeggiated chords -------------------------------------------------------
 # The \arpeggio sign is one more thing MIDI cannot carry. BWV 565 marks its big
 # diminished chord in bar 3 and sets connectArpeggios, meaning the roll spans the
