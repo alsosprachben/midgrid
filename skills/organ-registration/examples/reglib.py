@@ -385,6 +385,58 @@ def apply_ornaments(notes, figures, TPB, tol=None, verbose=True):
 
 
 
+
+# --- section ends -------------------------------------------------------------
+# Mutopia's typesetters write the ritardandos into their scores as runs of
+# \tempo marks: a chorale prelude in three verses slows at each verse end and
+# picks the tempo up again after it. Those numbers are the TYPESETTER's
+# performance, not Bach's -- he marked essentially no tempi -- so by this repo's
+# own rule we do not play them. But WHERE they fall is structural information and
+# perfectly good: a dip followed by a recovery marks the end of a section.
+#
+# So we take the positions and discard the numbers, and shape those points with
+# our own vocabulary. 48 of the 53 works flagged for "more than one tempo mark"
+# turn out to have nothing but a final rall., which our own cadential rit already
+# covers; only a handful have an interior section end at all.
+
+def section_ends(mid, tail_frac=0.88, recover=0.9):
+    """[beat] where the engraving slows and then picks up again -- a section end.
+
+    A dip that never recovers is the final ritardando and is not reported: that
+    is the close, which the performer's own --rit already shapes.
+    """
+    TPB = mid.ticks_per_beat
+    ts, end = [], 0
+    for tr in mid.tracks:
+        t = 0
+        for x in tr:
+            t += x.time
+            if x.is_meta and x.type == 'set_tempo': ts.append((t, 60e6 / x.tempo))
+        end = max(end, t)
+    ts = sorted(set(ts))
+    if len(ts) < 3 or not end: return []
+    base = ts[0][1]
+    out, i = [], 1
+    while i < len(ts):
+        tick, bpm = ts[i]
+        if bpm < base * 0.95 and tick < tail_frac * end:
+            j, lo, lo_t = i, bpm, tick
+            while j < len(ts) and ts[j][1] < base * recover:
+                if ts[j][1] < lo: lo, lo_t = ts[j][1], ts[j][0]
+                j += 1
+            if j < len(ts) and j > i:             # it recovered: a section end
+                out.append(lo_t / float(TPB))
+            # ALWAYS advance. The entry test is base*0.95 and the inner test is
+            # base*recover (0.90), so a tempo mark between the two takes this
+            # branch while the inner loop runs zero times -- j stays equal to i,
+            # and "i = j" then spins on that event forever. Same shape as the
+            # self-recursive guards in event-listener-safe.ly: a loop whose
+            # condition does not guarantee progress.
+            i = max(j, i + 1)
+        else:
+            i += 1
+    return out
+
 # --- slurs --------------------------------------------------------------------
 # A slur is a legato instruction and MIDI carries none of them. The touch is
 # otherwise applied uniformly -- every note gets the same separation -- which on

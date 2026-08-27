@@ -352,7 +352,8 @@ def build_timemap(total_beats, bpm, rit_beats, rit_amount, agogic, bar_len, prof
                   ineg=0.5, ineg_div=2, res=0.02,
                   phrase_ends=(), density_at=None, tension_at=None,
                   phrase=0.0, density_damp=0.0, tension=0.0,
-                  fermatas=(), fermata_mult=1.9, fermata_min=1.2, anacrusis=0.0):
+                  fermatas=(), fermata_mult=1.9, fermata_min=1.2, anacrusis=0.0,
+                  section_rits=(), section_rit_beats=4.0, section_rit_amount=1.30):
     """beat -> performed seconds (cumulative, monotonic). Base tempo x a per-bar
     agogic breath (strong beats slower/longer, mean-preserving so no drift) x a
     smoothstep cadential broadening over the last rit_beats."""
@@ -449,8 +450,20 @@ def build_timemap(total_beats, bpm, rit_beats, rit_amount, agogic, bar_len, prof
             if b0 <= b < b1: return k
         return 1.0
 
+    # SECTION ENDS. A chorale prelude in verses closes each one and starts again;
+    # the engraving shows where by slowing and picking up. We take the positions
+    # and not the typesetter's numbers (see reglib.section_ends) and broaden into
+    # each with our own vocabulary -- smaller than the final rit, and it resumes.
+    def section_rit(b):
+        for e in section_rits:
+            d = b - e
+            if -section_rit_beats <= d <= 0.0:
+                x = (d + section_rit_beats) / section_rit_beats
+                return 1.0 + (section_rit_amount - 1.0) * (x * x * (3 - 2 * x))
+        return 1.0
+
     def factor(b):
-        return (rit(b) * (1.0 + agogic * depth_scale(b) * (weight(b) - mean_w))
+        return (section_rit(b) * rit(b) * (1.0 + agogic * depth_scale(b) * (weight(b) - mean_w))
                 * inegal(b) * (1.0 + phrase_bump(b) + tension_bump(b))
                 * fermata_scale(b))
     bs, times, t = [], [], 0.0
@@ -508,6 +521,9 @@ def main():
     ap.add_argument("--no-slurs", action="store_true")             # ignore the score's slurs
     ap.add_argument("--staccato-frac", type=float, default=0.55)   # fraction of value a staccato note keeps
     ap.add_argument("--breath-gap", type=float, default=0.14)      # s: the lift at a breath mark
+    ap.add_argument("--section-rits", type=str, default="")        # beats: broaden into each, then resume
+    ap.add_argument("--section-rit-beats", type=float, default=4.0)
+    ap.add_argument("--section-rit-amount", type=float, default=1.30)
     a = ap.parse_args()
 
     m = mido.MidiFile(a.inp); TPB = m.ticks_per_beat
@@ -723,7 +739,10 @@ def main():
                        tension_at=tens_at, phrase=a.phrase, density_damp=a.density_damp,
                        tension=a.tension, fermatas=ferms,
                        fermata_mult=a.fermata_mult, fermata_min=a.fermata_min,
-                       anacrusis=a.anacrusis)
+                       anacrusis=a.anacrusis,
+                       section_rits=[float(x) for x in a.section_rits.split(",") if x.strip()],
+                       section_rit_beats=a.section_rit_beats,
+                       section_rit_amount=a.section_rit_amount)
     _wa = meter_weight(bar_len, prof)
     _ph = (bar_len - (a.anacrusis % bar_len)) % bar_len
     weight_at = (lambda b: _wa(b + _ph)) if _ph else _wa
