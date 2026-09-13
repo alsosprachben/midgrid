@@ -1,0 +1,79 @@
+# Title: Comma Ascent -- a ricercar on the widening third
+# Composer: written for Werckmeister III; in equal temperament it has no argument
+# tempo 56
+# Voices: V0 soprano, V1 alto, V2 bass (tonic drone)
+#
+# Werckmeister III makes the major third a different size in every key. Walking
+# the circle of fifths from C widens it monotonically -- 3.9, 9.7, 9.7, 15.7,
+# 15.7, 15.7, 21.5 cents above a pure 5:4. Each entry states the same subject a
+# fifth higher over a tonic drone, so the third is always exposed against its
+# own root, and the tension rises from the TUNING while the intervals on the
+# page stay identical. The collapse at bar 17 is a semitone (F#->F), from the
+# widest third to the purest: 21.5 back to 3.9. Nothing about that is notated.
+// Patch V0: 19
+// Patch V1: 19
+// Patch V2: 19
+
+# -- C, +3.9 cents: the subject bare, over its own tonic
+0     | .        | C4@72    | C3@66
+2     | .        | E4@74    | -
+4     | .        | D4@72    | -
+5     | .        | G4@74    | -
+6     | .        | F4@72    | -
+7     | .        | E4@72    | -
+# -- G, +9.7
+8     | G4@76    | D4@64    | G2@68
+10    | B4@78    | -        | -
+12    | A4@76    | -        | -
+13    | D5@78    | -        | -
+14    | C5@76    | -        | -
+15    | B4@76    | -        | -
+# -- D, +9.7
+16    | D5@66    | D4@78    | D3@70
+18    | -        | F#4@80   | -
+20    | -        | E4@78    | -
+21    | -        | A4@80    | -
+22    | -        | G4@78    | -
+23    | -        | F#4@78   | -
+# -- A, +15.7: past equal temperament now
+24    | A4@80    | E4@68    | A2@72
+26    | C#5@82   | -        | -
+28    | B4@80    | -        | -
+29    | E5@82    | -        | -
+30    | D5@80    | -        | -
+31    | C#5@80   | -        | -
+# -- E, +15.7
+32    | B4@70    | E4@82    | E2@74
+34    | -        | G#4@84   | -
+36    | -        | F#4@82   | -
+37    | -        | B4@84    | -
+38    | -        | A4@82    | -
+39    | -        | G#4@82   | -
+# -- B, +15.7
+40    | B4@84    | F#4@72   | B2@76
+42    | D#5@86   | -        | -
+44    | C#5@84   | -        | -
+45    | F#5@86   | -        | -
+46    | E5@84    | -        | -
+47    | D#5@84   | -        | -
+# -- F#, +21.5: the widest third in the temperament
+48    | C#5@74   | F#4@86   | F#2@78
+50    | -        | A#4@90   | -
+52    | -        | G#4@86   | -
+53    | -        | C#5@88   | -
+54    | -        | B4@86    | -
+55    | -        | A#4@86   | -
+# -- the peak held: F# major, +21.5, eight beats to let it beat
+56    | C#5@88   | A#4@92   | F#2@82
+# -- collapse a semitone to F, +3.9. The widest third to the purest.
+64    | F4@70    | C4@62    | F2@64
+66    | A4@72    | -        | -
+68    | G4@70    | -        | -
+69    | C5@72    | -        | -
+70    | A#4@70   | -        | -
+71    | A4@70    | -        | -
+# -- home, and the third is pure again
+72    | G4@64    | E4@60    | C3@60
+76    | E5@62    | C4@58    | -
+80    | E5@56    | G3@54    | C2@52
+88    | .        | .        | .
