@@ -27,7 +27,7 @@ this is the parsimony case in its purest shape.
 """
 import mido, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from reglib import (read_tracks, read_notes, make_channel_track, conductor,
+from reglib import (read_tracks, read_notes, make_channel_track, conductor, console_reed, CONSOLE_PROGRAM,
                     read_ornament_log, realize_ornaments, apply_ornaments,
                     read_fermatas, read_slurs, read_staccatos, read_breaths,
                     F8, F4, F2, F223, F16, F513, MIXTUR, R8, R16, TRUMPET,
@@ -105,8 +105,8 @@ def main():
     out.tracks.append(conductor("BWV582 Passacaglia (organ)", src=src, fermatas=ferm, slurs=slur, staccatos=stac, breaths=brth))
     out.tracks.append(make_channel_track(0, 19, manual, GREAT,     TPB, unit='beat'))
     out.tracks.append(make_channel_track(1, 19, pedal,  PEDAL,     TPB, unit='beat'))
-    out.tracks.append(make_channel_track(2, 20, pedal,  POSAUNE,   TPB, unit='beat'))
-    out.tracks.append(make_channel_track(3, 20, manual, TROMPETTE, TPB, unit='beat'))
+    out.tracks.append(make_channel_track(2, CONSOLE_PROGRAM, pedal, console_reed( POSAUNE),   TPB, unit='beat'))
+    out.tracks.append(make_channel_track(3, CONSOLE_PROGRAM, manual, console_reed(TROMPETTE), TPB, unit='beat'))
     out.save(DST)
     print("wrote %s | TPB %d | %.0fs | manual %d, pedal %d"
           % (DST, TPB, out.length, len(manual), len(pedal)))

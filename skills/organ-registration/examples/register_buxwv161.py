@@ -21,7 +21,7 @@ CC11 flue bits: 0=8' 1=4' 2=2' 3=2 2/3' 4=16' 5=5 1/3';  reed: 0=8' 1=16' 2=4' 3
 """
 import mido, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from reglib import read_notes, make_channel_track
+from reglib import read_notes, make_channel_track, console_reed, CONSOLE_PROGRAM
 
 SRC = "/home/ben/Downloads/buxtehude_passacaglia.mid"
 DST = "/home/ben/Downloads/buxtehude_passacaglia_registered.mid"
@@ -53,8 +53,8 @@ def main():
     out.tracks.append(cond)
     out.tracks.append(make_channel_track(0, 19, great, GREAT, TPB=B, unit='beat'))
     out.tracks.append(make_channel_track(1, 19, pedal, PEDAL, TPB=B, unit='beat'))
-    out.tracks.append(make_channel_track(2, 20, pedal, POSAUNE, TPB=B, unit='beat'))
-    out.tracks.append(make_channel_track(3, 20, great, TRUMPET, TPB=B, unit='beat'))   # Great Trompette (d-return)
+    out.tracks.append(make_channel_track(2, CONSOLE_PROGRAM, pedal, console_reed(POSAUNE), TPB=B, unit='beat'))
+    out.tracks.append(make_channel_track(3, CONSOLE_PROGRAM, great, console_reed(TRUMPET), TPB=B, unit='beat'))   # Great Trompette (d-return)
     out.save(DST)
     print("wrote", DST, "| tracks", len(out.tracks), "| len %.1fs" % out.length,
           "| great", len(great), "pedal", len(pedal))

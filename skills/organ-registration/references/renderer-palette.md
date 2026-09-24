@@ -6,7 +6,7 @@ note builds its whole stop list of ranks internally, and you **draw stops with a
 CC11 bitfield**, swell with **CC7**, and roll a crescendo with **CC4** — all live,
 acting on notes already sounding. (Non-organ voices are one plain series.)
 
-## Control map (organ voices: FlueOrgan prog 19, ReedOrgan prog 20)
+## Control map (the organ: FlueOrgan prog 19, flue AND reed stops)
 
 | MIDI | Role |
 |---|---|
@@ -23,7 +23,13 @@ before this feature. Everything you hear beyond that you draw.
 
 - **Flue (prog 19)** — bit 0 = 8′, 1 = 4′, 2 = 2′, 3 = 2⅔′, 4 = 16′, 5 = 5⅓′,
   **6 = Flute 8′**, **7 = Mixtur III**.
-- **Reed (prog 20)** — bit 0 = 8′, 1 = 16′, 2 = 4′, **3 = Trumpet 8′**.
+- **Reeds — on the same console, prog 19**, bits **8 = reed 8′, 9 = reed 16′,
+  10 = reed 4′, 11 = Trumpet 8′**. They used to be their own program, 20, with
+  bits 0–3; but GM 20 is a *reed organ* — a free reed, a harmonium — and the
+  renderer now plays it as one, so the pipe reeds moved onto the church organ.
+  A reed division still gets its own channel: `reglib.console_reed()` takes the
+  old 4-bit reed word and moves it up to bits 8–11, and `CONSOLE_PROGRAM` is 19.
+  The worked examples below were written with `p20`; their scripts now do this.
 
 The stop word is **14-bit**: **CC11 = bits 0–6**, **CC43 = bits 7–13**. So most
 registrations are still one CC11 value = sum of `1<<bit` (8′+4′+2′+2⅔′ = `0b1111`

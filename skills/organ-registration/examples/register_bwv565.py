@@ -48,7 +48,7 @@ actually ask for it:
 """
 import mido, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from reglib import (read_notes, make_channel_track, conductor,
+from reglib import (read_notes, make_channel_track, conductor, console_reed, CONSOLE_PROGRAM,
                     read_ornament_log, realize_ornaments, apply_ornaments,
                     read_fermatas, read_slurs, read_staccatos, read_breaths, find_echoes, split_echoes,
                     read_arpeggios, big_chords, read_stems, hold_stem_voice,
@@ -276,8 +276,8 @@ def main():
     out.tracks.append(make_channel_track(0, 19, ow, OBERWERK,    TPB, unit='beat'))
     out.tracks.append(make_channel_track(1, 19, rp, RUCKPOSITIV, TPB, unit='beat'))
     out.tracks.append(make_channel_track(2, 19, pedal, PEDAL,       TPB, unit='beat'))
-    out.tracks.append(make_channel_track(3, 20, pedal, POSAUNE,     TPB, unit='beat'))
-    out.tracks.append(make_channel_track(4, 20, rh + lh, TROMPETTE, TPB, unit='beat'))
+    out.tracks.append(make_channel_track(3, CONSOLE_PROGRAM, pedal, console_reed(POSAUNE),     TPB, unit='beat'))
+    out.tracks.append(make_channel_track(4, CONSOLE_PROGRAM, rh + lh, console_reed(TROMPETTE), TPB, unit='beat'))
     out.save(DST)
     print("wrote %s | TPB %d | %.0fs | Oberwerk %d, Rueckpositiv %d, pedal %d"
           % (DST, TPB, out.length, len(ow), len(rp), len(pedal)))

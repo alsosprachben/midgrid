@@ -75,6 +75,22 @@ def read_tracks(mid, indices):
 
 # --- emitting a registered division ------------------------------------------
 
+# THE REEDS ARE ON THE CONSOLE. A pipe organ's reed stops used to be reached as
+# program 20 with their own 4-bit word (0=8' 1=16' 2=4' 3=Trumpet). GM 20 is a
+# REED ORGAN -- a free reed, a harmonium -- and the renderer now plays it as
+# one, so the pipe reeds moved onto the church organ itself: program 19, stop
+# bits 8-11, after the flue chorus and the Mixtur (tuning/tonelib.py). A reed
+# division keeps its own channel; only its program and its bits change.
+CONSOLE_PROGRAM = 19
+CONSOLE_REED_SHIFT = 8
+
+
+def console_reed(mask_events):
+    """A reed division's [(pos, mask)] in the old 4-bit reed word, moved to the
+    console's reed bits."""
+    return [(pos, (mask & 0xF) << CONSOLE_REED_SHIFT) for pos, mask in mask_events]
+
+
 def make_channel_track(ch, prog, notes, mask_events, TPB=None, unit='tick',
                        transpose=0, cc7=None, min_velocity=None):
     """One MIDI track = one organ division.

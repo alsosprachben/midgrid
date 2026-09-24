@@ -30,7 +30,7 @@ for the acquisition pipeline (IMSLP .ly -> lilypond -> ornaments -> register).
 """
 import mido, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from reglib import read_notes, make_channel_track, get_tempo
+from reglib import read_notes, make_channel_track, get_tempo, console_reed, CONSOLE_PROGRAM
 from fractions import Fraction
 sys.path.insert(0, "/home/ben/repos/midgrid")
 from kern2midi_ornaments import realize, MAJOR_STEPS   # shared C.P.E. Bach engine
@@ -133,8 +133,8 @@ def build(src, dst, GREAT, PEDF, PEDR, TRUMPET, name, orns=None, POSITIVE=None):
     else:
         out.tracks.append(make_channel_track(0, 19, great, GREAT, TPB, unit='beat', min_velocity=40))
     out.tracks.append(make_channel_track(1, 19, pedal, PEDF, TPB, unit='beat', min_velocity=40))
-    out.tracks.append(make_channel_track(2, 20, pedal, PEDR, TPB, unit='beat', min_velocity=40))
-    out.tracks.append(make_channel_track(3, 20, great, TRUMPET, TPB, unit='beat', min_velocity=40))
+    out.tracks.append(make_channel_track(2, CONSOLE_PROGRAM, pedal, console_reed(PEDR), TPB, unit='beat', min_velocity=40))
+    out.tracks.append(make_channel_track(3, CONSOLE_PROGRAM, great, console_reed(TRUMPET), TPB, unit='beat', min_velocity=40))
     out.save(dst)
     print("wrote", dst, "| TPB", TPB, "| len %.1fs" % out.length, "| great", len(great), "pedal", len(pedal))
 

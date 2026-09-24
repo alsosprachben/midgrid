@@ -22,7 +22,7 @@ CC11 bitfield bits: flue 0=8' 1=4' 2=2' 3=2 2/3' 4=16' 5=5 1/3' 6=Flute;
 """
 import mido, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from reglib import read_notes, make_channel_track
+from reglib import read_notes, make_channel_track, console_reed, CONSOLE_PROGRAM
 
 SRC = "/home/ben/Downloads/buxtehude_buxwv140_flat.mid"
 DST = "/home/ben/Downloads/buxtehude_buxwv140_registered_cc.mid"
@@ -60,8 +60,8 @@ def main():
     out.tracks.append(cond)
     out.tracks.append(make_channel_track(0, 19, great, GREAT))
     out.tracks.append(make_channel_track(1, 19, pedal, PEDAL))
-    out.tracks.append(make_channel_track(2, 20, pedal, POSAUNE))
-    out.tracks.append(make_channel_track(3, 20, great, GREAT_REED))   # Great reed: fugue subject + close Trompette
+    out.tracks.append(make_channel_track(2, CONSOLE_PROGRAM, pedal, console_reed(POSAUNE)))
+    out.tracks.append(make_channel_track(3, CONSOLE_PROGRAM, great, console_reed(GREAT_REED)))   # Great reed: fugue subject + close Trompette
     out.save(DST)
     print("wrote", DST, "| type", out.type, "| tracks", len(out.tracks),
           "| len %.1fs" % out.length, "| great", len(great), "pedal", len(pedal))

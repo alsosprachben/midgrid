@@ -41,7 +41,8 @@ random and listen to what happens.
    the mordent on its opening `a`, and BWV 582's fugue without its cadential
    trill, and nothing in the pipeline complained.
 6. **Realize it** (`references/renderer-palette.md`): put one organ channel per
-   division (flue prog 19, reed prog 20) and **draw the stops with a CC11
+   division — all on prog 19, the reeds via `reglib.console_reed` (bits 8–11) —
+   and **draw the stops with a CC11
    bitfield** per section (the engine stacks the ranks itself and they lock to
    `hybrid`); add **CC7** for a live swell and **CC4** for a crescendo pedal.
    velocity sets static level.

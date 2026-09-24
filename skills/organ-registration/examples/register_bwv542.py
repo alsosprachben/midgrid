@@ -19,7 +19,7 @@ CC11 flue bits: 0=8' 1=4' 2=2' 3=2 2/3' 4=16' 5=5 1/3' 6=Flute;  reed: 0=8' 1=16
 """
 import mido, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from reglib import read_channel, make_channel_track as track_from
+from reglib import read_channel, make_channel_track as track_from, console_reed, CONSOLE_PROGRAM
 
 SRC = "/home/ben/Downloads/midi/bwv542.mid"
 DST = "/home/ben/Downloads/bwv542_registered.mid"
@@ -60,8 +60,8 @@ def main():
     out.tracks.append(track_from(0, 19, great, GREAT))
     out.tracks.append(track_from(1, 19, positive, [(0, 0b1000000)]))   # flue, FLUTE stop only (bit6) -- soft 8' flute, hybrid-locked
     out.tracks.append(track_from(2, 19, pedal, PEDF))
-    out.tracks.append(track_from(3, 20, pedal, PEDR))
-    out.tracks.append(track_from(4, 20, trumpets, [(0, 0b0001000)]))   # reed, TRUMPET stop (bit3) -- bright, consistent
+    out.tracks.append(track_from(3, CONSOLE_PROGRAM, pedal, console_reed(PEDR)))
+    out.tracks.append(track_from(4, CONSOLE_PROGRAM, trumpets, console_reed([(0, 0b0001000)])))   # reed, TRUMPET stop (bit3) -- bright, consistent
     out.save(DST)
     print("wrote", DST, "| tracks", len(out.tracks), "| len %.1fs" % out.length,
           "| great", len(great), "pos", len(positive), "ped", len(pedal), "trump", len(trumpets))
