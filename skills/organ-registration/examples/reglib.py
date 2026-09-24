@@ -705,9 +705,11 @@ def fermata_markers(fermatas):
             for t, d in fermatas]
 
 # --- stop masks ---------------------------------------------------------------
-# Flue (prog 19): 0=8' 1=4' 2=2' 3=2-2/3' 4=16' 5=5-1/3' 6=Flute 7=Mixtur
+# Flue (prog 19): 0=8' 1=4' 2=2' 3=2-2/3' 4=Principal 16' 5=5-1/3' 6=Flute 7=Mixtur
+#   (8-11 the console's reeds, see console_reed) 12=Bourdon 16' (stopped)
 # Reed (prog 20): 0=8' 1=16' 2=4' 3=Trumpet
 F8, F4, F2, F223, F16, F513, FLUTE, MIXTUR = (1 << i for i in range(8))
+BOURDON16 = 1 << 12     # the stopped 16': the manual's usual gravity, softer than F16
 R8, R16, R4, TRUMPET = (1 << i for i in range(4))
 
 PLENUM      = F8 | F4 | F2 | F223           # Organo pleno

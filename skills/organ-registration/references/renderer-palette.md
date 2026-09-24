@@ -21,8 +21,12 @@ before this feature. Everything you hear beyond that you draw.
 
 ### Stop bitfield bits
 
-- **Flue (prog 19)** — bit 0 = 8′, 1 = 4′, 2 = 2′, 3 = 2⅔′, 4 = 16′, 5 = 5⅓′,
-  **6 = Flute 8′**, **7 = Mixtur III**.
+- **Flue (prog 19)** — bit 0 = 8′, 1 = 4′, 2 = 2′, 3 = 2⅔′, 4 = Principal 16′
+  (open), 5 = 5⅓′, **6 = Flute 8′**, **7 = Mixtur III**, and **12 = Bourdon
+  16′** (stopped; `reglib.BOURDON16`, drawn with `CC43 = 32`).
+- **Which 16′.** The Bourdon is a manual's usual 16′: a stopped pipe, soft,
+  gravity *under* an 8′ rather than a second bass line. The open Principal 16′
+  is grave and heavy — a pedal foundation, or the full pleno's weight.
 - **Reeds — on the same console, prog 19**, bits **8 = reed 8′, 9 = reed 16′,
   10 = reed 4′, 11 = Trumpet 8′**. They used to be their own program, 20, with
   bits 0–3; but GM 20 is a *reed organ* — a free reed, a harmonium — and the
@@ -118,7 +122,8 @@ Colors the stop list doesn't cover still go on **their own channel** as a plain
 2. **Draw the registration per section** with a **CC11** event at each section
    tick (program-change first, then CC11, at the same tick). Terraced, discrete —
    the Baroque way.
-3. **Pedal gravity** = draw 16′ (+8′) on the pedal channel; a Posaune adds a
+3. **Pedal gravity** = draw 16′ (+8′) on the pedal channel — the Principal for
+   weight, the Bourdon (`BOURDON16`) for a softer Subbass; a Posaune adds a
    reed channel (prog 20 with 16′, or brass prog 58 on its own channel).
 4. **Swell / crescendo** where wanted: a **CC7** ramp for an expressive swell on
    held notes, or a **CC4** sweep to roll stops in as a crescendo. Leave CC7 at
