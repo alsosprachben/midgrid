@@ -1,9 +1,9 @@
 # Worked example — Bach, Fantasia & Fugue in G minor (BWV 542)
 
 Re-registering a MIDI that already carries the *maker's* registration (Martin
-Robinson, 1997), and the fullest showcase of the CC-driven system: cross-family
-stops (flute + trumpet on 19/20), terraced by section, with a real trap in the
-*timing* of the switches. Generator: `examples/register_bwv542.py`.
+Robinson, 1997), and the fullest showcase of the CC-driven system: one
+console, flues and reeds and the Bourdon on a single stop word, terraced by
+section, with a real trap in the *timing* of the switches. Generator: `examples/register_bwv542.py`.
 
 ## 1. Read the source
 
@@ -26,30 +26,34 @@ episodes, Trumpets for their passage, Pedal throughout). Keep that. Extract the
 ch8), **discard the octave-doubling tracks** (4′/16′/32′ — we re-create footages
 with our own stops), and copy the tempo track verbatim.
 
-## 3. The registration (all on 19/20)
-
+## 3. The registration (all on 19, the one console)
 ```text
 Piece: Bach, Fantasia & Fugue in G minor, BWV 542
-Design: terraced Werkprinzip; the two walking-bass chorales drop to a soft flute;
-        a Trompette + 16'/5 1/3' crown the final peroration.
-
-Division   Channel  Body                    Chorales (Great tacet)   Close
----------  -------  ----------------------  -----------------------  ------------------
-Great      ch0 p19  Principal 8+4+2+2 2/3   (silent)                 +16'  (CC11 15->31)
-Positive   ch1 p19  --                      Flute 8' (bit6, 0b1000000)  --
-Pedal      ch2 p19  16'+8'                  bare 8' FLUTE (bit6)     +5 1/3'
-Pedal reed ch3 p20  Posaune 16'+8'          OFF                      Posaune
-Trumpets   ch4 p20  Trumpet stop (bit3)     --                       (their own passage)
+Design: terraced Werkprinzip; the two walking-bass chorales drop to soft
+        flutes over a Bourdon; 16' and the Mixtur crown the final peroration.
+Division   Channel  Body                        Chorales (Great tacet)     Close
+---------  -------  --------------------------  -------------------------  ---------------------
+Great      ch0 p19  Principal 8+4+2+2 2/3       (silent)                   +Principal 16, Mixtur
+Positive   ch1 p19  --                          Flute 8'                   --
+Pedal      ch2 p19  Principal 16+8, Posaune     Bourdon 16 + Flute 8,      +Quint 5 1/3
+                    16+8 (reed 16+8)            reed off
+Trumpets   ch3 p19  Trumpet 8'                  --                         (their own passage)
 ```
-
-### The cross-family stops (the point)
-There is no flute or bright chorus-reed among the *principal* stops, so before
-this they'd need a separate BlownPipe/brass channel. Now:
-- **Positive & chorale pedal = the Flute stop on 19 (bit 6)** — BlownPipe
-  spectrum, but flue **dynamic** inharmonicity, so it locks to hybrid.
-- **Trumpets = the Trumpet stop on 20 (bit 3)** — BrightBrass spectrum. A
-  *harmonic* reed beats against the stretched flue (a slow **phaser**); the
-  trumpet stop is flagged **`dynamic`** so it takes the flue stretch and **locks**.
+### One console, one pedal
+The reeds used to be their own program (20), so the pedal was **two channels
+playing the same notes** -- flue on 19, Posaune on 20. Once the reeds became
+stops of the church organ (bits 8-11), the pedal is one division again: the
+notes are played once, and the stop word draws principals and Posaune
+together, as a player's pedal does.
+### The stops that make it work
+- **Positive = the Flute stop (bit 6)**, a stopped-pipe spectrum on the flue's
+  pipe, so it locks to hybrid.
+- **The chorale pedal = Bourdon 16' + Flute 8'.** It was a bare 8' flute, for
+  want of a soft 16'; the stopped Bourdon (bit 12) is the classic Subbass
+  under a Gedackt, gravity without weight.
+- **Trumpets = the console's Trumpet (bit 11)**, a brass spectrum on the reed
+  pipe, flagged `dynamic` so it takes the flue stretch and **locks** -- a
+  harmonic reed would beat against the stretched flue as a slow phaser.
 
 ## 4. The trap: *when* the registration switches
 
@@ -66,8 +70,10 @@ pedal point finishes soft. (Diagnose with note on/off times, not just onsets.)
 
 ## 5. Render & check
 
-`hybrid` tuning; organ **hall** `vol 0.5 … reverb 100 20 100 100 0 -9`,
-normalized to −1 dBFS; **Flat factor 0.00**. Ear metric: the chorales enter *and*
+tuning's `examples/organ.py`: `hybrid` at A415, the **church** room for both
+the early reflections and the tail, −12 dB of headroom for the tail, then
+normalized to −1 dBFS. (Earlier renders used a post-render `sox reverb`; the
+renderer has its own rooms now.) Ear metric: the chorales enter *and*
 exit soft with no swell on the boundary notes; the Trompette blazes without a
 phaser; the plenum lands cleanly as the Great re-enters.
 
@@ -87,5 +93,5 @@ before shaping it: one tempo event means notation, many means a performance.)
 
 Re-registering someone's registration is: keep *what they decided* (the manual
 choreography) and change *how it sounds* (your stops). The cross-family stops let
-you do it all on 19/20 and stay hybrid-locked. And registration is **timing** as
+you do it all on the one console and stay hybrid-locked. And registration is **timing** as
 much as stops — switch in the gaps, and respect held notes (pedal points).
