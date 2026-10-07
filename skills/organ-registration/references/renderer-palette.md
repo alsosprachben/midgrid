@@ -24,6 +24,12 @@ before this feature. Everything you hear beyond that you draw.
 - **Flue (prog 19)** — bit 0 = 8′, 1 = 4′, 2 = 2′, 3 = 2⅔′, 4 = Principal 16′
   (open), 5 = 5⅓′, **6 = Flute 8′**, **7 = Mixtur III**, and **12 = Bourdon
   16′** (stopped; `reglib.BOURDON16`, drawn with `CC43 = 32`).
+- **Bit 13 = Tremulant** (`reglib.TREMULANT`, `CC43 = 64`): no pipes — it
+  pulses the wind the whole channel stands on, ±10% at 5.6 Hz, so every drawn
+  rank on that division wavers in pitch and level together (a flue about
+  ±6.5 cents, a reed hardly in pitch). It is a stop for a **solo** — a flute or
+  a reed singing a chorale melody on its own division — never the plenum's, and
+  it reaches only its own channel, as a real tremulant reaches only its chest.
 - **Which 16′.** The Bourdon is a manual's usual 16′: a stopped pipe, soft,
   gravity *under* an 8′ rather than a second bass line. The open Principal 16′
   is grave and heavy — a pedal foundation, or the full pleno's weight.
