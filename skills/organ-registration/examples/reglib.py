@@ -91,6 +91,42 @@ def console_reed(mask_events):
     return [(pos, (mask & 0xF) << CONSOLE_REED_SHIFT) for pos, mask in mask_events]
 
 
+# A STOP CHANGE GOES IN THE DIVISION'S NEXT SILENCE. A planned seam is a beat;
+# the music rarely breaks exactly there. An organist changes between notes, and
+# each hand or foot when it is free -- so each division takes its own seam:
+# walk from the planned tick past every note that division is holding, and
+# change just after the release. BuxWV 140 changed for its fugue at a round 120
+# beats, mid-way through the prelude's last chord and before the pedal's
+# cadence: Ben heard "an abrupt registration change that is too early".
+# Writing held for longer than `hold_beats` is changed where planned -- a stop
+# drawn over a held chord swells it, as on a real organ.
+def seam(notes, tick, TPB=480, after_beats=1 / 60.0, hold_beats=8.0):
+    """The first tick at or after `tick` where `notes` hold nothing, just past
+    the release; `tick` itself if nothing is held or the hold is too long."""
+    t, moved = tick, True
+    while moved:
+        moved = False
+        for s, e, _n, _v in notes:
+            if s < t < e:
+                t, moved = e, True
+    if t == tick or t - tick > hold_beats * TPB:
+        return tick
+    return t + max(1, int(after_beats * TPB))
+
+
+def at_seams(events, notes, TPB=480, moved=None, **kw):
+    """[(tick, mask)] with every change after the first moved to its seam.
+    `moved` re-plans a beat first: {planned tick: tick to start looking from}."""
+    moved = moved or {}
+    return [(seam(notes, moved.get(tick, tick), TPB, **kw) if tick else 0, mask)
+            for tick, mask in events]
+
+
+def entry_after(notes, tick):
+    """The first onset at or after `tick`."""
+    return min(s for s, _e, _n, _v in notes if s >= tick)
+
+
 def make_channel_track(ch, prog, notes, mask_events, TPB=None, unit='tick',
                        transpose=0, cc7=None, min_velocity=None):
     """One MIDI track = one organ division.

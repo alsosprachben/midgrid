@@ -22,7 +22,8 @@ CC11 bitfield bits: flue 0=8' 1=4' 2=2' 3=2 2/3' 4=16' 5=5 1/3' 6=Flute;
 """
 import mido, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from reglib import read_notes, make_channel_track, console_reed, CONSOLE_PROGRAM
+from reglib import (read_notes, make_channel_track, console_reed, CONSOLE_PROGRAM,
+                    at_seams, entry_after)
 
 SRC = "/home/ben/Downloads/buxtehude_buxwv140_flat.mid"
 DST = "/home/ben/Downloads/buxtehude_buxwv140_registered_cc.mid"
@@ -46,39 +47,10 @@ PEDAL = [(0, 0b000001), (P_TUTTI, 0b010001), (FUGUE, 0b000001),   # 8' -> 16+8 ;
          (F_BUILD, 0b010001), (CLOSE, 0b110001)]                  # 16+8 ; +5 1/3' close
 POSAUNE = [(0, 0), (CLOSE, 0b000011)]                             # pedal reed only crowns the close
 
-# THE SEAMS ABOVE ARE BEATS; THE CHANGE GOES IN THE DIVISION'S NEXT SILENCE.
-# At the round 120 beats the Great's last prelude chord was still held (to
-# 60.33 s) and the pedal's closing D3-D2 (60.87-62.30) had not yet sounded, so
-# the flues cut out mid-chord and the cadence fell to the light 8' -- Ben: "an
-# abrupt registration change that is too early". An organist changes between
-# notes, and each hand or foot when it is free, so each division takes its own
-# seam: walk from the planned beat past every note that division is holding,
-# and change just after the release. Writing held for longer than HOLD_MAX is
-# changed where planned -- a stop drawn over a held chord swells it, as on a
-# real organ; it is TAKING one away under the fingers that is heard as a cut.
-AFTER    = 8                  # ticks past the release (960 ticks/s here)
-HOLD_MAX = 4 * 2 * B          # 4 s
-
-def seam(notes, tick):
-    """The first tick at or after `tick` where `notes` hold nothing, plus AFTER."""
-    t, moved = tick, True
-    while moved:
-        moved = False
-        for s, e, _n, _v in notes:
-            if s < t < e:
-                t, moved = e, True
-    if t - tick > HOLD_MAX:
-        return tick
-    return t + AFTER if t != tick else t
-
-def at_seams(events, notes, moved=None):
-    """`moved` re-plans a beat first: {planned tick: tick to start looking from}."""
-    moved = moved or {}
-    return [(seam(notes, moved.get(tick, tick)) if tick else 0, mask) for tick, mask in events]
-
-def entry_after(notes, tick):
-    """The first onset at or after `tick`."""
-    return min(s for s, _e, _n, _v in notes if s >= tick)
+# THE SEAMS ABOVE ARE BEATS; each change goes in its division's next silence
+# (reglib.seam). At the round 120 beats the Great's last prelude chord was still
+# held (to 60.33 s) and the pedal's closing D3-D2 (60.87-62.30) had not yet
+# sounded, so the flues cut out mid-chord and the cadence fell to the light 8'.
 
 def main():
     src = mido.MidiFile(SRC)
@@ -96,7 +68,7 @@ def main():
     # The pedal's D3-D2 after the Great's last prelude chord (60.87-62.30 s)
     # is the PRELUDE's cadence: it keeps the 16+8 and lightens once the fugue
     # subject has entered and the foot is free.
-    pedal_ev = at_seams(PEDAL, pedal, {FUGUE: entry_after(great, great_ev[2][0])})
+    pedal_ev = at_seams(PEDAL, pedal, moved={FUGUE: entry_after(great, great_ev[2][0])})
     pos_ev = at_seams(POSAUNE, pedal)
     for name, plan, got in (("great", GREAT, great_ev), ("pedal", PEDAL, pedal_ev),
                             ("posaune", POSAUNE, pos_ev), ("great reed", GREAT_REED, reed_ev)):

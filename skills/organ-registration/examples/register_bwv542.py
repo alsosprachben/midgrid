@@ -32,7 +32,7 @@ import mido, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from reglib import (read_channel, make_channel_track as track_from, CONSOLE_PROGRAM,
                     CONSOLE_REED_SHIFT, F8, F4, F2, F223, F16, F513, FLUTE, MIXTUR,
-                    BOURDON16, R8, R16, TRUMPET)
+                    BOURDON16, R8, R16, TRUMPET, at_seams)
 
 SRC = "/home/ben/Downloads/midi/bwv542.mid"
 DST = "/home/ben/Downloads/bwx-renders/bwv542/bwv542_console.mid"
@@ -72,6 +72,11 @@ def main():
              (CLIMAX, PED_PLENO | F513)]                     # +5 1/3' for the close
     TRUMPETS = [(0, REED(TRUMPET))]
 
+    # The chorale seams above were placed in silences by hand; the climax is a
+    # round beat, and the Great is holding two notes across it (to 642.77 s),
+    # so it takes the Great's own next silence (reglib.seam).
+    GREAT = at_seams(GREAT, great, TPB)
+    PEDAL = at_seams(PEDAL, pedal, TPB)
     out.tracks.append(track_from(0, CONSOLE_PROGRAM, great, GREAT))
     out.tracks.append(track_from(1, CONSOLE_PROGRAM, positive, POS))
     out.tracks.append(track_from(2, CONSOLE_PROGRAM, pedal, PEDAL))
