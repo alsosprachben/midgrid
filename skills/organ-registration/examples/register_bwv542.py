@@ -22,9 +22,16 @@ flue on 19, Posaune on 20 -- because the reeds had their own program then. On
 the console the Posaune is a stop of the pedal, so the notes are played once
 and the stop word draws both families.
 
-THE CHORALE PEDAL GETS THE BOURDON. The two walking-bass chorales need the
-pedal soft; it used to be a bare 8' flute, for want of a soft 16'. The stopped
-Bourdon 16' (bit 12) under the flute is the classic soft pedal.
+THE CHORALE PEDAL GETS THE SUBBASS. The two walking-bass chorales need the
+pedal soft; it was a bare 8' flute, for want of a soft 16', then the manual's
+Bourdon 16' standing in. Pitea's pedal Subbas 16' (bit 18) is the real stop: the
+classic soft pedal, under the flute. It also stands under the pedal pleno's
+Principal 16', as a North German pedal's Subbass does.
+
+THE 32' HIS FILE ASKED FOR. Robinson's "Ped 32 Reed" track plays the Fantasia's
+last pages (beats 299-329), entering with his trumpets; it was discarded for
+want of the stop. Pitea's Kontrabasun 32' (bit 19) is that stop: the pedal draws
+it for those pages and lets it go before the fugue.
 
 The conductor/tempo track (rubato, 32 tempo events) is copied verbatim.
 """
@@ -32,7 +39,7 @@ import mido, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from reglib import (read_channel, make_channel_track as track_from, CONSOLE_PROGRAM,
                     CONSOLE_REED_SHIFT, F8, F4, F2, F223, F16, F513, FLUTE, MIXTUR,
-                    BOURDON16, R8, R16, TRUMPET, at_seams)
+                    BOURDON16, SUBBASS16, CONTRAFAG32, R8, R16, TRUMPET, at_seams)
 
 SRC = "/home/ben/Downloads/midi/bwv542.mid"
 DST = "/home/ben/Downloads/bwx-renders/bwv542/bwv542_console.mid"
@@ -64,11 +71,14 @@ def main():
     GREAT = [(0, F8 | F4 | F2 | F223),                       # Organo pleno
              (CLIMAX, F8 | F4 | F2 | F223 | F16 | MIXTUR)]   # +16' and the Mixtur for the close
     POS   = [(0, FLUTE)]                                     # soft 8' flute
-    PED_PLENO = F16 | F8 | REED(R16 | R8)                    # principals 16+8, Posaune 16+8
-    PED_SOFT  = BOURDON16 | FLUTE                            # the chorales: Subbass + Gedackt
+    PED_PLENO = F16 | SUBBASS16 | F8 | REED(R16 | R8)        # principal 16 + subbass 16, 8, Posaune 16+8
+    PED_SOFT  = SUBBASS16 | FLUTE                            # the chorales: Subbass + Gedackt
+    P32a, P32b = int(297.0 * TPB), int(331.0 * TPB)          # his Ped 32 Reed: beats 299-329
     PEDAL = [(0, PED_PLENO),
              (C1a, PED_SOFT), (C1b, PED_PLENO),              # chorale 1
              (C2a, PED_SOFT), (C2b, PED_PLENO),              # chorale 2
+             (P32a, PED_PLENO | CONTRAFAG32),                # the Fantasia's last pages: + the 32' reed
+             (P32b, PED_PLENO),
              (CLIMAX, PED_PLENO | F513)]                     # +5 1/3' for the close
     TRUMPETS = [(0, REED(TRUMPET))]
 

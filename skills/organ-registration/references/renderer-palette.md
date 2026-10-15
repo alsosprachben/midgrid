@@ -30,6 +30,16 @@ before this feature. Everything you hear beyond that you draw.
   ±6.5 cents, a reed hardly in pitch). It is a stop for a **solo** — a flute or
   a reed singing a chorale melody on its own division — never the plenum's, and
   it reaches only its own channel, as a real tremulant reaches only its chest.
+- **Bits 14–24, the recorded ranks** (`reglib` names in brackets), each fitted
+  to its own Piteå pipes, drawn with **CC44** (bits 14–20) and **CC45** (21–27):
+  14 Koppelflöte 4′ (`KOPPEL4`), 15 Waldflöte 2′ (`WALD2`), 16 Nazard 2⅔′
+  (`NAZARD`), 17 Tierce 1⅗′ (`TIERCE`); 18 Subbass 16′ (`SUBBASS16`), 19
+  Contrabassoon 32′ (`CONTRAFAG32`); 20 Gamba 8′ (`GAMBA8`), 21 Céleste 8′
+  (`CELESTE8`, from C3, +18 cents: with the Gamba it beats); 22 Oboe 8′
+  (`OBOE8`), 23 Vox humana 8′ (`VOXHUMANA8`, a tremulant's stop), 24 Trompette
+  8′ (`TROMPETTE8`). The flute chorus for Bach and Buxtehude is Flute 8′ +
+  Koppelflöte 4′ + Waldflöte 2′; `SESQUIALTERA` = Nazard + Tierce, a solo's
+  colour over a flute 8′; `CORNET` decomposed = 8 + 4 + 2⅔ + 2 + 1⅗.
 - **Which 16′.** The Bourdon is a manual's usual 16′: a stopped pipe, soft,
   gravity *under* an 8′ rather than a second bass line. The open Principal 16′
   is grave and heavy — a pedal foundation, or the full pleno's weight.
@@ -41,7 +51,7 @@ before this feature. Everything you hear beyond that you draw.
   old 4-bit reed word and moves it up to bits 8–11, and `CONSOLE_PROGRAM` is 19.
   The worked examples below were written with `p20`; their scripts now do this.
 
-The stop word is **14-bit**: **CC11 = bits 0–6**, **CC43 = bits 7–13**. So most
+The stop word is **28-bit**: **CC11 = bits 0–6**, **CC43 = bits 7–13**, **CC44 = bits 14–20**, **CC45 = bits 21–27**. So most
 registrations are still one CC11 value = sum of `1<<bit` (8′+4′+2′+2⅔′ = `0b1111`
 = 15; add 16′ = `0b11111` = 31; flute alone = 64; trumpet = 8) — but the **Mixtur
 (bit 7) is drawn with `CC43=1`**. `CC43=0` (the default) is exactly the old 7-bit

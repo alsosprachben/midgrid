@@ -23,7 +23,7 @@ CC11 bitfield bits: flue 0=8' 1=4' 2=2' 3=2 2/3' 4=16' 5=5 1/3' 6=Flute;
 import mido, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from reglib import (read_notes, make_channel_track, console_reed, CONSOLE_PROGRAM,
-                    at_seams, entry_after)
+                    at_seams, entry_after, SUBBASS16, CONTRAFAG32)
 
 SRC = "/home/ben/Downloads/buxtehude_buxwv140_flat.mid"
 DST = "/home/ben/Downloads/buxtehude_buxwv140_registered_cc.mid"
@@ -43,8 +43,11 @@ MIX = 1 << 7    # Mixtur III (flue bit 7) -- the crown of a full pleno, close on
 GREAT = [(0, 0b000011), (P_TUTTI, 0b000111), (FUGUE, 0),          # 8+4 -> 8+4+2 ; tacet in fugue
          (F_BUILD, 0b000011), (CLOSE, 0b011111 | MIX)]            # flue rejoins 8+4 ; +16'+Mixtur close
 GREAT_REED = [(0, 0), (FUGUE, 0b000001), (CLOSE, 0b001001)]       # solo 8' reed fugue ; +Trumpet close
-PEDAL = [(0, 0b000001), (P_TUTTI, 0b010001), (FUGUE, 0b000001),   # 8' -> 16+8 ; light 8' under the reed
-         (F_BUILD, 0b010001), (CLOSE, 0b110001)]                  # 16+8 ; +5 1/3' close
+# THE PEDAL'S 16' IS THE SUBBASS (bit 18, Pitea's own pedal Subbas): a North
+# German pedal's foundation under its 8', where the open Principal 16' stood in;
+# the close draws both 16's and the 5 1/3'.
+PEDAL = [(0, 0b000001), (P_TUTTI, SUBBASS16 | 0b000001), (FUGUE, 0b000001),   # 8' -> Subbass 16+8 ; light 8' under the reed
+         (F_BUILD, SUBBASS16 | 0b000001), (CLOSE, SUBBASS16 | 0b110001)]      # Subbass 16+8 ; +Principal 16, 5 1/3' close
 POSAUNE = [(0, 0), (CLOSE, 0b000011)]                             # pedal reed only crowns the close
 
 # THE SEAMS ABOVE ARE BEATS; each change goes in its division's next silence
@@ -76,7 +79,11 @@ def main():
                                             for (a, _), (b, _) in zip(plan, got) if a))
     out.tracks.append(make_channel_track(0, 19, great, great_ev))
     out.tracks.append(make_channel_track(1, 19, pedal, pedal_ev))
-    out.tracks.append(make_channel_track(2, CONSOLE_PROGRAM, pedal, console_reed(pos_ev)))
+    # ...and the Picardy close stands on the 32' reed too (bit 19, Pitea's
+    # Kontrabasun), as the big Hamburg Schnitgers' 32' Posaune: added after
+    # console_reed has moved the reed word onto the console's reed bits
+    pos_ev = [(t, m | CONTRAFAG32) if m else (t, m) for t, m in console_reed(pos_ev)]
+    out.tracks.append(make_channel_track(2, CONSOLE_PROGRAM, pedal, pos_ev))
     out.tracks.append(make_channel_track(3, CONSOLE_PROGRAM, great, console_reed(reed_ev)))   # Great reed: fugue subject + close Trompette
     out.save(DST)
     print("wrote", DST, "| type", out.type, "| tracks", len(out.tracks),

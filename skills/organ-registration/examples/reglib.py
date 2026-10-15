@@ -132,9 +132,10 @@ def make_channel_track(ch, prog, notes, mask_events, TPB=None, unit='tick',
     """One MIDI track = one organ division.
 
     `mask_events` is [(pos, stop_mask)]; `unit` says whether pos is in 'tick' or
-    'beat' (beats need TPB). The mask is the **14-bit stop word**: CC11 carries
-    bits 0-6 and CC43 bits 7-13, so the Mixtur (flue bit 7) is drawable. CC43=0
-    reproduces the old 7-bit behaviour exactly.
+    'beat' (beats need TPB). The mask is the **stop word**: CC11 carries bits
+    0-6, CC43 bits 7-13 (the Mixtur is flue bit 7), and CC44/CC45 bits 14-27
+    (the recorded ranks, sent only when a mask uses them). CC43=0 reproduces
+    the old 7-bit behaviour exactly.
 
     `cc7` is for NON-registerable voices (a plain BlownPipe/brass channel), where
     channel_volume = (CC7*CC11)^2 -- never send CC11=0 to those or they go silent.
@@ -150,12 +151,20 @@ def make_channel_track(ch, prog, notes, mask_events, TPB=None, unit='tick',
     ev = [(0, 0, mido.Message('program_change', channel=ch, program=prog, time=0))]
     if cc7 is not None:
         ev.append((0, 0, mido.Message('control_change', channel=ch, control=7, value=cc7)))
+    # CC44/CC45 carry bits 14-27 (the recorded ranks); sent only on a channel
+    # that draws one, so every registration written before is the same MIDI
+    wide = any(int(m) >> 14 for _, m in mask_events)
     for pos, mask in mask_events:
         tick = int(pos * scale)
         ev.append((tick, 1, mido.Message('control_change', channel=ch, control=11,
                                          value=mask & 0x7F)))
         ev.append((tick, 1, mido.Message('control_change', channel=ch, control=43,
                                          value=(mask >> 7) & 0x7F)))
+        if wide:
+            ev.append((tick, 1, mido.Message('control_change', channel=ch, control=44,
+                                             value=(mask >> 14) & 0x7F)))
+            ev.append((tick, 1, mido.Message('control_change', channel=ch, control=45,
+                                             value=(mask >> 21) & 0x7F)))
     for s, e, n, v in notes:
         nn = n + transpose
         if not (0 <= nn <= 127):
@@ -744,10 +753,19 @@ def fermata_markers(fermatas):
 # Flue (prog 19): 0=8' 1=4' 2=2' 3=2-2/3' 4=Principal 16' 5=5-1/3' 6=Flute 7=Mixtur
 #   (8-11 the console's reeds, see console_reed) 12=Bourdon 16' (stopped)
 #   13=Tremulant (no pipes: it pulses the division's wind)
+#   14=Koppelflute 4 15=Waldflute 2 16=Nazard 2-2/3 17=Tierce 1-3/5
+#   18=Subbass 16 19=Contrabassoon 32 20=Gamba 8 21=Celeste 8 (from C3; with
+#   the Gamba it beats) 22=Oboe 8 23=Vox humana 8 24=Trompette 8
 # Reed (prog 20): 0=8' 1=16' 2=4' 3=Trumpet
 F8, F4, F2, F223, F16, F513, FLUTE, MIXTUR = (1 << i for i in range(8))
 BOURDON16 = 1 << 12     # the stopped 16': the manual's usual gravity, softer than F16
 TREMULANT = 1 << 13     # pulses the whole division's wind: a solo's colour, never the plenum's
+# THE RECORDED RANKS, bits 14-24 (CC44 bits 14-20, CC45 21-27): Pitea's own
+# stops, each fitted to its pipes (../tuning/examples/pitea_newranks.py)
+(KOPPEL4, WALD2, NAZARD, TIERCE, SUBBASS16, CONTRAFAG32,
+ GAMBA8, CELESTE8, OBOE8, VOXHUMANA8, TROMPETTE8) = (1 << i for i in range(14, 25))
+SESQUIALTERA = NAZARD | TIERCE              # the 2-2/3 and 1-3/5 together: a solo's colour
+CORNET       = FLUTE | KOPPEL4 | NAZARD | WALD2 | TIERCE   # the decomposed cornet, 8 4 2-2/3 2 1-3/5
 R8, R16, R4, TRUMPET = (1 << i for i in range(4))
 
 PLENUM      = F8 | F4 | F2 | F223           # Organo pleno
