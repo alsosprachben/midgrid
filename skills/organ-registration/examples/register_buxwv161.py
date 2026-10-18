@@ -27,8 +27,14 @@ SRC = "/home/ben/Downloads/buxtehude_passacaglia.mid"
 DST = "/home/ben/Downloads/buxtehude_passacaglia_registered.mid"
 TPB = 1024
 B = TPB
-GREAT_TRACKS = [2, 3, 4]
-PEDAL_TRACK  = 5
+# THE PEDAL IS TRACK 2, AT ITS WRITTEN PITCH. The source's sequencer layered
+# the ostinato in octaves to fake a 16' on one GM sound: track 5 is track 2's
+# 200 notes exactly an octave down (D1-C3, below any pedalboard -- whose compass
+# C2-d' track 2 fills exactly). Taking 5 as the pedal and 2 as a manual voice
+# put every pedal stop an octave low (the 32' reed at 64', ~10 Hz on its D) and
+# doubled the ground at 8' on the manual's registration. Track 5 is dropped.
+GREAT_TRACKS = [3, 4]
+PEDAL_TRACK  = 2
 
 MIX = 1 << 7    # Mixtur III (flue bit 7) -- crowns the d-return climax only
 
