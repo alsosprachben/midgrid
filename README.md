@@ -99,7 +99,3 @@ The following documents describe the core formats used in this project:
 ## Composition Skills
 
 The [composition skills map](composition_skills.md) outlines repo-local skill packets for example-driven counterpoint and fugue training with MidGrid, including strict output, Fux species exercises, harmonic effect control, fugue exposition, and report-driven repair loops.
-
-## License
-
-MIT License
